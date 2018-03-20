@@ -7,6 +7,7 @@ android:
     - build-tools-26.0.2
 before_script: 
   - cd CyFile-Android
+  - chmod +x gradlew
 
 script:
   - echo "Travis branch is $TRAVIS_BRANCH"
