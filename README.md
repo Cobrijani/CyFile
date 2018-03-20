@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/Cobrijani/CyFile.svg?branch=master)](https://travis-ci.org/Cobrijani/CyFile)
 # Group: XP Morning 04
 ## Project title: CyFile
 ## Project description:
