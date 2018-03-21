@@ -5,7 +5,7 @@ package at.tugraz.tc.cyfile.crypto;
  * Created by cobri on 3/21/2018.
  */
 
-public class DummyCryptoService implements CryptoService {
+public class CryptoServiceImpl implements CryptoService {
     @Override
     public byte[] encrypt(byte[] data) {
         return new byte[0];
