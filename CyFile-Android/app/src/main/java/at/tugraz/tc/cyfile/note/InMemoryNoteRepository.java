@@ -10,7 +10,7 @@ import at.tugraz.tc.cyfile.domain.Note;
  * Created by cobri on 3/21/2018.
  */
 
-public class DummyNoteRepository implements NoteRepository {
+public class InMemoryNoteRepository implements NoteRepository {
     @Override
     public List<Note> findAll() {
         return Collections.emptyList();

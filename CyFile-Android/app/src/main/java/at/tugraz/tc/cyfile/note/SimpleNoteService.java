@@ -10,13 +10,13 @@ import at.tugraz.tc.cyfile.domain.Note;
  * Created by cobri on 3/21/2018.
  */
 
-public class DummyNoteService implements NoteService {
+public class SimpleNoteService implements NoteService {
 
     private final NoteRepository repository;
 
     private final CryptoService cryptoService;
 
-    public DummyNoteService(NoteRepository repository, CryptoService cryptoService) {
+    public SimpleNoteService(NoteRepository repository, CryptoService cryptoService) {
         this.repository = repository;
         this.cryptoService = cryptoService;
     }
