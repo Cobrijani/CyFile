@@ -2,7 +2,7 @@ package at.tugraz.tc.cyfile;
 
 import android.app.Application;
 
-import at.tugraz.tc.cyfile.crypto.CryptoServiceImpl;
+import at.tugraz.tc.cyfile.crypto.NoOpCryptoService;
 import at.tugraz.tc.cyfile.note.DaggerNoteComponent;
 import at.tugraz.tc.cyfile.note.InMemoryNoteRepository;
 import at.tugraz.tc.cyfile.note.NoteComponent;
@@ -24,7 +24,7 @@ public class CyFileApplication extends Application {
 
         mNoteComponent = DaggerNoteComponent
                 .builder()
-                .noteModule(new NoteModule(new SecureNoteService(new InMemoryNoteRepository(), new CryptoServiceImpl())))
+                .noteModule(new NoteModule(new SecureNoteService(new InMemoryNoteRepository(), new NoOpCryptoService())))
                 .build();
 
     }
