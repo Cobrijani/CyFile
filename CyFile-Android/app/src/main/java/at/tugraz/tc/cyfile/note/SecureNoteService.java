@@ -6,17 +6,21 @@ import at.tugraz.tc.cyfile.crypto.CryptoService;
 import at.tugraz.tc.cyfile.domain.Note;
 
 /**
- * Dummy implementation of {@link NoteService}
+ * Secure implementation of {@link NoteService}
+ * <p>
+ * Which means everything will be encrypted, except the id,
+ * before saving into storage and decrypted when retrieving from it.
+ * <p>
  * Created by cobri on 3/21/2018.
  */
 
-public class SimpleNoteService implements NoteService {
+public class SecureNoteService implements NoteService {
 
     private final NoteRepository repository;
 
     private final CryptoService cryptoService;
 
-    public SimpleNoteService(NoteRepository repository, CryptoService cryptoService) {
+    public SecureNoteService(NoteRepository repository, CryptoService cryptoService) {
         this.repository = repository;
         this.cryptoService = cryptoService;
     }
@@ -47,6 +51,9 @@ public class SimpleNoteService implements NoteService {
 
     @Override
     public Note save(Note note) {
+        if (note == null) {
+            throw new IllegalArgumentException("Cannot be null");
+        }
         note.setContent(cryptoService.encrypt(note.getContent()));
         note.setTitle(cryptoService.encrypt(note.getTitle()));
         return repository.save(note);
