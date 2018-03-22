@@ -2,6 +2,8 @@ package at.tugraz.tc.cyfile.crypto;
 
 /**
  * Implementation of {@link CryptoService}
+ * <p>
+ * that does nothing
  * Created by cobri on 3/21/2018.
  */
 
