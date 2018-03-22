@@ -8,21 +8,21 @@ package at.tugraz.tc.cyfile.crypto;
 public class CryptoServiceImpl implements CryptoService {
     @Override
     public byte[] encrypt(byte[] data) {
-        return new byte[0];
+        return data;
     }
 
     @Override
     public byte[] decrypt(byte[] cipherData) {
-        return new byte[0];
+        return cipherData;
     }
 
     @Override
     public String encrypt(String data) {
-        return null;
+        return data;
     }
 
     @Override
     public String decrypt(String cipherData) {
-        return null;
+        return cipherData;
     }
 }
