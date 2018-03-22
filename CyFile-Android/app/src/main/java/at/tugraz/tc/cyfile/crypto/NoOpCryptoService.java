@@ -14,13 +14,13 @@ public class NoOpCryptoService implements CryptoService {
     }
 
     @Override
-    public byte[] decrypt(byte[] cipherData) {
-        return cipherData;
+    public String encrypt(String data) {
+        return data;
     }
 
     @Override
-    public String encrypt(String data) {
-        return data;
+    public byte[] decrypt(byte[] cipherData) {
+        return cipherData;
     }
 
     @Override

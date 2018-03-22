@@ -15,21 +15,20 @@ public interface CryptoService {
     byte[] encrypt(byte[] data);
 
     /**
+     * Encrypt data and perform base64 encoding
+     *
+     * @param data data to be encrypted
+     * @return cipher data in encoded format
+     */
+    String encrypt(String data);
+
+    /**
      * Decrypt cipher data
      *
      * @param cipherData data to be decrypted
      * @return decrypted text in a form of byte array
      */
     byte[] decrypt(byte[] cipherData);
-
-
-    /**
-     * Encrypt data and perform base64 encoding
-     *
-     * @param data data to be encrypted
-     * @return cipher data in base64 format
-     */
-    String encrypt(String data);
 
     /**
      * Decrypt data
