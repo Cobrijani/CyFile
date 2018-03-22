@@ -1,7 +1,7 @@
 package at.tugraz.tc.cyfile.crypto;
 
 /**
- * Dummy implementation of {@link CryptoService}
+ * Implementation of {@link CryptoService}
  * Created by cobri on 3/21/2018.
  */
 
