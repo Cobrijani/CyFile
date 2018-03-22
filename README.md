@@ -1,4 +1,6 @@
 [![Build Status](https://travis-ci.org/Cobrijani/CyFile.svg?branch=master)](https://travis-ci.org/Cobrijani/CyFile)
+[![CodeFactor](https://www.codefactor.io/repository/github/cobrijani/cyfile/badge)](https://www.codefactor.io/repository/github/cobrijani/cyfile)
+
 # Group: XP Morning 04
 ## Project title: CyFile
 ## Project description:
