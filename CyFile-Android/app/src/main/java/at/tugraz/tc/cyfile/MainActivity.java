@@ -23,5 +23,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ((CyFileApplication) getApplication()).getNoteComponent().inject(this);
+
     }
 }

@@ -24,12 +24,13 @@ public class CyFileApplication extends Application {
 
         mNoteComponent = DaggerNoteComponent
                 .builder()
-                .noteModule(new NoteModule(new SecureNoteService(new InMemoryNoteRepository(), new NoOpCryptoService())))
+                .noteModule(new NoteModule(new SecureNoteService(
+                        new InMemoryNoteRepository(InMemoryNoteRepository.getInitialNotes()), new NoOpCryptoService())))
                 .build();
-
     }
 
     public NoteComponent getNoteComponent() {
         return mNoteComponent;
     }
+
 }
