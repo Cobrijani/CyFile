@@ -23,7 +23,9 @@
         android:onClick="onSelectSaveNote"
         android:text="SAVE"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="284dp" />
+        tools:layout_editor_absoluteX="284dp"
+        android:background="@drawable/round_button"
+        />
 
     <EditText
         android:id="@+id/TEXT_TITLE"

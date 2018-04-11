@@ -33,6 +33,7 @@
         android:onClick="onSelectAddNote"
         android:text="Add"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="269dp" />
+        tools:layout_editor_absoluteX="269dp"
+        android:background="@drawable/round_button" />
 
 </android.support.constraint.ConstraintLayout>
