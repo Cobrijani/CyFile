@@ -42,4 +42,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     compileOnly "org.projectlombok:lombok:$lombok_version"
     annotationProcessor "org.projectlombok:lombok:$lombok_version"
+    androidTestCompile 'com.android.support.test.espresso:espresso-intents:3.0.1'
 }
