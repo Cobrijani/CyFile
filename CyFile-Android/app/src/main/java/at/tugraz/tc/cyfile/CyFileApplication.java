@@ -80,6 +80,94 @@ public class CyFileApplication extends Application {
                         "                feugiat. Curabitur feugiat augue nec porta vehicula."
         ));
         initialNotes.add(new Note("f329aef4-2e90-11e8-b467-0ed5f89f718b", "Empty note", ""));
+        initialNotes.add(new Note("asdfasdf-2e90-11e8-b467-0ed5f89f718b",
+                "Note with a very long title. Very long. Still not over. Blablablabla",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+
         return initialNotes;
     }
 }
