@@ -1,7 +1,6 @@
 package at.tugraz.tc.cyfile.note;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -74,4 +73,5 @@ public class InMemoryNoteRepository implements NoteRepository {
             }
         }
     }
+
 }
