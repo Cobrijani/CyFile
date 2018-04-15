@@ -1,9 +1,11 @@
-package at.tugraz.tc.cyfile.note;
+package at.tugraz.tc.cyfile.note.impl;
 
 import java.util.List;
 
 import at.tugraz.tc.cyfile.crypto.CryptoService;
 import at.tugraz.tc.cyfile.domain.Note;
+import at.tugraz.tc.cyfile.note.NoteRepository;
+import at.tugraz.tc.cyfile.note.NoteService;
 
 /**
  * Secure implementation of {@link NoteService}

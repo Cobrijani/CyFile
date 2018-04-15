@@ -4,11 +4,14 @@ import at.tugraz.tc.cyfile.secret.Secret;
 import at.tugraz.tc.cyfile.secret.SecretRepository;
 import at.tugraz.tc.cyfile.secret.SecretVerifier;
 
-public class PinPatternSecretVerifier implements SecretVerifier {
+/**
+ * {@link SecretVerifier} that simply checks if the string values are equal
+ */
+public class SimplePinPatternSecretVerifier implements SecretVerifier {
 
     private final SecretRepository secretRepository;
 
-    public PinPatternSecretVerifier(SecretRepository secretRepository) {
+    public SimplePinPatternSecretVerifier(SecretRepository secretRepository) {
         this.secretRepository = secretRepository;
     }
 

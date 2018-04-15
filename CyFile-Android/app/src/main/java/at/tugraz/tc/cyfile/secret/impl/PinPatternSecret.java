@@ -1,8 +1,10 @@
-package at.tugraz.tc.cyfile.secret;
+package at.tugraz.tc.cyfile.secret.impl;
 
 import com.andrognito.patternlockview.PatternLockView;
 
 import java.util.List;
+
+import at.tugraz.tc.cyfile.secret.Secret;
 
 public class PinPatternSecret implements Secret {
 
