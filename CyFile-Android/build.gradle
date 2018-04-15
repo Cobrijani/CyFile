@@ -7,6 +7,12 @@ buildscript {
     ext.mockito_version = '2.16.0'
     ext.util_version = '1.13.10'
     ext.pattern_lock_version = '1.0.0'
+    ext.android_support_version = '27.1.1'
+    ext.contraint_layout_version = '1.1.0'
+    ext.junit_version = '4.12'
+    ext.dexmaker_version = '2.2.0'
+    ext.espresso_version = '3.0.1'
+    ext.test_runner_version = '1.0.1'
     repositories {
         google()
         jcenter()
