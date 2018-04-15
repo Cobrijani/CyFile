@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import at.tugraz.tc.cyfile.domain.Note;
+import at.tugraz.tc.cyfile.note.impl.InMemoryNoteRepository;
 
 /**
  * Unit tests for {@link InMemoryNoteRepository}
