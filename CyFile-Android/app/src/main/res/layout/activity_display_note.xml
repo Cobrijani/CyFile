@@ -6,15 +6,6 @@
     android:layout_height="match_parent"
     tools:context="at.tugraz.tc.cyfile.DisplayNoteActivity">
 
-    <EditText
-        android:id="@+id/noteText"
-        android:layout_width="360dp"
-        android:layout_height="387dp"
-        android:ems="10"
-        android:inputType="textMultiLine"
-        tools:layout_editor_absoluteX="13dp"
-        tools:layout_editor_absoluteY="64dp" />
-
     <Button
         android:id="@+id/BTN_SAVE"
         android:layout_width="wrap_content"
@@ -37,4 +28,13 @@
         android:inputType="text"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/noteText"
+        android:layout_width="358dp"
+        android:layout_height="382dp"
+        android:ems="10"
+        android:inputType="textMultiLine"
+        app:layout_constraintTop_toBottomOf="@+id/TEXT_TITLE"
+        tools:layout_editor_absoluteX="16dp" />
 </android.support.constraint.ConstraintLayout>

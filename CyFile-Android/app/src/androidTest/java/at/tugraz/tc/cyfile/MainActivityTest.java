@@ -41,7 +41,6 @@ public class MainActivityTest {
         assertEquals("at.tugraz.tc.cyfile", appContext.getPackageName());
     }
 
-
     public void testAddNoteBtn() {
         onView(withId(R.id.BTN_ADD)).perform(click());
         intended(hasComponent(DisplayNoteActivity.class.getName()));

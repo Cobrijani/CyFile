@@ -36,10 +36,7 @@ public class DisplayNoteActivityTest {
     }
 
     public void testSaveButton() {
-
         onView(withId(R.id.BTN_ADD)).perform(click());
         intended(hasComponent(DisplayNoteActivity.class.getName()));
-
-
     }
 }
