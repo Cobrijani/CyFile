@@ -1,4 +1,4 @@
-package at.tugraz.tc.cyfile.note;
+package at.tugraz.tc.cyfile.note.impl;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import at.tugraz.tc.cyfile.domain.Note;
+import at.tugraz.tc.cyfile.note.NoteRepository;
 
 /**
  * In memory implementation of {@link NoteRepository}

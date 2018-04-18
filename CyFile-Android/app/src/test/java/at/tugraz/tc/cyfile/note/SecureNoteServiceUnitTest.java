@@ -10,6 +10,7 @@ import java.util.List;
 
 import at.tugraz.tc.cyfile.crypto.CryptoService;
 import at.tugraz.tc.cyfile.domain.Note;
+import at.tugraz.tc.cyfile.note.impl.SecureNoteService;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.anyString;

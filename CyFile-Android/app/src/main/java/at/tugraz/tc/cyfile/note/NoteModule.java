@@ -12,7 +12,7 @@ import dagger.Provides;
 @Module
 public class NoteModule {
 
-    public NoteService mNoteService;
+    private NoteService mNoteService;
 
     public NoteModule(NoteService service) {
         this.mNoteService = service;
@@ -23,6 +23,5 @@ public class NoteModule {
     @Singleton
     public NoteService providesNoteService() {
         return mNoteService;
-
     }
 }

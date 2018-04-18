@@ -9,7 +9,7 @@ import at.tugraz.tc.cyfile.domain.Note;
  * Created by cobri on 3/21/2018.
  */
 
-interface NoteRepository {
+public interface NoteRepository {
 
     /**
      * get all notes
