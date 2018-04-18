@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         ((CyFileApplication) getApplication()).getNoteComponent().inject(this);
 
         Intent intent = new Intent(this, PatternLockActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, 1);
         loadNoteList();
     }
 
