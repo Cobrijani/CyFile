@@ -3,6 +3,7 @@ package at.tugraz.tc.cyfile;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -18,18 +19,21 @@ public class DisplayNoteActivity extends AppCompatActivity {
     NoteService noteService;
 
     private Note loadedNote;
+    private TextView textView;
+    private TextView textTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_note);
 
+        textView = findViewById(R.id.noteText);
+        textTitle = findViewById(R.id.TEXT_TITLE);
+
         ((CyFileApplication) getApplication()).getNoteComponent().inject(this);
 
         Intent intent = getIntent();
-
         String noteId = intent.getStringExtra(MainActivity.NOTE_ID);
-
         loadNote(noteId);
 
         onOpenNote();
@@ -47,17 +51,11 @@ public class DisplayNoteActivity extends AppCompatActivity {
         Log.d("Note Id", loadedNote.getId() + " " );
         Log.d("Note Content", loadedNote.getContent() + " " );
 
-        TextView textView = findViewById(R.id.noteText);
         textView.setText(loadedNote.getContent());
-
-        TextView textTitle = findViewById(R.id.TEXT_TITLE);
         textTitle.setText(loadedNote.getTitle());
     }
 
     public void onSelectSaveNote(View v) {
-        TextView textTitle = findViewById(R.id.TEXT_TITLE);
-        TextView textView = findViewById(R.id.noteText);
-
         String noteTitle = textTitle.getText().toString();
         String noteContent = textView.getText().toString();
         Log.d("onSelectSaveNote", "Title:- " + noteTitle);
@@ -67,5 +65,8 @@ public class DisplayNoteActivity extends AppCompatActivity {
         loadedNote.setContent(noteContent);
 
         loadedNote = noteService.save(loadedNote);
-    };
+        //TODO handle return value (null if not successful)
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
 }
