@@ -39,8 +39,16 @@ public class MainActivity extends AppCompatActivity {
         loadNoteList();
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        //reload data
+        //loadNoteList();
+    }
+
     private void loadNoteList() {
-       final  LinearLayout linear = (LinearLayout) findViewById(R.id.noteList);
+       final  LinearLayout linear = findViewById(R.id.noteList);
 
         for (Note note :
                 noteService.findAll()) {
@@ -66,4 +74,11 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(NOTE_ID, message);
         startActivity(intent);
     }
+
+    public void onSelectAddNote(View v) {
+        Log.d("onSelectAddNote", "on select add new note");
+
+        Intent intent = new Intent(this, DisplayNoteActivity.class);
+        startActivity(intent);
+    };
 }

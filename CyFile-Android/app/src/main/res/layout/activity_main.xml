@@ -25,4 +25,15 @@
             android:orientation="vertical" />
     </ScrollView>
 
+    <Button
+        android:id="@+id/BTN_ADD"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:onClick="onSelectAddNote"
+        android:text="Add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteX="269dp"
+        android:background="@drawable/round_button" />
+
 </android.support.constraint.ConstraintLayout>
