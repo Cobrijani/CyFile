@@ -2,16 +2,26 @@ package at.tugraz.tc.cyfile;
 
 import android.app.Application;
 
+import com.blankj.utilcode.util.Utils;
+
 import java.util.HashSet;
 import java.util.Set;
 
 import at.tugraz.tc.cyfile.crypto.NoOpCryptoService;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.note.DaggerNoteComponent;
-import at.tugraz.tc.cyfile.note.InMemoryNoteRepository;
 import at.tugraz.tc.cyfile.note.NoteComponent;
 import at.tugraz.tc.cyfile.note.NoteModule;
-import at.tugraz.tc.cyfile.note.SecureNoteService;
+import at.tugraz.tc.cyfile.note.impl.InMemoryNoteRepository;
+import at.tugraz.tc.cyfile.note.impl.SecureNoteService;
+import at.tugraz.tc.cyfile.secret.DaggerSecretComponent;
+import at.tugraz.tc.cyfile.secret.SecretComponent;
+import at.tugraz.tc.cyfile.secret.SecretModule;
+import at.tugraz.tc.cyfile.secret.SecretRepository;
+import at.tugraz.tc.cyfile.secret.impl.InMemorySecretRepository;
+import at.tugraz.tc.cyfile.secret.impl.PinPatternSecret;
+import at.tugraz.tc.cyfile.secret.impl.SimplePinPatternSecretVerifier;
+import at.tugraz.tc.cyfile.secret.impl.SecretManagerImpl;
 
 /**
  * Application extended class
@@ -22,14 +32,45 @@ public class CyFileApplication extends Application {
 
     private NoteComponent mNoteComponent;
 
+    private SecretComponent mSecretComponent;
+
     @Override
     public void onCreate() {
         super.onCreate();
 
-        mNoteComponent = DaggerNoteComponent
+        Utils.init(this);
+
+        mSecretComponent = configureSecretComponent();
+        mNoteComponent = configureNoteComponent();
+    }
+
+    /**
+     * Configure Applications {@link NoteComponent}
+     *
+     * @return note component
+     */
+    private NoteComponent configureNoteComponent() {
+        return DaggerNoteComponent
                 .builder()
                 .noteModule(new NoteModule(new SecureNoteService(
                         new InMemoryNoteRepository(getInitialNotes()), new NoOpCryptoService())))
+                .build();
+    }
+
+    /**
+     * Configure Applications {@link SecretComponent}
+     *
+     * @return secret component
+     */
+    private SecretComponent configureSecretComponent() {
+        SecretRepository secretRepository = new InMemorySecretRepository();
+
+        // for now we're hard coding the secret, until the UI has option where user is prompted to choose it
+        secretRepository.saveSecret(new PinPatternSecret("111222"));
+
+        return DaggerSecretComponent
+                .builder()
+                .secretModule(new SecretModule(new SecretManagerImpl(new SimplePinPatternSecretVerifier(secretRepository), secretRepository)))
                 .build();
     }
 
@@ -174,4 +215,14 @@ public class CyFileApplication extends Application {
 
         return initialNotes;
     }
+
+    public SecretComponent getSecretVerifierComponent() {
+        return mSecretComponent;
+    }
+
+    public void setSecretVerifierComponent(SecretComponent secretComponent) {
+        this.mSecretComponent = secretComponent;
+    }
+
+
 }

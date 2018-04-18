@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.note.NoteService;
+import at.tugraz.tc.cyfile.ui.PatternLockActivity;
 
 
 /**
@@ -33,9 +34,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         ((CyFileApplication) getApplication()).getNoteComponent().inject(this);
 
+        Intent intent = new Intent(this, PatternLockActivity.class);
+        startActivity(intent);
         loadNoteList();
     }
 
