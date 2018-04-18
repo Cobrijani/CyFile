@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String NOTE_ID = "NOTE_ID";
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,35 +40,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadNoteList() {
-        List<Note> listOfNotes = noteService.findAll();
+       final  LinearLayout linear = (LinearLayout) findViewById(R.id.noteList);
 
-        Button[] listBtn = new Button[listOfNotes.size()];
-        LinearLayout linear;
-
-        linear = (LinearLayout) findViewById(R.id.noteList);
-        for (int i = 0; i < listBtn.length; i++) {
-            listBtn[i] = new Button(this);
-            listBtn[i].setTextSize(11);
-            Note note = listOfNotes.get(i);
-            listBtn[i].setText(note.getTitle());
-            listBtn[i].setHeight(70);
-            listBtn[i].setWidth(linear.getWidth());
-            listBtn[i].setTag(note.getId());
-            listBtn[i].setOnClickListener(noteSelected);
-            linear.addView(listBtn[i]);
+        for (Note note :
+                noteService.findAll()) {
+            Button btn = new Button(this);
+            btn.setTextSize(11);
+            btn.setText(note.getTitle());
+            btn.setHeight(70);
+            btn.setWidth(linear.getWidth());
+            btn.setTag(note.getId());
+            btn.setOnClickListener(view -> openNoteInDetailActivity(note.getId()));
+            linear.addView(btn);
         }
     }
 
-    View.OnClickListener noteSelected = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            Button btn = (Button)view;
-            String noteId = (String) btn.getTag();
-            openNoteInDetailActivity(noteId);
-        }
-    };
-
-    public void openNoteInDetailActivity(String noteId) {
+    private void openNoteInDetailActivity(String noteId) {
         Note noteMessage = noteService.findOne(noteId);
         Log.d("Note Id", noteMessage.getId());
         Log.d("Note Content", noteMessage.getContent());
