@@ -37,6 +37,10 @@ public class CyFileApplication extends Application {
         return mNoteComponent;
     }
 
+    public void setmNoteComponent(NoteComponent component){
+        this.mNoteComponent = component;
+    }
+
     private Set<Note> getInitialNotes() {
         Set<Note> initialNotes = new HashSet<>();
         initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
