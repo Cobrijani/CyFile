@@ -10,31 +10,37 @@
         android:id="@+id/BTN_SAVE"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:onClick="onSelectSaveNote"
-        android:text="SAVE"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="284dp"
+        android:layout_marginBottom="@dimen/default_margin_dp"
+        android:layout_marginEnd="@dimen/default_margin_dp"
         android:background="@drawable/round_button"
-        />
+        android:onClick="onSelectSaveNote"
+        android:text="@string/btn_save_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/noteText" />
 
     <EditText
         android:id="@+id/TEXT_TITLE"
         android:layout_width="359dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginEnd="@dimen/default_margin_dp"
+        android:layout_marginTop="@dimen/default_margin_dp"
         android:ems="10"
+        android:hint="@string/input_title_note_hint"
         android:inputType="text"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/noteText"
         android:layout_width="358dp"
         android:layout_height="382dp"
+        android:layout_marginEnd="@dimen/default_margin_dp"
         android:ems="10"
+        android:hint="@string/note_text_hint"
         android:inputType="textMultiLine"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/TEXT_TITLE"
         tools:layout_editor_absoluteX="16dp" />
+
 </android.support.constraint.ConstraintLayout>
