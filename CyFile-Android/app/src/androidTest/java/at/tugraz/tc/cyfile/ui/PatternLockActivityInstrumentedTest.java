@@ -1,21 +1,16 @@
 package at.tugraz.tc.cyfile.ui;
 
-import android.app.Instrumentation;
 import android.content.Intent;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
+import at.tugraz.tc.cyfile.BaseInstrumentedTest;
 import at.tugraz.tc.cyfile.AppModule;
-import at.tugraz.tc.cyfile.CyFileApplication;
 import at.tugraz.tc.cyfile.MainActivity;
 import at.tugraz.tc.cyfile.R;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
@@ -35,8 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(AndroidJUnit4.class)
-public class PatternLockActivityInstrumentedTest {
+public class PatternLockActivityInstrumentedTest extends BaseInstrumentedTest {
 
 
     @Rule
@@ -54,11 +48,6 @@ public class PatternLockActivityInstrumentedTest {
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
-        Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
-        CyFileApplication app
-                = (CyFileApplication) instrumentation.getTargetContext().getApplicationContext();
-
         app.setComponent(DaggerApplicationComponent.builder()
                 .appModule(new AppModule(app))
                 .noteModule(new NoteModule(mock(NoteService.class)))

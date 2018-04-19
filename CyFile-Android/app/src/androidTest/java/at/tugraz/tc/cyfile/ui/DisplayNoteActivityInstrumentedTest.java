@@ -4,20 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
-import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.List;
 
+import at.tugraz.tc.cyfile.BaseInstrumentedTest;
 import at.tugraz.tc.cyfile.AppModule;
-import at.tugraz.tc.cyfile.CyFileApplication;
 import at.tugraz.tc.cyfile.MainActivity;
 import at.tugraz.tc.cyfile.R;
 import at.tugraz.tc.cyfile.domain.Note;
@@ -38,14 +35,13 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(AndroidJUnit4.class)
-public class DisplayNoteActivityTest {
+public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
+
     @Mock
     private NoteService noteService;
 
     @Mock
     private SecretManager secretManager;
-
 
     @Rule
     public IntentsTestRule<MainActivity> testRule =
@@ -58,15 +54,6 @@ public class DisplayNoteActivityTest {
 
     @Before
     public void init() {
-        MockitoAnnotations.initMocks(this);
-
-        CyFileApplication app = (CyFileApplication)
-                InstrumentationRegistry
-                        .getInstrumentation()
-                        .getTargetContext()
-                        .getApplicationContext();
-
-
         ApplicationComponent applicationComponent
                 = DaggerApplicationComponent.builder()
                 .noteModule(new NoteModule(noteService))
@@ -75,7 +62,6 @@ public class DisplayNoteActivityTest {
                 .build();
 
         app.setComponent(applicationComponent);
-
 
         mockRepo(testNotes);
     }

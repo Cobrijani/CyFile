@@ -1,17 +1,13 @@
 package at.tugraz.tc.cyfile;
 
 import android.content.Intent;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.assertion.ViewAssertions;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
-import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,8 +38,8 @@ import static org.mockito.Mockito.when;
 /**
  * Created by kina on 11.04.18.
  */
-@RunWith(AndroidJUnit4.class)
-public class MainActivityInstrumentedTest {
+
+public class MainActivityInstrumentedTest extends BaseInstrumentedTest {
     @Mock
     private NoteService noteService;
 
@@ -60,14 +56,6 @@ public class MainActivityInstrumentedTest {
 
     @Before
     public void init() {
-        MockitoAnnotations.initMocks(this);
-
-        CyFileApplication app = (CyFileApplication)
-                InstrumentationRegistry
-                        .getInstrumentation()
-                        .getTargetContext()
-                        .getApplicationContext();
-
         ApplicationComponent applicationComponent
                 = DaggerApplicationComponent.builder()
                 .noteModule(new NoteModule(noteService))
