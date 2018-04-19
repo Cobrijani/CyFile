@@ -1,19 +1,19 @@
-package at.tugraz.tc.cyfile;
+package at.tugraz.tc.cyfile.ui;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import javax.inject.Inject;
 
+import at.tugraz.tc.cyfile.MainActivity;
+import at.tugraz.tc.cyfile.R;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.note.NoteService;
 
-public class DisplayNoteActivity extends AppCompatActivity {
+public class DisplayNoteActivity extends BaseActivity {
 
     @Inject
     NoteService noteService;
@@ -27,10 +27,11 @@ public class DisplayNoteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_note);
 
+        getActivityComponent().inject(this);
+
         textView = findViewById(R.id.noteText);
         textTitle = findViewById(R.id.TEXT_TITLE);
 
-        ((CyFileApplication) getApplication()).getNoteComponent().inject(this);
 
         Intent intent = getIntent();
         String noteId = intent.getStringExtra(MainActivity.NOTE_ID);
@@ -48,8 +49,8 @@ public class DisplayNoteActivity extends AppCompatActivity {
     }
 
     public void onOpenNote() {
-        Log.d("Note Id", loadedNote.getId() + " " );
-        Log.d("Note Content", loadedNote.getContent() + " " );
+        Log.d("Note Id", loadedNote.getId() + " ");
+        Log.d("Note Content", loadedNote.getContent() + " ");
 
         textView.setText(loadedNote.getContent());
         textTitle.setText(loadedNote.getTitle());

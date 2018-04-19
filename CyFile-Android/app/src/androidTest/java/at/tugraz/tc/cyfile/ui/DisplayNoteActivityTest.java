@@ -1,4 +1,4 @@
-package at.tugraz.tc.cyfile;
+package at.tugraz.tc.cyfile.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,26 +16,26 @@ import org.mockito.MockitoAnnotations;
 import java.util.Arrays;
 import java.util.List;
 
+import at.tugraz.tc.cyfile.AppModule;
+import at.tugraz.tc.cyfile.CyFileApplication;
+import at.tugraz.tc.cyfile.MainActivity;
+import at.tugraz.tc.cyfile.R;
 import at.tugraz.tc.cyfile.domain.Note;
-import at.tugraz.tc.cyfile.note.DaggerNoteComponent;
-import at.tugraz.tc.cyfile.note.NoteComponent;
+import at.tugraz.tc.cyfile.injection.ApplicationComponent;
+import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
 import at.tugraz.tc.cyfile.note.NoteModule;
 import at.tugraz.tc.cyfile.note.NoteService;
-import at.tugraz.tc.cyfile.secret.DaggerSecretComponent;
-import at.tugraz.tc.cyfile.secret.SecretComponent;
 import at.tugraz.tc.cyfile.secret.SecretManager;
 import at.tugraz.tc.cyfile.secret.SecretModule;
+import at.tugraz.tc.cyfile.secret.SecretPrompter;
 
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.intent.Intents.intended;
-import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
@@ -45,6 +45,7 @@ public class DisplayNoteActivityTest {
 
     @Mock
     private SecretManager secretManager;
+
 
     @Rule
     public IntentsTestRule<MainActivity> testRule =
@@ -58,28 +59,23 @@ public class DisplayNoteActivityTest {
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
+
         CyFileApplication app = (CyFileApplication)
                 InstrumentationRegistry
                         .getInstrumentation()
                         .getTargetContext()
                         .getApplicationContext();
 
-        NoteComponent mockedComponent = DaggerNoteComponent
-                .builder()
+
+        ApplicationComponent applicationComponent
+                = DaggerApplicationComponent.builder()
                 .noteModule(new NoteModule(noteService))
+                .secretModule(new SecretModule(secretManager, mock(SecretPrompter.class)))
+                .appModule(mock(AppModule.class))
                 .build();
 
-        SecretComponent mockedSecretComp
-                = DaggerSecretComponent
-                .builder()
-                .secretModule(new SecretModule(secretManager))
-                .build();
+        app.setComponent(applicationComponent);
 
-        app.setmNoteComponent(mockedComponent);
-        app.setSecretVerifierComponent(mockedSecretComp);
-
-        when(secretManager.verify(any()))
-                .thenReturn(true);
 
         mockRepo(testNotes);
     }
@@ -111,6 +107,7 @@ public class DisplayNoteActivityTest {
         Intent startIntent = new Intent();
         Note editedNote = testNotes.get(0);
         startIntent.putExtra(MainActivity.NOTE_ID, editedNote.getId());
+
         testRule.launchActivity(startIntent);
 
         onView(withId(R.id.TEXT_TITLE)).check(matches(withText(editedNote.getTitle())));

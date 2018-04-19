@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.assertion.ViewAssertions;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
-import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Before;
@@ -19,18 +18,17 @@ import java.util.Collections;
 import java.util.List;
 
 import at.tugraz.tc.cyfile.domain.Note;
-import at.tugraz.tc.cyfile.note.DaggerNoteComponent;
-import at.tugraz.tc.cyfile.note.NoteComponent;
+import at.tugraz.tc.cyfile.injection.ApplicationComponent;
+import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
 import at.tugraz.tc.cyfile.note.NoteModule;
 import at.tugraz.tc.cyfile.note.NoteService;
-import at.tugraz.tc.cyfile.secret.DaggerSecretComponent;
-import at.tugraz.tc.cyfile.secret.SecretComponent;
 import at.tugraz.tc.cyfile.secret.SecretManager;
 import at.tugraz.tc.cyfile.secret.SecretModule;
+import at.tugraz.tc.cyfile.secret.SecretPrompter;
+import at.tugraz.tc.cyfile.ui.DisplayNoteActivity;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.matcher.ViewMatchers.hasChildCount;
@@ -38,6 +36,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -51,6 +50,9 @@ public class MainActivityInstrumentedTest {
     @Mock
     private SecretManager secretManager;
 
+    @Mock
+    private SecretPrompter secretPrompter;
+
     @Rule
     public IntentsTestRule<MainActivity> mActivityRule =
             new IntentsTestRule<>(MainActivity.class, true, false);
@@ -59,25 +61,21 @@ public class MainActivityInstrumentedTest {
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
+
         CyFileApplication app = (CyFileApplication)
                 InstrumentationRegistry
                         .getInstrumentation()
                         .getTargetContext()
                         .getApplicationContext();
 
-        NoteComponent mockedComponent = DaggerNoteComponent
-                .builder()
+        ApplicationComponent applicationComponent
+                = DaggerApplicationComponent.builder()
                 .noteModule(new NoteModule(noteService))
+                .secretModule(new SecretModule(secretManager, secretPrompter))
+                .appModule(mock(AppModule.class))
                 .build();
 
-        SecretComponent mockedSecretComp
-                = DaggerSecretComponent
-                .builder()
-                .secretModule(new SecretModule(secretManager))
-                .build();
-
-        app.setmNoteComponent(mockedComponent);
-        app.setSecretVerifierComponent(mockedSecretComp);
+        app.setComponent(applicationComponent);
 
         when(secretManager.verify(any()))
                 .thenReturn(true);
@@ -89,8 +87,6 @@ public class MainActivityInstrumentedTest {
                 .thenReturn(Collections.emptyList());
 
         mActivityRule.launchActivity(new Intent());
-
-        unlock();
 
         onView(withId(R.id.noteList))
                 .check(ViewAssertions.matches(hasChildCount(0)));
@@ -109,19 +105,12 @@ public class MainActivityInstrumentedTest {
     }
 
 
-    private void unlock() {
-        onView(withId(R.id.pattern_lock_view))
-                .perform(swipeLeft());
-    }
-
     @Test
     public void testTwoNotesPresent() throws Exception {
         mockRepo(Arrays.asList(new Note("1", "name1", "content1")
                 , new Note("2", "name2", "content2")));
 
         mActivityRule.launchActivity(new Intent());
-
-        unlock();
 
         onView(withId(R.id.noteList))
                 .check(ViewAssertions.matches(hasChildCount(2)));
@@ -139,8 +128,6 @@ public class MainActivityInstrumentedTest {
 
         mActivityRule.launchActivity(new Intent());
 
-        unlock();
-
         onView(withText("name1"))
                 .check(ViewAssertions.matches(isDisplayed()));
 
@@ -156,6 +143,9 @@ public class MainActivityInstrumentedTest {
         List<Note> testNotes = Arrays.asList(new Note("1", "name1", "content1")
                 , new Note("2", "name2", "content2"));
         mockRepo(testNotes);
+
+        mActivityRule.launchActivity(new Intent());
+
         String title = testNotes.get(0).getTitle();
         onView(withText(title))
                 .check(ViewAssertions.matches(isDisplayed()));
@@ -163,6 +153,5 @@ public class MainActivityInstrumentedTest {
         onView(withId(R.id.noteList))
                 .check(ViewAssertions.doesNotExist());
         intended(hasComponent(DisplayNoteActivity.class.getName()));
-        //TODO can't figure out how to verify that the activity was launched with the id of the note...
     }
 }
