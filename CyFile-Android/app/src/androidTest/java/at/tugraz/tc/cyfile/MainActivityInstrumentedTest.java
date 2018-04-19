@@ -25,6 +25,7 @@ import at.tugraz.tc.cyfile.ui.DisplayNoteActivity;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.matcher.ViewMatchers.hasChildCount;
@@ -119,7 +120,10 @@ public class MainActivityInstrumentedTest extends BaseInstrumentedTest {
         onView(withText("name1"))
                 .check(ViewAssertions.matches(isDisplayed()));
 
-        onView(withText("name1")).perform(click());
+        onView(withText("name1"))
+                .perform(scrollTo())
+                .perform(click());
+
         onView(withId(R.id.noteList))
                 .check(ViewAssertions.doesNotExist());
         intended(hasComponent(DisplayNoteActivity.class.getName()));
@@ -137,9 +141,14 @@ public class MainActivityInstrumentedTest extends BaseInstrumentedTest {
         String title = testNotes.get(0).getTitle();
         onView(withText(title))
                 .check(ViewAssertions.matches(isDisplayed()));
-        onView(withText(title)).perform(click());
+
+        onView(withText(title))
+                .perform(scrollTo())
+                .perform(click());
+
         onView(withId(R.id.noteList))
                 .check(ViewAssertions.doesNotExist());
+
         intended(hasComponent(DisplayNoteActivity.class.getName()));
     }
 }
