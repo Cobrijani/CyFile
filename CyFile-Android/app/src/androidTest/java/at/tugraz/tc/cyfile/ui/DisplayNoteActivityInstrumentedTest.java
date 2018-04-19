@@ -100,7 +100,6 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
         assertTrue(editedNote.getTitle().length() > 0);
     }
 
-    //TODO not done yet
     public void testSaveButton() {
 
     }
