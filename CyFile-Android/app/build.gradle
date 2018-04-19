@@ -20,6 +20,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -40,6 +41,8 @@ dependencies {
     implementation "com.google.dagger:dagger-android-support:$dagger_version"
     implementation "com.blankj:utilcode:$util_version"
     implementation "com.andrognito.patternlockview:patternlockview:$pattern_lock_version"
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+
 
     //testing
     testImplementation "junit:junit:$junit_version"
@@ -48,6 +51,7 @@ dependencies {
     //android testing
     androidTestImplementation "com.android.support.test:runner:$test_runner_version"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:$espresso_version"
+    androidTestImplementation "com.android.support.test.espresso:espresso-intents:$espresso_version"
     androidTestImplementation "com.linkedin.dexmaker:dexmaker-mockito:$dexmaker_version"
 
     // if you use the support libraries
@@ -56,3 +60,5 @@ dependencies {
     compileOnly "org.projectlombok:lombok:$lombok_version"
     annotationProcessor "org.projectlombok:lombok:$lombok_version"
 }
+
+

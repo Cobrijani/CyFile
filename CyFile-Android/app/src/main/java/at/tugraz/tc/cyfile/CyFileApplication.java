@@ -1,6 +1,8 @@
 package at.tugraz.tc.cyfile;
 
 import android.app.Application;
+import android.arch.lifecycle.ProcessLifecycleOwner;
+import android.content.Context;
 
 import com.blankj.utilcode.util.Utils;
 
@@ -9,19 +11,19 @@ import java.util.Set;
 
 import at.tugraz.tc.cyfile.crypto.NoOpCryptoService;
 import at.tugraz.tc.cyfile.domain.Note;
-import at.tugraz.tc.cyfile.note.DaggerNoteComponent;
-import at.tugraz.tc.cyfile.note.NoteComponent;
+import at.tugraz.tc.cyfile.injection.ApplicationComponent;
+import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
 import at.tugraz.tc.cyfile.note.NoteModule;
 import at.tugraz.tc.cyfile.note.impl.InMemoryNoteRepository;
 import at.tugraz.tc.cyfile.note.impl.SecureNoteService;
-import at.tugraz.tc.cyfile.secret.DaggerSecretComponent;
-import at.tugraz.tc.cyfile.secret.SecretComponent;
 import at.tugraz.tc.cyfile.secret.SecretModule;
 import at.tugraz.tc.cyfile.secret.SecretRepository;
 import at.tugraz.tc.cyfile.secret.impl.InMemorySecretRepository;
+import at.tugraz.tc.cyfile.secret.impl.OnApplicationForegroundSecretPrompter;
 import at.tugraz.tc.cyfile.secret.impl.PinPatternSecret;
-import at.tugraz.tc.cyfile.secret.impl.SimplePinPatternSecretVerifier;
+import at.tugraz.tc.cyfile.secret.impl.PinPatternSecretPrompter;
 import at.tugraz.tc.cyfile.secret.impl.SecretManagerImpl;
+import at.tugraz.tc.cyfile.secret.impl.SimplePinPatternSecretVerifier;
 
 /**
  * Application extended class
@@ -30,53 +32,43 @@ import at.tugraz.tc.cyfile.secret.impl.SecretManagerImpl;
 
 public class CyFileApplication extends Application {
 
-    private NoteComponent mNoteComponent;
-
-    private SecretComponent mSecretComponent;
+    private ApplicationComponent mApplicationComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
         Utils.init(this);
 
-        mSecretComponent = configureSecretComponent();
-        mNoteComponent = configureNoteComponent();
+
+
     }
 
-    /**
-     * Configure Applications {@link NoteComponent}
-     *
-     * @return note component
-     */
-    private NoteComponent configureNoteComponent() {
-        return DaggerNoteComponent
-                .builder()
-                .noteModule(new NoteModule(new SecureNoteService(
-                        new InMemoryNoteRepository(getInitialNotes()), new NoOpCryptoService())))
-                .build();
+    public static CyFileApplication get(Context context) {
+        return (CyFileApplication) context.getApplicationContext();
     }
 
-    /**
-     * Configure Applications {@link SecretComponent}
-     *
-     * @return secret component
-     */
-    private SecretComponent configureSecretComponent() {
-        SecretRepository secretRepository = new InMemorySecretRepository();
+    public ApplicationComponent getComponent() {
+        if (mApplicationComponent == null) {
+            SecretRepository secretRepository = new InMemorySecretRepository(new PinPatternSecret("111222"));
+            OnApplicationForegroundSecretPrompter prompter = new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(this));
 
-        // for now we're hard coding the secret, until the UI has option where user is prompted to choose it
-        secretRepository.saveSecret(new PinPatternSecret("111222"));
+            //add this prompter to the lifecycle so we which states
+            ProcessLifecycleOwner.get().getLifecycle().addObserver(prompter);
 
-        return DaggerSecretComponent
-                .builder()
-                .secretModule(new SecretModule(new SecretManagerImpl(new SimplePinPatternSecretVerifier(secretRepository), secretRepository)))
-                .build();
+            mApplicationComponent = DaggerApplicationComponent.builder()
+                    .appModule(new AppModule(this))
+                    .noteModule(new NoteModule(new SecureNoteService(new InMemoryNoteRepository(getInitialNotes()), new NoOpCryptoService())))
+                    .secretModule(new SecretModule(new SecretManagerImpl(new SimplePinPatternSecretVerifier(secretRepository), secretRepository), prompter))
+                    .build();
+        }
+        return mApplicationComponent;
     }
 
-    public NoteComponent getNoteComponent() {
-        return mNoteComponent;
+    // Needed to replace the component with a test specific one
+    public void setComponent(ApplicationComponent applicationComponent) {
+        this.mApplicationComponent = applicationComponent;
     }
+
 
     private Set<Note> getInitialNotes() {
         Set<Note> initialNotes = new HashSet<>();
@@ -121,16 +113,94 @@ public class CyFileApplication extends Application {
                         "                feugiat. Curabitur feugiat augue nec porta vehicula."
         ));
         initialNotes.add(new Note("f329aef4-2e90-11e8-b467-0ed5f89f718b", "Empty note", ""));
+        initialNotes.add(new Note("asdfasdf-2e90-11e8-b467-0ed5f89f718b",
+                "Note with a very long title. Very long. Still not over. Blablablabla",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+        initialNotes.add(new Note("dd95ab42-2e90-11e8-b467-0ed5f89f718b",
+                "Secret Note",
+                "Lorem Ipsum Dolor sit amet"));
+
         return initialNotes;
     }
-
-    public SecretComponent getSecretVerifierComponent() {
-        return mSecretComponent;
-    }
-
-    public void setSecretVerifierComponent(SecretComponent secretComponent) {
-        this.mSecretComponent = secretComponent;
-    }
-
-
 }

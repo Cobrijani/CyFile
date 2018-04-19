@@ -74,5 +74,4 @@ public class InMemoryNoteRepository implements NoteRepository {
             }
         }
     }
-
 }

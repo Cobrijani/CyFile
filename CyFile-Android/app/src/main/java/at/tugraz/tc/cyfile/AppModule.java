@@ -1,9 +1,11 @@
 package at.tugraz.tc.cyfile;
 
 import android.app.Application;
+import android.content.Context;
 
 import javax.inject.Singleton;
 
+import at.tugraz.tc.cyfile.injection.ApplicationContext;
 import dagger.Module;
 import dagger.Provides;
 
@@ -23,7 +25,13 @@ public class AppModule {
 
     @Provides
     @Singleton
-    Application providesApplication() {
+    Application provideApplication() {
+        return mApplication;
+    }
+
+    @Provides
+    @ApplicationContext
+    Context provideContext() {
         return mApplication;
     }
 
