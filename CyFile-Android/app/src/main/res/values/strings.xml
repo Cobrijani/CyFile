@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">CyFile</string>
+    <string name="btn_add_note">Add</string>
+    <string name="note_text_hint">Note text</string>
+    <string name="input_title_note_hint">Input title</string>
+    <string name="btn_save_text">SAVE</string>
 </resources>
