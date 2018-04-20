@@ -76,7 +76,6 @@ public class DisplayNoteActivity extends BaseActivity {
 
         noteService.delete(noteId);
 
-        intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        finish();
     }
 }
