@@ -1,4 +1,4 @@
-package at.tugraz.tc.cyfile;
+package at.tugraz.tc.cyfile.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,22 +11,23 @@ import android.support.test.runner.AndroidJUnit4;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.List;
 
+import at.tugraz.tc.cyfile.AppModule;
+import at.tugraz.tc.cyfile.BaseInstrumentedTest;
+import at.tugraz.tc.cyfile.MainActivity;
+import at.tugraz.tc.cyfile.R;
 import at.tugraz.tc.cyfile.domain.Note;
-import at.tugraz.tc.cyfile.note.DaggerNoteComponent;
-import at.tugraz.tc.cyfile.note.NoteComponent;
+import at.tugraz.tc.cyfile.injection.ApplicationComponent;
+import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
 import at.tugraz.tc.cyfile.note.NoteModule;
 import at.tugraz.tc.cyfile.note.NoteService;
-import at.tugraz.tc.cyfile.secret.DaggerSecretComponent;
-import at.tugraz.tc.cyfile.secret.SecretComponent;
 import at.tugraz.tc.cyfile.secret.SecretManager;
 import at.tugraz.tc.cyfile.secret.SecretModule;
+import at.tugraz.tc.cyfile.secret.SecretPrompter;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
@@ -38,16 +39,15 @@ import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(AndroidJUnit4.class)
-public class DisplayNoteActivityTest {
+public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
+
     @Mock
     private NoteService noteService;
 
@@ -71,30 +71,14 @@ public class DisplayNoteActivityTest {
 
     @Before
     public void init() {
-        MockitoAnnotations.initMocks(this);
-        CyFileApplication app = (CyFileApplication)
-                InstrumentationRegistry
-                        .getInstrumentation()
-                        .getTargetContext()
-                        .getApplicationContext();
-
-        NoteComponent mockedComponent = DaggerNoteComponent
-                .builder()
+        ApplicationComponent applicationComponent
+                = DaggerApplicationComponent.builder()
                 .noteModule(new NoteModule(noteService))
+                .secretModule(new SecretModule(secretManager, mock(SecretPrompter.class)))
+                .appModule(mock(AppModule.class))
                 .build();
 
-        SecretComponent mockedSecretComp
-                = DaggerSecretComponent
-                .builder()
-                .secretModule(new SecretModule(secretManager))
-                .build();
-
-        app.setmNoteComponent(mockedComponent);
-        app.setSecretVerifierComponent(mockedSecretComp);
-
-        when(secretManager.verify(any()))
-                .thenReturn(true);
-
+        app.setComponent(applicationComponent);
         mockRepo(testNotes);
     }
 
@@ -148,10 +132,8 @@ public class DisplayNoteActivityTest {
 
         //assert changed title in list-view
         intended(hasComponent(MainActivity.class.getName()));
-        //TODO verfiy exists
         onView(withText(newTitle)).check(matches(isDisplayed()));
         onView(withText(oldTitle)).check(doesNotExist());
-        assertTrue(false);
     }
 
     @Test

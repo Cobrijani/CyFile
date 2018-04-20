@@ -3,54 +3,52 @@ package at.tugraz.tc.cyfile;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.note.NoteService;
-import at.tugraz.tc.cyfile.ui.PatternLockActivity;
+import at.tugraz.tc.cyfile.secret.SecretPrompter;
+import at.tugraz.tc.cyfile.ui.BaseActivity;
+import at.tugraz.tc.cyfile.ui.DisplayNoteActivity;
 
 
 /**
  * Main activity
  * Created by cobri on 3/21/2018.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     @Inject
     NoteService noteService;
 
-    public static final String NOTE_ID = "NOTE_ID";
+    @Inject
+    SecretPrompter secretPrompter;
 
+    public static final String NOTE_ID = "NOTE_ID";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ((CyFileApplication) getApplication()).getNoteComponent().inject(this);
-
-        Intent intent = new Intent(this, PatternLockActivity.class);
-        startActivityForResult(intent, 1);
-        loadNoteList();
+        getActivityComponent().inject(this);
+        secretPrompter.promptSecret();
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
+    protected void onResume() {
+        super.onResume();
 
-        //reload data
-        //loadNoteList();
+        loadNoteList();
     }
 
     private void loadNoteList() {
-       final  LinearLayout linear = findViewById(R.id.noteList);
+        final LinearLayout linear = findViewById(R.id.noteList);
+        linear.removeAllViews();
 
         for (Note note :
                 noteService.findAll()) {
@@ -82,5 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, DisplayNoteActivity.class);
         startActivity(intent);
-    };
+    }
+
+    ;
 }
