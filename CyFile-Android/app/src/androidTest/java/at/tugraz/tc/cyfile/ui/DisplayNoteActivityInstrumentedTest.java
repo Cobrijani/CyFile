@@ -62,13 +62,10 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
     public ActivityTestRule<MainActivity> mainActivityTestRule =
             new ActivityTestRule<>(MainActivity.class, true, false);
 
-
-
     private List<Note> testNotes =
             Arrays.asList(new Note("1", "name1", "content1")
                     , new Note("2", "name2", "content2"));
-
-
+    
     @Before
     public void init() {
         ApplicationComponent applicationComponent
@@ -152,7 +149,7 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
         pressBack();
 
         //assert not changed title in list-view
-        intended(hasComponent(MainActivity.class.getName()));
+        //intended(hasComponent(MainActivity.class.getName()));
         onView(withText(oldTitle)).check(matches(isDisplayed()));
         onView(withText(newTitle)).check(doesNotExist());
     }
