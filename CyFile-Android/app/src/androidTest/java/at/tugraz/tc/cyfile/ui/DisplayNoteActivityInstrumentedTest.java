@@ -149,7 +149,6 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
         pressBack();
 
         //assert not changed title in list-view
-        //intended(hasComponent(MainActivity.class.getName()));
         onView(withText(oldTitle)).check(matches(isDisplayed()));
         onView(withText(newTitle)).check(doesNotExist());
     }
