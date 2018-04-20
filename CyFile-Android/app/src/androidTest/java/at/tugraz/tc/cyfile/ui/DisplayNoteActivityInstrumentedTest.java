@@ -151,9 +151,8 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
         onView(withId(R.id.TEXT_TITLE)).perform(replaceText(newTitle));
         pressBack();
 
-        //assert changed title in list-view
+        //assert not changed title in list-view
         intended(hasComponent(MainActivity.class.getName()));
-        //TODO verfiy exists
         onView(withText(oldTitle)).check(matches(isDisplayed()));
         onView(withText(newTitle)).check(doesNotExist());
     }

@@ -12,7 +12,6 @@ public abstract class BaseInstrumentedTest {
 
     protected CyFileApplication app;
 
-
     @Before
     public void initialization() {
         MockitoAnnotations.initMocks(this);
