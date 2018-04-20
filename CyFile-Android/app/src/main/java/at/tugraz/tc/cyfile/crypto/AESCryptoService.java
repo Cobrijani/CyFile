@@ -25,15 +25,27 @@ import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
 public class AESCryptoService implements CryptoService {
-    private Cipher encryptCipher;
-    private Cipher decryptCipher;
+    private Cipher encCipher;
+    private Cipher decCipher;
+
+    private static final String ALGO = "AES";
+    private static final byte[] keyValue =
+            new byte[]{'T', 'h', 'e', 'B', 'e', 's', 't', 'S', 'e', 'c', 'r', 'e', 't', 'K', 'e', 'y'};
+
 
     //is it a problem if we use 0 iv? maybe we should randomize it?
     byte[] iv = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     String password = "hunter2";
+    Key key = null;
 
     public AESCryptoService() {
+        try {
+            key = generateKey();
+        } catch (Exception e) {
+            //TODO
+            e.printStackTrace();
+        }
 
 //        try {
 //            //don't actually use MD5 :P
@@ -54,10 +66,6 @@ public class AESCryptoService implements CryptoService {
 //        }
     }
 
-    private static final String ALGO = "AES";
-    private static final byte[] keyValue =
-            new byte[]{'T', 'h', 'e', 'B', 'e', 's', 't', 'S', 'e', 'c', 'r', 'e', 't', 'K', 'e', 'y'};
-
     private static Key generateKey() throws Exception {
         return new SecretKeySpec(keyValue, ALGO);
     }
@@ -71,12 +79,10 @@ public class AESCryptoService implements CryptoService {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public String encrypt(String data) {
-        Key key = null;
         try {
-            key = generateKey();
-            Cipher c = Cipher.getInstance(ALGO);
-            c.init(Cipher.ENCRYPT_MODE, key);
-            byte[] encVal = c.doFinal(data.getBytes());
+            encCipher = Cipher.getInstance(ALGO);
+            encCipher.init(Cipher.ENCRYPT_MODE, key);
+            byte[] encVal = encCipher.doFinal(data.getBytes());
             return Base64.getEncoder().encodeToString(encVal);
         } catch (Exception e) {
             e.printStackTrace();
@@ -111,9 +117,7 @@ public class AESCryptoService implements CryptoService {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public String decrypt(String encryptedData) {
-        Key key = null;
         try {
-            key = generateKey();
             Cipher c = Cipher.getInstance(ALGO);
             c.init(Cipher.DECRYPT_MODE, key);
             byte[] decordedValue = Base64.getDecoder().decode(encryptedData);
