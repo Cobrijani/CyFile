@@ -39,7 +39,6 @@ import static org.mockito.Mockito.when;
 /**
  * Created by kina on 11.04.18.
  */
-
 public class MainActivityInstrumentedTest extends BaseInstrumentedTest {
     @Mock
     private NoteService noteService;
