@@ -3,7 +3,9 @@ package at.tugraz.tc.cyfile;
 import android.content.Context;
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.Espresso;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
+import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Before;
@@ -27,6 +29,7 @@ import at.tugraz.tc.cyfile.secret.SecretManager;
 import at.tugraz.tc.cyfile.secret.SecretModule;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
@@ -54,6 +57,12 @@ public class DisplayNoteActivityTest {
     @Rule
     public IntentsTestRule<DisplayNoteActivity> testRule =
             new IntentsTestRule<>(DisplayNoteActivity.class, true, false);
+
+    @Rule
+    public ActivityTestRule<MainActivity> mainActivityTestRule =
+            new ActivityTestRule<>(MainActivity.class, true, false);
+
+
 
     private List<Note> testNotes =
             Arrays.asList(new Note("1", "name1", "content1")
@@ -145,7 +154,25 @@ public class DisplayNoteActivityTest {
         assertTrue(false);
     }
 
+    @Test
     public void testNotSavedBack() {
+        mainActivityTestRule.launchActivity(new Intent());
+        String newTitle = "this title is new";
+        Note note = noteService.findAll().get(0);
+        String oldTitle = note.getTitle();
+        assertNotEquals(newTitle, note.getTitle());
 
+        Intent startIntent = new Intent();
+        startIntent.putExtra(MainActivity.NOTE_ID, note.getId());
+        testRule.launchActivity(startIntent);
+
+        onView(withId(R.id.TEXT_TITLE)).perform(replaceText(newTitle));
+        pressBack();
+
+        //assert changed title in list-view
+        intended(hasComponent(MainActivity.class.getName()));
+        //TODO verfiy exists
+        onView(withText(oldTitle)).check(matches(isDisplayed()));
+        onView(withText(newTitle)).check(doesNotExist());
     }
 }
