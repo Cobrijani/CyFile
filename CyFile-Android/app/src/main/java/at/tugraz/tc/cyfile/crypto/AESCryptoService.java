@@ -13,7 +13,9 @@ import java.security.NoSuchAlgorithmException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -22,26 +24,42 @@ import java.security.Key;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
+import java.security.SecureRandom;
 import java.util.Base64;
 
 public class AESCryptoService implements CryptoService {
     private Cipher encCipher;
     private Cipher decCipher;
 
-    private static final String ALGO = "AES";
+    private static final String ALGO = "AES/CBC/PKCS5Padding";
     private static final byte[] keyValue =
             new byte[]{'T', 'h', 'e', 'B', 'e', 's', 't', 'S', 'e', 'c', 'r', 'e', 't', 'K', 'e', 'y'};
 
 
-    //is it a problem if we use 0 iv? maybe we should randomize it?
     byte[] iv = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     String password = "hunter2";
-    Key key = null;
 
     public AESCryptoService() {
         try {
-            key = generateKey();
+//            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+//            digest.update(password.getBytes("UTF-8"));
+//            byte[] keyBytes = new byte[16];
+//            System.arraycopy(digest.digest(), 0, keyBytes, 0, keyBytes.length);
+//            SecretKeySpec secretKeySpec = new SecretKeySpec(keyBytes, "AES");
+
+            int ivSize = 16;
+            byte[] iv = new byte[ivSize];
+            SecureRandom random = new SecureRandom();
+            random.nextBytes(iv);
+            IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+
+            Key key = generateKey();
+            encCipher = Cipher.getInstance(ALGO);
+            encCipher.init(Cipher.ENCRYPT_MODE, key, ivParameterSpec);
+
+            decCipher = Cipher.getInstance(ALGO);
+            decCipher.init(Cipher.DECRYPT_MODE, key, ivParameterSpec);
         } catch (Exception e) {
             //TODO
             e.printStackTrace();
@@ -67,7 +85,10 @@ public class AESCryptoService implements CryptoService {
     }
 
     private static Key generateKey() throws Exception {
-        return new SecretKeySpec(keyValue, ALGO);
+        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+        keyGenerator.init(128);
+        SecretKey key = keyGenerator.generateKey();
+        return key;
     }
 
     /**
@@ -80,8 +101,6 @@ public class AESCryptoService implements CryptoService {
     @Override
     public String encrypt(String data) {
         try {
-            encCipher = Cipher.getInstance(ALGO);
-            encCipher.init(Cipher.ENCRYPT_MODE, key);
             byte[] encVal = encCipher.doFinal(data.getBytes());
             return Base64.getEncoder().encodeToString(encVal);
         } catch (Exception e) {
@@ -95,21 +114,6 @@ public class AESCryptoService implements CryptoService {
         return new byte[0];
     }
 
-//    @TargetApi(Build.VERSION_CODES.O)
-//    @Override
-//    public String encrypt(String data) {
-//        String encryptedValue = null;
-//
-//        try {
-//            byte[] encValue = encryptCipher.doFinal(data.getBytes());
-////            byte[] encryptedByteValue = Base64.encode(encValue, Base64.DEFAULT);
-//            encryptedValue = new String(encValue);
-//        } catch (IllegalBlockSizeException | BadPaddingException e) {
-//            e.printStackTrace();
-//        }
-//        return encryptedValue;
-//    }
-
     @Override
     public byte[] decrypt(byte[] cipherData) {
         return new byte[0];
@@ -118,28 +122,12 @@ public class AESCryptoService implements CryptoService {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public String decrypt(String encryptedData) {
         try {
-            Cipher c = Cipher.getInstance(ALGO);
-            c.init(Cipher.DECRYPT_MODE, key);
-            byte[] decordedValue = Base64.getDecoder().decode(encryptedData);
-            byte[] decValue = c.doFinal(decordedValue);
+            byte[] decodedValue = Base64.getDecoder().decode(encryptedData);
+            byte[] decValue = decCipher.doFinal(decodedValue);
             return new String(decValue);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
-
-//    @Override
-//    public String decrypt(String cipherData) {
-//        String.format("%1$-" + 16 + "s", cipherData);
-//        String plainText = null;
-//        try {
-//            byte[] decrypted = decryptCipher.doFinal(cipherData.getBytes());
-//            plainText = new String(decrypted);
-//        } catch (IllegalBlockSizeException | BadPaddingException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return plainText;
-//    }
 }
