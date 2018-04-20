@@ -28,12 +28,17 @@ import at.tugraz.tc.cyfile.secret.SecretModule;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.replaceText;
+import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -47,8 +52,8 @@ public class DisplayNoteActivityTest {
     private SecretManager secretManager;
 
     @Rule
-    public IntentsTestRule<MainActivity> testRule =
-            new IntentsTestRule<>(MainActivity.class);
+    public IntentsTestRule<DisplayNoteActivity> testRule =
+            new IntentsTestRule<>(DisplayNoteActivity.class, true, false);
 
     private List<Note> testNotes =
             Arrays.asList(new Note("1", "name1", "content1")
@@ -107,6 +112,7 @@ public class DisplayNoteActivityTest {
         assertEquals("at.tugraz.tc.cyfile", appContext.getPackageName());
     }
 
+    @Test
     public void testEditNote() {
         Intent startIntent = new Intent();
         Note editedNote = testNotes.get(0);
@@ -117,9 +123,26 @@ public class DisplayNoteActivityTest {
         assertTrue(editedNote.getTitle().length() > 0);
     }
 
-    //TODO not done yet
+    @Test
     public void testSaveButton() {
+        String newTitle = "this title is new";
+        Note note = noteService.findAll().get(0);
+        String oldTitle = note.getTitle();
+        assertNotEquals(newTitle, note.getTitle());
 
+        Intent startIntent = new Intent();
+        startIntent.putExtra(MainActivity.NOTE_ID, note.getId());
+        testRule.launchActivity(startIntent);
+
+        onView(withId(R.id.TEXT_TITLE)).perform(replaceText(newTitle));
+        onView(withId(R.id.BTN_SAVE)).perform(click());
+
+        //assert changed title in list-view
+        intended(hasComponent(MainActivity.class.getName()));
+        //TODO verfiy exists
+        onView(withText(newTitle)).check(matches(isDisplayed()));
+        onView(withText(oldTitle)).check(doesNotExist());
+        assertTrue(false);
     }
 
     public void testNotSavedBack() {
