@@ -69,4 +69,13 @@ public class DisplayNoteActivity extends BaseActivity {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
+
+    public void onSelectDeleteNote(View v) {
+        Intent intent = getIntent();
+        String noteId = intent.getStringExtra(MainActivity.NOTE_ID);
+
+        noteService.delete(noteId);
+
+        finish();
+    }
 }
