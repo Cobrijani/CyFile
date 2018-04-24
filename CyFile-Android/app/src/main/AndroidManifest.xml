@@ -19,8 +19,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.PatternLockActivity"
-            android:launchMode="singleInstance" />
+            android:name=".ui.PatternLockActivity" />
         <activity
             android:name=".ui.DisplayNoteActivity"
             android:launchMode="singleInstance" />
