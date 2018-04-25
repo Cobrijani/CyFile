@@ -10,6 +10,8 @@
 
 # Created by https://www.gitignore.io/api/osx,java,linux,macos,windows,android,intellij+all,androidstudio
 
+
+!/app/release/*.apk
 ### Android ###
 # Built application files
 *.apk
