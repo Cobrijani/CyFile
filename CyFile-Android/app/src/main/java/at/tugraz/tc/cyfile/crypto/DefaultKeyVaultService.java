@@ -7,7 +7,7 @@ import kotlin.NotImplementedError;
 
 public class DefaultKeyVaultService implements KeyVaultService {
     @Override
-    public boolean unlockVault(String passphrase, String algo) throws InvalidKeyException {
+    public void unlockVault(String passphrase, String algo) throws InvalidKeyException {
         throw new NotImplementedError();
     }
 

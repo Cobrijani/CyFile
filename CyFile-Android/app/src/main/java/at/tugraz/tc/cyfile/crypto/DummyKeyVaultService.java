@@ -10,9 +10,8 @@ public class DummyKeyVaultService implements KeyVaultService {
     private String algo;
 
     @Override
-    public boolean unlockVault(String passphrase, String algo) {
+    public void unlockVault(String passphrase, String algo) {
         this.algo = algo;
-        return true;
     }
 
     @Override
