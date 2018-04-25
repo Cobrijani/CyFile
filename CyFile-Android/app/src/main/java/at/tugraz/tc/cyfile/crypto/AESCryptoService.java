@@ -6,7 +6,9 @@ import android.support.annotation.RequiresApi;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.util.Base64;
 
@@ -15,15 +17,23 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
 public class AESCryptoService implements CryptoService {
     private Cipher encCipher;
     private Cipher decCipher;
+    private KeyVaultService keyVaultService;
+    private KeyStore keyStore;
 
     private static final String ALGO = "AES/CBC/PKCS5Padding";
 
-    public AESCryptoService() {
+    public AESCryptoService() {}
+
+    public void init(String passphrase) throws InvalidKeyException
+    {
+        keyVaultService.unlockVault(passphrase);
+        Key key = keyVaultService.getEncryptionKey(ALGO);
         int ivSize = 16;
         byte[] iv = new byte[ivSize];
         SecureRandom random = new SecureRandom();
@@ -31,7 +41,6 @@ public class AESCryptoService implements CryptoService {
         IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
 
         try {
-            Key key = generateKey();
             encCipher = Cipher.getInstance(ALGO);
             encCipher.init(Cipher.ENCRYPT_MODE, key, ivParameterSpec);
 

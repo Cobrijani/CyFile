@@ -1,5 +1,7 @@
 package at.tugraz.tc.cyfile.crypto;
 
+import java.security.InvalidKeyException;
+
 /**
  * Service responsible for handling various cryptographic operations
  * Created by cobri on 3/21/2018.
@@ -37,4 +39,13 @@ public interface CryptoService {
      * @return String representation of data
      */
     String decrypt(String cipherData);
+
+
+    /**
+     * After calling the constructor, this method needs to be called in order to initialize the
+     * Key Store
+     *
+     * @param passphrase the passphrase for the KeyVault
+     */
+    void init(String passphrase) throws InvalidKeyException;
 }
