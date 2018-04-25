@@ -66,7 +66,15 @@ public class DisplayNoteActivity extends BaseActivity {
         loadedNote.setContent(noteContent);
 
         loadedNote = noteService.save(loadedNote);
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        finish();
+    }
+
+    public void onSelectDeleteNote(View v) {
+        Intent intent = getIntent();
+        String noteId = intent.getStringExtra(MainActivity.NOTE_ID);
+
+        noteService.delete(noteId);
+
+        finish();
     }
 }

@@ -18,6 +18,19 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <Button
+        android:id="@+id/BTN_DEL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_margin_dp"
+        android:layout_marginBottom="@dimen/default_margin_dp"
+        android:background="@drawable/round_button"
+        android:onClick="onSelectDeleteNote"
+        android:text="@string/btn_delete"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/noteText" />
+
     <EditText
         android:id="@+id/TEXT_TITLE"
         android:layout_width="0dp"
