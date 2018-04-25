@@ -1,10 +1,19 @@
 package at.tugraz.tc.cyfile.crypto;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static junit.framework.Assert.*;
+import java.security.InvalidKeyException;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotSame;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by david on 3/21/2018.
@@ -13,19 +22,57 @@ import static junit.framework.Assert.*;
 public class AESCryptoServiceTest {
 
     private AESCryptoService cryptoService;
+    private KeyVaultService dummyKeyVaultService = new DummyKeyVaultService();
 
-    @Before
-    public void setup() {
-        cryptoService = new AESCryptoService();
+    public void setup(KeyVaultService keyVaultService) {
+        cryptoService = new AESCryptoService(keyVaultService);
+        try {
+            cryptoService.init("any pass");
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
     }
 
     private int blockSize = 16;
 
 
+    //TODO this won't work until we reinitialize the cipher on every encrypt/decrypt
+    @Ignore
+    @Test
+    public void testRelockedVault() {
+        setup(dummyKeyVaultService);
+        String plain = "Hello World!";
+        String encrypted = cryptoService.encrypt(plain);
+
+        assertNotSame(plain, encrypted);
+        assertTrue(encrypted.length() > 0);
+
+        //after we encrypted something we lock the vault
+        dummyKeyVaultService.lockVault();
+        String decrypted = cryptoService.decrypt(encrypted);
+        assertNull(decrypted);
+    }
+
+    @Test
+    public void testFailedUnlock() throws Exception {
+        KeyVaultService svc = mock(KeyVaultService.class);
+        when(svc.unlockVault(any(), any())).thenThrow(new InvalidKeyException());
+        when(svc.getEncryptionKey()).thenReturn(null);
+
+        cryptoService = new AESCryptoService(svc);
+        try {
+            cryptoService.init("any pass");
+        } catch (InvalidKeyException e) {
+            return;
+        }
+        fail("Exception should have been thrown");
+    }
+
     //TODO tests with byte-arrays and not strings
 
     @Test
-    public void testEncryptDecryptString () {
+    public void testEncryptDecryptString() {
+        setup(dummyKeyVaultService);
         String plain = "Hello World!";
         String encrypted = cryptoService.encrypt(plain);
         assertNotSame(plain, encrypted);
@@ -35,7 +82,8 @@ public class AESCryptoServiceTest {
     }
 
     @Test
-    public void testEncryptEmptyString () {
+    public void testEncryptEmptyString() {
+        setup(dummyKeyVaultService);
         String plain = "";
         String encrypted = cryptoService.encrypt(plain);
         assertNotSame(plain, encrypted);
@@ -45,7 +93,8 @@ public class AESCryptoServiceTest {
     }
 
     @Test
-    public void testEncryptNotBlockSizeAlignedString () {
+    public void testEncryptNotBlockSizeAlignedString() {
+        setup(dummyKeyVaultService);
         String plain = "Hello this is a not Block-Size aligned String!";
         assertNotSame(0, plain.length() % blockSize);
         String encrypted = cryptoService.encrypt(plain);
@@ -56,7 +105,8 @@ public class AESCryptoServiceTest {
     }
 
     @Test
-    public void testEncryptBlockSizeAlignedString () {
+    public void testEncryptBlockSizeAlignedString() {
+        setup(dummyKeyVaultService);
         String plain = "This is gonna be a Block-Size aligned String, achieved by cropping!" +
                 " In order to fit different block sizes, this has to be a quite large String." +
                 " If it is too short, just append something at the end.";
@@ -72,7 +122,8 @@ public class AESCryptoServiceTest {
 
     @Ignore
     @Test
-    public void testEncryptSameStringMultipleTimes () {
+    public void testEncryptSameStringMultipleTimes() {
+        setup(dummyKeyVaultService);
         // TODO imho with a block-cipher this should return different strings.
         // i guess the .doFinal "resets" the cipher
         // will look into this
@@ -88,19 +139,22 @@ public class AESCryptoServiceTest {
 
     @Ignore
     @Test
-    public void testEncryptDifferentCryptoServiceInstances () {
-        //TODO this can't work until we are able to pass a key to the enc-service
+    public void testEncryptDifferentCryptoServiceInstances () throws InvalidKeyException {
+        //TODO this can't work until we initialize the iv for every encryption
+        setup(dummyKeyVaultService);
         String plain = "";
         String encrypted = cryptoService.encrypt(plain);
         assertNotSame(plain, encrypted);
         assertTrue(encrypted.length() > 0);
-        AESCryptoService cryptoService2 = new AESCryptoService();
+        AESCryptoService cryptoService2 = new AESCryptoService(dummyKeyVaultService);
+        cryptoService2.init("any pass");
         String decrypted = cryptoService2.decrypt(encrypted);
         assertEquals(plain, decrypted);
     }
 
     @Test
-    public void testEncryptLongString () {
+    public void testEncryptLongString() {
+        setup(dummyKeyVaultService);
         String plain = "\"Nam vehicula tellus euismod, faucibus enim vitae, feugiat risus. Morbi in\\n\" +\n" +
                 "                        \"                pulvinar dolor, vitae ultricies diam. Cras sed turpis nec elit laoreet ultricies non\\n\" +\n" +
                 "                        \"                a velit. Cras vel nunc lacinia, malesuada felis ac, sodales mi. Aliquam erat\\n\" +\n" +

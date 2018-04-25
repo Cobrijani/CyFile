@@ -1,27 +1,39 @@
 package at.tugraz.tc.cyfile.crypto;
 
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 public class DummyKeyVaultService implements KeyVaultService {
-    public static final String SUPER_SECURE_PASSWORD = "hunter2";
     private String algo;
+    private Key key;
 
     @Override
     public boolean unlockVault(String passphrase, String algo) {
         this.algo = algo;
-        return true;
+        KeyGenerator keyGenerator;
+        try {
+            keyGenerator = KeyGenerator.getInstance("AES");
+            keyGenerator.init(128);
+            key = keyGenerator.generateKey();
+            return true;
+        } catch (NoSuchAlgorithmException e) {
+            key = null;
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override
     public void lockVault() {
-        //nothing to see here, move along citizen!
+        key = null;
     }
 
     @Override
     public Key getEncryptionKey() {
-        return new SecretKeySpec(SUPER_SECURE_PASSWORD.getBytes(), algo);
+        return key;
     }
 }
