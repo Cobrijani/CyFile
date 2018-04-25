@@ -28,37 +28,15 @@ public class AESCryptoService implements CryptoService {
 
     private static final String ALGO = "AES/CBC/PKCS5Padding";
 
+    //TODO move to enc-dec
+    byte[] iv;
+
     public AESCryptoService(KeyVaultService keyVaultService) {
         this.keyVaultService = keyVaultService;
     }
 
-    public void init(String passphrase) throws InvalidKeyException
-    {
+    public void init(String passphrase) throws InvalidKeyException {
         keyVaultService.unlockVault(passphrase, ALGO);
-        Key key = keyVaultService.getEncryptionKey();
-        int ivSize = 16;
-        byte[] iv = new byte[ivSize];
-        SecureRandom random = new SecureRandom();
-        random.nextBytes(iv);
-        IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
-
-        try {
-            encCipher = Cipher.getInstance(ALGO);
-            encCipher.init(Cipher.ENCRYPT_MODE, key, ivParameterSpec);
-
-            decCipher = Cipher.getInstance(ALGO);
-            decCipher.init(Cipher.DECRYPT_MODE, key, ivParameterSpec);
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException | InvalidKeyException e) {
-            //this should never happen...
-            //TODO think about error handling, maybe add a init function with a return value or something like that
-            e.printStackTrace();
-        }
-    }
-
-    private static Key generateKey() throws NoSuchAlgorithmException {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-        keyGenerator.init(128);
-        return keyGenerator.generateKey();
     }
 
     /**
@@ -76,10 +54,47 @@ public class AESCryptoService implements CryptoService {
                 : null;
     }
 
+    private void initEncryptionCipher() {
+        Key key = keyVaultService.getEncryptionKey();
+        int ivSize = 16;
+        iv = new byte[ivSize];
+        SecureRandom random = new SecureRandom();
+        random.nextBytes(iv);
+        IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+
+        try {
+            encCipher = Cipher.getInstance(ALGO);
+            encCipher.init(Cipher.ENCRYPT_MODE, key, ivParameterSpec);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException | InvalidKeyException e) {
+            //this should never happen...
+            //TODO think about error handling, maybe add a init function with a return value or something like that
+            e.printStackTrace();
+        }
+    }
+
+    private void initDecryptionCipher(byte[] iv) {
+        Key key = keyVaultService.getEncryptionKey();
+        IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+
+        try {
+            decCipher = Cipher.getInstance(ALGO);
+            decCipher.init(Cipher.DECRYPT_MODE, key, ivParameterSpec);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException | InvalidKeyException e) {
+            //this should never happen...
+            //TODO think about error handling, maybe add a init function with a return value or something like that
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public byte[] encrypt(byte[] data) {
         try {
-            return encCipher.doFinal(data);
+            initEncryptionCipher();
+            byte[] encBytes = encCipher.doFinal(data);
+            byte[] ret = new byte[encBytes.length + iv.length];
+            System.arraycopy(iv, 0, ret, 0, iv.length);
+            System.arraycopy(encBytes, 0, ret, iv.length, encBytes.length);
+            return ret;
         } catch (IllegalBlockSizeException | BadPaddingException e) {
             e.printStackTrace();
         }
@@ -89,7 +104,13 @@ public class AESCryptoService implements CryptoService {
     @Override
     public byte[] decrypt(byte[] cipherData) {
         try {
-            return decCipher.doFinal(cipherData);
+            byte[] iv = new byte[16];
+            byte[] encryptedData = new byte[cipherData.length - 16];
+            System.arraycopy(cipherData, 0, iv, 0, 16);
+            System.arraycopy(cipherData, 16, encryptedData, 0,
+                    cipherData.length - 16);
+            initDecryptionCipher(iv);
+            return decCipher.doFinal(encryptedData);
         } catch (IllegalBlockSizeException | BadPaddingException e) {
             e.printStackTrace();
         }

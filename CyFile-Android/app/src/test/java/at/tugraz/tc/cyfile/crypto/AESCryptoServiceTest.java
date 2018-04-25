@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.security.InvalidKeyException;
+import java.util.Arrays;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -76,10 +77,14 @@ public class AESCryptoServiceTest {
     public void testEncryptDecryptString() {
         setup(dummyKeyVaultService);
         String plain = "Hello World!";
-        String encrypted = cryptoService.encrypt(plain);
+        byte[] encrypted = cryptoService.encrypt(plain.getBytes());
         assertNotSame(plain, encrypted);
-        assertTrue(encrypted.length() > 0);
-        String decrypted = cryptoService.decrypt(encrypted);
+
+        // 16 for iv, then 16 for each started block of 16
+        int expectedLength = (plain.length() / 16 + 2) * 16;
+        assertEquals(encrypted.length, expectedLength);
+
+        String decrypted = new String(cryptoService.decrypt(encrypted));
         assertEquals(plain, decrypted);
     }
 
@@ -122,21 +127,20 @@ public class AESCryptoServiceTest {
         assertEquals(plain, decrypted);
     }
 
-    @Ignore
     @Test
     public void testEncryptSameStringMultipleTimes() {
         setup(dummyKeyVaultService);
-        // TODO imho with a block-cipher this should return different strings.
-        // i guess the .doFinal "resets" the cipher
-        // will look into this
         String plain = "Hello World!";
-        String encrypted1 = cryptoService.encrypt(plain);
-        assertNotSame(plain, encrypted1);
-        String encrypted2 = cryptoService.encrypt(plain);
+        byte[] encrypted1 = cryptoService.encrypt(plain.getBytes());
+
+        byte[] encrypted2 = cryptoService.encrypt(plain.getBytes());
         assertNotSame(plain, encrypted2);
-        assertTrue(encrypted1.length() > 0);
-        assertTrue(encrypted2.length() > 0);
-        assertFalse(encrypted1.equals(encrypted2));
+        assertFalse(Arrays.equals(encrypted1, encrypted2));
+
+        assertTrue(new String(cryptoService.decrypt(encrypted1))
+                .equals(plain));
+        assertTrue(new String(cryptoService.decrypt(encrypted2))
+                .equals(plain));
     }
 
     @Ignore
