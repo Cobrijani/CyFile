@@ -7,10 +7,11 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class DummyKeyVaultService implements KeyVaultService {
     public static final String SUPER_SECURE_PASSWORD = "hunter2";
-    public static final String ALGO = "";
+    private String algo;
 
     @Override
-    public boolean unlockVault(String passphrase) {
+    public boolean unlockVault(String passphrase, String algo) {
+        this.algo = algo;
         return true;
     }
 
@@ -20,7 +21,7 @@ public class DummyKeyVaultService implements KeyVaultService {
     }
 
     @Override
-    public Key getEncryptionKey(String algo) {
+    public Key getEncryptionKey() {
         return new SecretKeySpec(SUPER_SECURE_PASSWORD.getBytes(), algo);
     }
 }

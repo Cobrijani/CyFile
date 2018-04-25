@@ -4,9 +4,9 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 
 public interface KeyVaultService {
-    boolean unlockVault(String passphrase) throws InvalidKeyException;
+    boolean unlockVault(String passphrase, String algo) throws InvalidKeyException;
 
     void lockVault();
 
-    Key getEncryptionKey(String algo);
+    Key getEncryptionKey();
 }

@@ -19,21 +19,23 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
+import javax.inject.Inject;
 
 public class AESCryptoService implements CryptoService {
     private Cipher encCipher;
     private Cipher decCipher;
     private KeyVaultService keyVaultService;
-    private KeyStore keyStore;
 
     private static final String ALGO = "AES/CBC/PKCS5Padding";
 
-    public AESCryptoService() {}
+    public AESCryptoService(KeyVaultService keyVaultService) {
+        this.keyVaultService = keyVaultService;
+    }
 
     public void init(String passphrase) throws InvalidKeyException
     {
-        keyVaultService.unlockVault(passphrase);
-        Key key = keyVaultService.getEncryptionKey(ALGO);
+        keyVaultService.unlockVault(passphrase, ALGO);
+        Key key = keyVaultService.getEncryptionKey();
         int ivSize = 16;
         byte[] iv = new byte[ivSize];
         SecureRandom random = new SecureRandom();
