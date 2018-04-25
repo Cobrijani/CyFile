@@ -6,12 +6,10 @@ import java.security.NoSuchAlgorithmException;
 import javax.crypto.KeyGenerator;
 
 public class DummyKeyVaultService implements KeyVaultService {
-    private String algo;
     private Key key;
 
     @Override
     public void unlockVault(String passphrase, String algo) {
-        this.algo = algo;
         KeyGenerator keyGenerator;
         try {
             keyGenerator = KeyGenerator.getInstance("AES");

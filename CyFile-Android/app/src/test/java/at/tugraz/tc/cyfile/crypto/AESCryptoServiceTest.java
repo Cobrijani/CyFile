@@ -2,6 +2,7 @@ package at.tugraz.tc.cyfile.crypto;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.security.InvalidKeyException;
 
@@ -56,7 +57,8 @@ public class AESCryptoServiceTest {
     @Test
     public void testFailedUnlock() throws Exception {
         KeyVaultService svc = mock(KeyVaultService.class);
-        when(svc.unlockVault(any(), any())).thenThrow(new InvalidKeyException());
+        Mockito.doThrow(new InvalidKeyException())
+                .when(svc).unlockVault(any(), any());
         when(svc.getEncryptionKey()).thenReturn(null);
 
         cryptoService = new AESCryptoService(svc);
