@@ -14,7 +14,7 @@ public interface CryptoService {
      * @param data data represented in bytes to be encrypted
      * @return cipher text in form of byte array
      */
-    byte[] encrypt(byte[] data);
+    byte[] encrypt(byte[] data) throws InvalidCryptoOperationException;
 
     /**
      * Encrypt data and perform base64 encoding
@@ -22,7 +22,7 @@ public interface CryptoService {
      * @param data data to be encrypted
      * @return cipher data in encoded format
      */
-    String encrypt(String data);
+    String encrypt(String data) throws InvalidCryptoOperationException;
 
     /**
      * Decrypt cipher data
@@ -30,7 +30,7 @@ public interface CryptoService {
      * @param cipherData data to be decrypted
      * @return decrypted text in a form of byte array
      */
-    byte[] decrypt(byte[] cipherData);
+    byte[] decrypt(byte[] cipherData) throws InvalidCryptoOperationException;
 
     /**
      * Decrypt data
@@ -38,7 +38,7 @@ public interface CryptoService {
      * @param cipherData data to be decrypted
      * @return String representation of data
      */
-    String decrypt(String cipherData);
+    String decrypt(String cipherData) throws InvalidCryptoOperationException;
 
 
     /**

@@ -6,119 +6,107 @@ import android.support.annotation.RequiresApi;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
-import javax.inject.Inject;
 
 public class AESCryptoService implements CryptoService {
     private Cipher encCipher;
     private Cipher decCipher;
     private KeyVaultService keyVaultService;
+    private byte[] currentIV;
 
-    private static final String ALGO = "AES/CBC/PKCS5Padding";
+    static final int BLOCK_SIZE = 16;
+    private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
 
-    //TODO move to enc-dec
-    byte[] iv;
 
     public AESCryptoService(KeyVaultService keyVaultService) {
         this.keyVaultService = keyVaultService;
     }
 
     public void init(String passphrase) throws InvalidKeyException {
-        keyVaultService.unlockVault(passphrase, ALGO);
+        keyVaultService.unlockVault(passphrase, ALGORITHM);
     }
 
-    /**
-     * Encrypt a string with AES algorithm.
-     *
-     * @param data is a string
-     * @return the encrypted string
-     */
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public String encrypt(String data) {
+    public String encrypt(String data) throws InvalidCryptoOperationException {
         byte[] encryptedBytes = encrypt(data.getBytes());
-        return encryptedBytes.length > 0 ?
-                Base64.getEncoder().encodeToString(encryptedBytes)
-                : null;
+        return Base64.getEncoder().encodeToString(encryptedBytes);
     }
 
-    private void initEncryptionCipher() {
+    private boolean initEncryptionCipher() {
         Key key = keyVaultService.getEncryptionKey();
-        int ivSize = 16;
-        iv = new byte[ivSize];
+        currentIV = new byte[BLOCK_SIZE];
         SecureRandom random = new SecureRandom();
-        random.nextBytes(iv);
-        IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+        random.nextBytes(currentIV);
+        IvParameterSpec ivParameterSpec = new IvParameterSpec(currentIV);
 
         try {
-            encCipher = Cipher.getInstance(ALGO);
+            encCipher = Cipher.getInstance(ALGORITHM);
             encCipher.init(Cipher.ENCRYPT_MODE, key, ivParameterSpec);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException | InvalidKeyException e) {
-            //this should never happen...
-            //TODO think about error handling, maybe add a init function with a return value or something like that
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
-    private void initDecryptionCipher(byte[] iv) {
+    private boolean initDecryptionCipher(byte[] iv) {
         Key key = keyVaultService.getEncryptionKey();
         IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
 
         try {
-            decCipher = Cipher.getInstance(ALGO);
+            decCipher = Cipher.getInstance(ALGORITHM);
             decCipher.init(Cipher.DECRYPT_MODE, key, ivParameterSpec);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException | InvalidKeyException e) {
-            //this should never happen...
-            //TODO think about error handling, maybe add a init function with a return value or something like that
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     @Override
-    public byte[] encrypt(byte[] data) {
+    public byte[] encrypt(byte[] data) throws InvalidCryptoOperationException {
         try {
-            initEncryptionCipher();
-            byte[] encBytes = encCipher.doFinal(data);
-            byte[] ret = new byte[encBytes.length + iv.length];
-            System.arraycopy(iv, 0, ret, 0, iv.length);
-            System.arraycopy(encBytes, 0, ret, iv.length, encBytes.length);
-            return ret;
+            boolean initSuccess = initEncryptionCipher();
+            if (initSuccess) {
+                byte[] encBytes = encCipher.doFinal(data);
+                byte[] ret = new byte[encBytes.length + currentIV.length];
+                System.arraycopy(currentIV, 0, ret, 0, currentIV.length);
+                System.arraycopy(encBytes, 0, ret, currentIV.length, encBytes.length);
+                return ret;
+            }
         } catch (IllegalBlockSizeException | BadPaddingException e) {
             e.printStackTrace();
         }
-        return null;
+        throw new InvalidCryptoOperationException();
     }
 
     @Override
-    public byte[] decrypt(byte[] cipherData) {
+    public byte[] decrypt(byte[] cipherData) throws InvalidCryptoOperationException {
         try {
-            byte[] iv = new byte[16];
-            byte[] encryptedData = new byte[cipherData.length - 16];
-            System.arraycopy(cipherData, 0, iv, 0, 16);
-            System.arraycopy(cipherData, 16, encryptedData, 0,
-                    cipherData.length - 16);
+            byte[] iv = new byte[BLOCK_SIZE];
+            byte[] encryptedData = new byte[cipherData.length - BLOCK_SIZE];
+            System.arraycopy(cipherData, 0, iv, 0, BLOCK_SIZE);
+            System.arraycopy(cipherData, BLOCK_SIZE, encryptedData, 0,
+                    cipherData.length - BLOCK_SIZE);
             initDecryptionCipher(iv);
             return decCipher.doFinal(encryptedData);
         } catch (IllegalBlockSizeException | BadPaddingException e) {
             e.printStackTrace();
         }
-        return null;
+        throw new InvalidCryptoOperationException();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public String decrypt(String encryptedData) {
+    public String decrypt(String encryptedData) throws InvalidCryptoOperationException {
         byte[] decodedValue = Base64.getDecoder().decode(encryptedData);
         byte[] decValue = decrypt(decodedValue);
         return new String(decValue);
