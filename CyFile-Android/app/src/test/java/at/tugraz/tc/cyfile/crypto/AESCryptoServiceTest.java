@@ -5,7 +5,13 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.util.Arrays;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.spec.SecretKeySpec;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -41,7 +47,7 @@ public class AESCryptoServiceTest {
     //TODO this won't work until we reinitialize the cipher on every encrypt/decrypt
     @Ignore
     @Test
-    public void testRelockedVault() {
+    public void testRelockedVault()  throws InvalidCryptoOperationException{
         setup(dummyKeyVaultService);
         String plain = "Hello World!";
         String encrypted = cryptoService.encrypt(plain);
@@ -71,10 +77,31 @@ public class AESCryptoServiceTest {
         fail("Exception should have been thrown");
     }
 
+    @Test
+    public void testEncryptChangePasswordDecryptFail() throws InvalidCryptoOperationException,
+            NoSuchAlgorithmException{
+        setup(dummyKeyVaultService);
+        Key key = new SecretKeySpec("new_password".getBytes(), "AES");
+        when(dummyKeyVaultService.getEncryptionKey()).thenReturn(key);
+        String plain = "Hello World!";
+        byte[] encrypted = cryptoService.encrypt(plain.getBytes());
+        assertNotSame(plain, encrypted);
+        key = new SecretKeySpec("new_password".getBytes(), "AES");
+        when(dummyKeyVaultService.getEncryptionKey()).thenReturn(key);
+
+        // 16 for iv, then 16 for each started block of 16
+        int expectedLength = (plain.length() / 16 + 2) * 16;
+        assertEquals(encrypted.length, expectedLength);
+
+        String decrypted = new String(cryptoService.decrypt(encrypted));
+        assertFalse(plain.equals(decrypted));
+    }
+
+
     //TODO tests with byte-arrays and not strings
 
     @Test
-    public void testEncryptDecryptString() {
+    public void testEncryptDecryptString() throws InvalidCryptoOperationException {
         setup(dummyKeyVaultService);
         String plain = "Hello World!";
         byte[] encrypted = cryptoService.encrypt(plain.getBytes());
@@ -89,7 +116,7 @@ public class AESCryptoServiceTest {
     }
 
     @Test
-    public void testEncryptEmptyString() {
+    public void testEncryptEmptyString() throws InvalidCryptoOperationException {
         setup(dummyKeyVaultService);
         String plain = "";
         String encrypted = cryptoService.encrypt(plain);
@@ -100,7 +127,7 @@ public class AESCryptoServiceTest {
     }
 
     @Test
-    public void testEncryptNotBlockSizeAlignedString() {
+    public void testEncryptNotBlockSizeAlignedString() throws InvalidCryptoOperationException {
         setup(dummyKeyVaultService);
         String plain = "Hello this is a not Block-Size aligned String!";
         assertNotSame(0, plain.length() % blockSize);
@@ -112,7 +139,7 @@ public class AESCryptoServiceTest {
     }
 
     @Test
-    public void testEncryptBlockSizeAlignedString() {
+    public void testEncryptBlockSizeAlignedString() throws InvalidCryptoOperationException {
         setup(dummyKeyVaultService);
         String plain = "This is gonna be a Block-Size aligned String, achieved by cropping!" +
                 " In order to fit different block sizes, this has to be a quite large String." +
@@ -128,7 +155,7 @@ public class AESCryptoServiceTest {
     }
 
     @Test
-    public void testEncryptSameStringMultipleTimes() {
+    public void testEncryptSameStringMultipleTimes() throws InvalidCryptoOperationException {
         setup(dummyKeyVaultService);
         String plain = "Hello World!";
         byte[] encrypted1 = cryptoService.encrypt(plain.getBytes());
@@ -145,7 +172,7 @@ public class AESCryptoServiceTest {
 
     @Ignore
     @Test
-    public void testEncryptDifferentCryptoServiceInstances () throws InvalidKeyException {
+    public void testEncryptDifferentCryptoServiceInstances () throws InvalidKeyException, InvalidCryptoOperationException {
         //TODO this can't work until we initialize the iv for every encryption
         setup(dummyKeyVaultService);
         String plain = "";
@@ -159,7 +186,7 @@ public class AESCryptoServiceTest {
     }
 
     @Test
-    public void testEncryptLongString() {
+    public void testEncryptLongString()  throws InvalidCryptoOperationException {
         setup(dummyKeyVaultService);
         String plain = "\"Nam vehicula tellus euismod, faucibus enim vitae, feugiat risus. Morbi in\\n\" +\n" +
                 "                        \"                pulvinar dolor, vitae ultricies diam. Cras sed turpis nec elit laoreet ultricies non\\n\" +\n" +
