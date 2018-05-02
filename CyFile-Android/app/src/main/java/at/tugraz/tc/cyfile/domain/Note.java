@@ -1,5 +1,7 @@
 package at.tugraz.tc.cyfile.domain;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -15,7 +17,7 @@ import lombok.Setter;
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Note {
+public class Note implements Serializable {
 
     private String id;
 

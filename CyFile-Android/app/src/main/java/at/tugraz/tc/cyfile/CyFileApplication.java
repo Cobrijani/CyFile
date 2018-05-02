@@ -9,11 +9,14 @@ import com.blankj.utilcode.util.Utils;
 import java.util.HashSet;
 import java.util.Set;
 
+import at.tugraz.tc.cyfile.crypto.CryptoService;
 import at.tugraz.tc.cyfile.crypto.NoOpCryptoService;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.injection.ApplicationComponent;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
 import at.tugraz.tc.cyfile.note.NoteModule;
+import at.tugraz.tc.cyfile.note.NoteRepository;
+import at.tugraz.tc.cyfile.note.impl.FileNoteRepository;
 import at.tugraz.tc.cyfile.note.impl.InMemoryNoteRepository;
 import at.tugraz.tc.cyfile.note.impl.SecureNoteService;
 import at.tugraz.tc.cyfile.secret.SecretModule;
@@ -38,9 +41,6 @@ public class CyFileApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Utils.init(this);
-
-
-
     }
 
     public static CyFileApplication get(Context context) {
@@ -52,13 +52,18 @@ public class CyFileApplication extends Application {
             SecretRepository secretRepository = new InMemorySecretRepository(new PinPatternSecret("111222"));
             OnApplicationForegroundSecretPrompter prompter = new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(this));
 
+            NoOpCryptoService cryptoService = new NoOpCryptoService();
+
+            NoteRepository repository = new FileNoteRepository(cryptoService, this, null);
+
             //add this prompter to the lifecycle so we which states
             ProcessLifecycleOwner.get().getLifecycle().addObserver(prompter);
 
             mApplicationComponent = DaggerApplicationComponent.builder()
                     .appModule(new AppModule(this))
-                    .noteModule(new NoteModule(new SecureNoteService(new InMemoryNoteRepository(getInitialNotes()), new NoOpCryptoService())))
-                    .secretModule(new SecretModule(new SecretManagerImpl(new SimplePinPatternSecretVerifier(secretRepository), secretRepository), prompter))
+                    .noteModule(new NoteModule(new SecureNoteService(repository, cryptoService)))
+                    .secretModule(new SecretModule(new SecretManagerImpl(
+                            new SimplePinPatternSecretVerifier(secretRepository), secretRepository), prompter))
                     .build();
         }
         return mApplicationComponent;

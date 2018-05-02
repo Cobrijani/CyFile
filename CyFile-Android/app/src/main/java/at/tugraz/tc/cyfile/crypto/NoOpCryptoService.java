@@ -15,7 +15,7 @@ public class NoOpCryptoService implements CryptoService {
 
     @Override
     public String encrypt(String data) {
-        return data;
+        return "DO NOT READ " + data;
     }
 
     @Override
@@ -25,6 +25,6 @@ public class NoOpCryptoService implements CryptoService {
 
     @Override
     public String decrypt(String cipherData) {
-        return cipherData;
+        return cipherData.replaceAll("DO NOT READ", "");
     }
 }
