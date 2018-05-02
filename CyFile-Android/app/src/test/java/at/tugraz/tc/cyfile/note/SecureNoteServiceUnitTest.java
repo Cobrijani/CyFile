@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import at.tugraz.tc.cyfile.crypto.CryptoService;
+import at.tugraz.tc.cyfile.crypto.InvalidCryptoOperationException;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.note.impl.SecureNoteService;
 
@@ -43,7 +44,7 @@ public class SecureNoteServiceUnitTest {
     }
 
     @Test
-    public void findAllShouldDecryptAllNotesAndReturnTheWholeCollection() {
+    public void findAllShouldDecryptAllNotesAndReturnTheWholeCollection() throws InvalidCryptoOperationException {
         when(noteRepository.findAll())
                 .thenReturn(Arrays.asList(new Note("1", "name1", "content1")
                         , new Note("2", "name2", "content2")));
@@ -56,7 +57,7 @@ public class SecureNoteServiceUnitTest {
     }
 
     @Test
-    public void findOneShouldFirstDecryptTheNoteThanReturnIt() {
+    public void findOneShouldFirstDecryptTheNoteThanReturnIt() throws InvalidCryptoOperationException {
         Note n = new Note("existing-id", "name", "content");
         when(noteRepository.findOne(n.getId()))
                 .thenReturn(n);
@@ -73,7 +74,7 @@ public class SecureNoteServiceUnitTest {
     }
 
     @Test
-    public void findOneShouldNotDecryptAndShouldReturnNullIfNoteDoesNotExist() {
+    public void findOneShouldNotDecryptAndShouldReturnNullIfNoteDoesNotExist() throws InvalidCryptoOperationException {
         when(noteRepository.findOne("non-existing-id"))
                 .thenReturn(null);
 
@@ -85,7 +86,7 @@ public class SecureNoteServiceUnitTest {
     }
 
     @Test
-    public void saveShouldEncryptNewDataAndUpdateOrInsertToStorage() {
+    public void saveShouldEncryptNewDataAndUpdateOrInsertToStorage() throws InvalidCryptoOperationException {
         secureNoteService.save(new Note("id", "name", "test"));
 
         verify(cryptoService, atLeastOnce()).encrypt(anyString());
