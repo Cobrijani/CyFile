@@ -132,7 +132,7 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
                 .perform(ViewActions.clearText())
                 .perform(ViewActions.typeText("Next text"));
 
-        onView(withId(R.id.BTN_CONTAINER))
+        onView(withId(R.id.BTN_SAVE))
                 .perform(click());
 
         onView(withText("New title"))

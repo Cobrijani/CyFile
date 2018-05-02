@@ -29,17 +29,34 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/NOTE_TITLE" />
 
-    <com.nightonke.boommenu.BoomMenuButton
-        android:id="@+id/BTN_CONTAINER"
-        android:layout_width="82dp"
-        android:layout_height="84dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="16dp"
-        android:tint="@android:color/holo_green_dark"
-        app:bmb_buttonEnum="simpleCircle"
-        app:bmb_buttonPlaceEnum="buttonPlace_sc_9_1"
-        app:bmb_piecePlaceEnum="piecePlace_dot_9_1"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/BTN_SAVE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="@dimen/default_margin_dp"
+        android:onClick="onSelectSaveNote"
+        android:tint="@android:color/white"
+        app:backgroundTint="@android:color/holo_blue_dark"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@drawable/ic_save_black_24dp"
+        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintTop_toBottomOf="@+id/NOTE_CONTENT"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/BTN_DEL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|left"
+        android:layout_margin="@dimen/default_margin_dp"
+        android:onClick="onSelectDeleteNote"
+        android:tint="@android:color/white"
+        app:backgroundTint="@android:color/holo_red_light"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/NOTE_CONTENT"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/ic_delete_black_24dp" />
 
 </android.support.constraint.ConstraintLayout>
