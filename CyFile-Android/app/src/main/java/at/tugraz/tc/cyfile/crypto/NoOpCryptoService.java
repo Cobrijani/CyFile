@@ -1,5 +1,7 @@
 package at.tugraz.tc.cyfile.crypto;
 
+import java.security.InvalidKeyException;
+
 /**
  * Implementation of {@link CryptoService}
  * <p>
@@ -27,4 +29,7 @@ public class NoOpCryptoService implements CryptoService {
     public String decrypt(String cipherData) {
         return cipherData.replaceAll("DO NOT READ", "");
     }
+
+    @Override
+    public void init(String passphrase) throws InvalidKeyException {}
 }
