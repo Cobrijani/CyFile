@@ -9,11 +9,9 @@ public interface KeyVaultService {
      * Key with getEncryptionKey
      *
      * @param passphrase The Passphrase of the KeVault
-     * @param algo The used encryption algorithm
-     *
      * @throws InvalidKeyException
      */
-    void unlockVault(String passphrase, String algo) throws InvalidKeyException;
+    void unlockVault(String passphrase) throws InvalidKeyException;
 
     /**
      * To lock the Vault again.

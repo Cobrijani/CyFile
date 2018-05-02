@@ -7,11 +7,9 @@ import org.mockito.Mockito;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 import java.util.Arrays;
 
 import javax.crypto.KeyGenerator;
-import javax.crypto.spec.SecretKeySpec;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -65,7 +63,7 @@ public class AESCryptoServiceTest {
     public void testFailedUnlock() throws Exception {
         KeyVaultService svc = mock(KeyVaultService.class);
         Mockito.doThrow(new InvalidKeyException())
-                .when(svc).unlockVault(any(), any());
+                .when(svc).unlockVault(any());
         when(svc.getEncryptionKey()).thenReturn(null);
 
         cryptoService = new AESCryptoService(svc);

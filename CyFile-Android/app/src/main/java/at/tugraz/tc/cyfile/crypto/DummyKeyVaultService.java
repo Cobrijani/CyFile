@@ -9,7 +9,7 @@ public class DummyKeyVaultService implements KeyVaultService {
     private Key key;
 
     @Override
-    public void unlockVault(String passphrase, String algo) {
+    public void unlockVault(String passphrase) {
         KeyGenerator keyGenerator;
         try {
             keyGenerator = KeyGenerator.getInstance("AES");

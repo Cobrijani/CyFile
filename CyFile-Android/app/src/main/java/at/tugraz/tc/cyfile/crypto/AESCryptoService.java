@@ -31,7 +31,7 @@ public class AESCryptoService implements CryptoService {
     }
 
     public void init(String passphrase) throws InvalidKeyException {
-        keyVaultService.unlockVault(passphrase, ALGORITHM);
+        keyVaultService.unlockVault(passphrase);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
