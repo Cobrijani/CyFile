@@ -29,14 +29,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
         android:layout_margin="@dimen/default_margin_dp"
-        app:elevation="@dimen/default_fab_elevation_dp"
-        app:borderWidth="@dimen/default_fab_border_dp"
+        android:layout_marginBottom="@dimen/default_margin_dp"
         android:onClick="onSelectAddNote"
         android:tint="@android:color/white"
         app:backgroundTint="@color/teal"
+        app:borderWidth="@dimen/default_fab_border_dp"
+        app:elevation="@dimen/default_fab_elevation_dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add"
-        app:layout_constraintVertical_bias="1.0"/>
+        app:srcCompat="@android:drawable/ic_input_add" />
 
 </android.support.constraint.ConstraintLayout>
