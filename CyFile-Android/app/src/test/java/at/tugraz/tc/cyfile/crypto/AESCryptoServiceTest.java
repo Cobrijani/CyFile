@@ -77,8 +77,8 @@ public class AESCryptoServiceTest {
         fail("Exception should have been thrown");
     }
 
-    @Test
-    public void testEncryptChangePasswordDecryptFail() throws InvalidCryptoOperationException, InvalidKeyException,
+    @Test(expected = InvalidCryptoOperationException.class)
+    public void testEncryptChangePasswordDecryptFail() throws InvalidKeyException, InvalidCryptoOperationException,
             NoSuchAlgorithmException{
         KeyGenerator keyGenerator;
         keyGenerator = KeyGenerator.getInstance("AES");
