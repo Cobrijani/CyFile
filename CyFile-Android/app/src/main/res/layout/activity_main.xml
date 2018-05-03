@@ -23,17 +23,21 @@
             android:orientation="vertical" />
     </ScrollView>
 
-    <Button
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/BTN_ADD"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="@dimen/default_margin_dp"
         android:layout_marginBottom="@dimen/default_margin_dp"
-        android:layout_marginEnd="@dimen/default_margin_dp"
-        android:background="@drawable/round_button"
         android:onClick="onSelectAddNote"
-        android:text="@string/btn_add_note"
+        android:tint="@android:color/white"
+        app:backgroundTint="@color/teal"
+        app:borderWidth="@dimen/default_fab_border_dp"
+        app:elevation="@dimen/default_fab_elevation_dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        tools:layout_editor_absoluteX="269dp" />
+        app:srcCompat="@android:drawable/ic_input_add" />
+
 
 </android.support.constraint.ConstraintLayout>
