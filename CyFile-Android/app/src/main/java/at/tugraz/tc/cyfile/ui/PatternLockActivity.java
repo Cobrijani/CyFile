@@ -6,11 +6,13 @@ import android.widget.Toast;
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
 
+import java.security.InvalidKeyException;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import at.tugraz.tc.cyfile.R;
+import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 import at.tugraz.tc.cyfile.secret.SecretManager;
 import at.tugraz.tc.cyfile.secret.SecretPrompter;
 import at.tugraz.tc.cyfile.secret.impl.PinPatternSecret;
@@ -26,6 +28,9 @@ public class PatternLockActivity extends BaseActivity
 
     @Inject
     SecretPrompter secretPrompter;
+
+    @Inject
+    KeyVaultService keyVaultService;
 
     private PatternLockView mPatternLockView;
 
@@ -57,8 +62,15 @@ public class PatternLockActivity extends BaseActivity
 
     @Override
     public void onComplete(List<PatternLockView.Dot> pattern) {
-        if (secretManager.verify(new PinPatternSecret(pattern))) {
+        PinPatternSecret secret = new PinPatternSecret(pattern);
+        if (secretManager.verify(secret)) {
             mPatternLockView.setViewMode(CORRECT);
+            try {
+                keyVaultService.unlockVault(secret.getSecretValue(), null);
+            } catch (InvalidKeyException e) {
+                e.printStackTrace();
+                throw new IllegalStateException("Key was verified but rejected by the KeyVaultService");
+            }
             finish();
         } else {
             Toast.makeText(this, "Invalid pin", Toast.LENGTH_LONG).show();
