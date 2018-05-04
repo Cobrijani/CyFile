@@ -9,6 +9,7 @@ import com.blankj.utilcode.util.Utils;
 import java.util.HashSet;
 import java.util.Set;
 
+import at.tugraz.tc.cyfile.crypto.DummyKeyVaultService;
 import at.tugraz.tc.cyfile.crypto.NoOpCryptoService;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.injection.ApplicationComponent;
@@ -38,9 +39,6 @@ public class CyFileApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Utils.init(this);
-
-
-
     }
 
     public static CyFileApplication get(Context context) {
@@ -55,10 +53,17 @@ public class CyFileApplication extends Application {
             //add this prompter to the lifecycle so we which states
             ProcessLifecycleOwner.get().getLifecycle().addObserver(prompter);
 
+            SecretModule secretModule = new SecretModule(
+                    new SecretManagerImpl(
+                            new SimplePinPatternSecretVerifier(secretRepository),
+                            secretRepository),
+                    prompter,
+                    new DummyKeyVaultService()
+            );
             mApplicationComponent = DaggerApplicationComponent.builder()
                     .appModule(new AppModule(this))
                     .noteModule(new NoteModule(new SecureNoteService(new InMemoryNoteRepository(getInitialNotes()), new NoOpCryptoService())))
-                    .secretModule(new SecretModule(new SecretManagerImpl(new SimplePinPatternSecretVerifier(secretRepository), secretRepository), prompter))
+                    .secretModule(secretModule)
                     .build();
         }
         return mApplicationComponent;

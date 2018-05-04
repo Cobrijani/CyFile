@@ -7,6 +7,7 @@ import javax.inject.Singleton;
 
 import at.tugraz.tc.cyfile.AppModule;
 import at.tugraz.tc.cyfile.crypto.CryptoModule;
+import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 import at.tugraz.tc.cyfile.note.NoteModule;
 import at.tugraz.tc.cyfile.note.NoteService;
 import at.tugraz.tc.cyfile.secret.SecretManager;
@@ -28,5 +29,7 @@ public interface ApplicationComponent {
     SecretManager secretManager();
 
     SecretPrompter secretPrompter();
+
+    KeyVaultService keyVaultService();
 
 }
