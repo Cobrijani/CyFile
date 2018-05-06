@@ -24,4 +24,5 @@ public class CryptoModule {
     public CryptoService providesCryptoService() {
         return mCryptoService;
     }
+
 }
