@@ -72,10 +72,12 @@ public class MainActivity extends BaseActivity {
 
                 @Override
                 public void onClick(Note itemData) {
+                    openNoteInDetailActivity(itemData.getId());
                 }
 
                 @Override
                 public void onLongClick(Note itemData) {
+                    openNoteInDetailActivity(itemData.getId());
                 }
             });
     }
