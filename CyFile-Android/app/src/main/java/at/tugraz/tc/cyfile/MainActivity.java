@@ -40,8 +40,6 @@ public class MainActivity extends BaseActivity {
     NotesAdapter adapter;
     SwipeToAction swipeToAction;
 
-    List<Note> notes = new ArrayList<>();
-
     public static final String NOTE_ID = "NOTE_ID";
 
     @Override
@@ -50,63 +48,56 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         getActivityComponent().inject(this);
         secretPrompter.promptSecret();
-            recyclerView = (RecyclerView) findViewById(R.id.noteList);
-            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-            recyclerView.setLayoutManager(layoutManager);
-            recyclerView.setHasFixedSize(true);
+    }
 
-            adapter = new NotesAdapter(this.notes);
-            recyclerView.setAdapter(adapter);
+    protected void initializeNoteList()
+    {
+        recyclerView = (RecyclerView) findViewById(R.id.noteList);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
 
-            swipeToAction = new SwipeToAction(recyclerView, new SwipeToAction.SwipeListener<Note>() {
-                @Override
-                public boolean swipeLeft(final Note itemData) {
+        adapter = new NotesAdapter(noteService.findAll());
+        recyclerView.setAdapter(adapter);
 
-                    return true;
-                }
+        swipeToAction = new SwipeToAction(recyclerView, new SwipeToAction.SwipeListener<Note>() {
+            @Override
+            public boolean swipeLeft(final Note itemData) {
 
-                @Override
-                public boolean swipeRight(Note itemData) {
-                    return true;
-                }
+                return true;
+            }
+
+            @Override
+            public boolean swipeRight(Note itemData) {
+                return true;
+            }
 
                 @Override
                 public void onClick(Note itemData) {
                     openNoteInDetailActivity(itemData.getId());
                 }
+            @Override
+            public void onClick(Note itemData) {
+            }
 
                 @Override
                 public void onLongClick(Note itemData) {
                     openNoteInDetailActivity(itemData.getId());
                 }
             });
+            @Override
+            public void onLongClick(Note itemData) {
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        loadNoteList();
+        initializeNoteList();
     }
 
-    private void loadNoteList() {
-        final RecyclerView linear = findViewById(R.id.noteList);
-        linear.removeAllViews();
-
-        for (Note note :
-                noteService.findAll()) {
-            /*
-            Button btn = new Button(this);
-            btn.setTextSize(11);
-            btn.setText(note.getTitle());
-            btn.setHeight(70);
-            btn.setWidth(linear.getWidth());
-            btn.setTag(note.getId());
-            btn.setOnClickListener(view -> openNoteInDetailActivity(note.getId()));
-            linear.addView(btn);*/
-            this.notes.add(note);
-        }
-    }
 
     private void openNoteInDetailActivity(String noteId) {
         Note noteMessage = noteService.findOne(noteId);
