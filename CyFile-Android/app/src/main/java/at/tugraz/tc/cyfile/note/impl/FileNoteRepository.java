@@ -14,35 +14,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import at.tugraz.tc.cyfile.crypto.CryptoService;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.note.NoteRepository;
-
-//class SerializedNote extends Note implements Serializable {
-//    public SerializedNote(Note note, CryptoService cryptoService) {
-//        String encryptedTitle = cryptoService.encrypt(note.getTitle());
-//        String encryptedContent = cryptoService.encrypt(note.getContent());
-//        this.setId(note.getId());
-//        this.setTitle(encryptedTitle);
-//        this.setContent(encryptedContent);
-//    }
-//}
 
 public class FileNoteRepository implements NoteRepository {
     private static final String DEFAULT_FILE_NAME = "notes.bin";
 
     private final String fileName;
     private final InMemoryNoteRepository inMemoryNoteRepository;
-    private final CryptoService cryptoService;
     private final Context context;
 
-    public FileNoteRepository(CryptoService cryptoService, Context context, String fileName) {
+    public FileNoteRepository(Context context, String fileName) {
         if (fileName == null) {
             fileName = DEFAULT_FILE_NAME;
         }
         this.fileName = fileName;
-
-        this.cryptoService = cryptoService;
         this.context = context;
 
         Set<Note> notes = loadNotesFromFile();
@@ -69,8 +55,9 @@ public class FileNoteRepository implements NoteRepository {
             os.writeObject(notes);
             Log.d("File IO", "saved " + notes.size() + " notes to file");
         } catch (IOException e) {
-            //TODO exception handling
             e.printStackTrace();
+            throw new IllegalStateException("This should never happen. " +
+                    "Maybe you actually managed to run out of storage?");
         }
     }
 
@@ -102,7 +89,6 @@ public class FileNoteRepository implements NoteRepository {
         if (notes.contains(new Note(id, "", ""))) {
             throw new IllegalStateException("Note didn't get deleted from InMemoryNoteRepo");
         }
-
         saveNotesToFile(notes);
     }
 }
