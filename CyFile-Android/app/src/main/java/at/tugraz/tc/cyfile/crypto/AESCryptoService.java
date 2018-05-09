@@ -1,14 +1,13 @@
 package at.tugraz.tc.cyfile.crypto;
 
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 
+import android.util.Base64;
+
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -17,13 +16,11 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 
 public class AESCryptoService implements CryptoService {
-    private Cipher encCipher;
-    private Cipher decCipher;
     private KeyVaultService keyVaultService;
-    private byte[] currentIV;
 
-    static final int BLOCK_SIZE = 16;
-    private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
+    private static final int BLOCK_SIZE = 16;
+    private static final String ALGORITHM = "AES/CBC/PKCS7Padding";
+    private static final String PROVIDER = "AndroidKeyStore";
 
 
     public AESCryptoService(KeyVaultService keyVaultService) {
@@ -34,44 +31,28 @@ public class AESCryptoService implements CryptoService {
         keyVaultService.unlockVault(passphrase);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public String encrypt(String data) throws InvalidCryptoOperationException {
-        byte[] encryptedBytes = encrypt(data.getBytes());
-        return Base64.getEncoder().encodeToString(encryptedBytes);
-    }
-
-    private void initEncryptionCipher() throws InvalidCryptoOperationException {
-        Key key = keyVaultService.getEncryptionKey();
-        currentIV = new byte[BLOCK_SIZE];
-        SecureRandom random = new SecureRandom();
-        random.nextBytes(currentIV);
-        IvParameterSpec ivParameterSpec = new IvParameterSpec(currentIV);
-
-        try {
-            encCipher = Cipher.getInstance(ALGORITHM);
-            encCipher.init(Cipher.ENCRYPT_MODE, key, ivParameterSpec);
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException | InvalidKeyException e) {
-            throw new InvalidCryptoOperationException(e);
-        }
-    }
-
-    private void initDecryptionCipher(byte[] iv) throws InvalidCryptoOperationException {
-        Key key = keyVaultService.getEncryptionKey();
-        IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
-
-        try {
-            decCipher = Cipher.getInstance(ALGORITHM);
-            decCipher.init(Cipher.DECRYPT_MODE, key, ivParameterSpec);
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException | InvalidKeyException e) {
-            throw new InvalidCryptoOperationException(e);
-        }
+        byte[] encryptedBytes = encrypt(data.getBytes(StandardCharsets.UTF_8));
+        return Base64.encodeToString(encryptedBytes, Base64.DEFAULT);
     }
 
     @Override
     public byte[] encrypt(byte[] data) throws InvalidCryptoOperationException {
+        Key key = keyVaultService.getEncryptionKey();
+        byte[] currentIV;
+        Cipher encCipher;
+
         try {
-            initEncryptionCipher();
+            encCipher = Cipher.getInstance(ALGORITHM);
+            encCipher.init(Cipher.ENCRYPT_MODE, key);
+
+            currentIV = encCipher.getIV();
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
+            throw new InvalidCryptoOperationException(e);
+        }
+
+        try {
             byte[] encBytes = encCipher.doFinal(data);
             byte[] ret = new byte[encBytes.length + currentIV.length];
             System.arraycopy(currentIV, 0, ret, 0, currentIV.length);
@@ -84,23 +65,32 @@ public class AESCryptoService implements CryptoService {
 
     @Override
     public byte[] decrypt(byte[] cipherData) throws InvalidCryptoOperationException {
+        Key key = keyVaultService.getEncryptionKey();
         try {
             byte[] iv = new byte[BLOCK_SIZE];
             byte[] encryptedData = new byte[cipherData.length - BLOCK_SIZE];
             System.arraycopy(cipherData, 0, iv, 0, BLOCK_SIZE);
             System.arraycopy(cipherData, BLOCK_SIZE, encryptedData, 0,
                     cipherData.length - BLOCK_SIZE);
-            initDecryptionCipher(iv);
+
+            IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+            Cipher decCipher = Cipher.getInstance(ALGORITHM);
+            decCipher.init(Cipher.DECRYPT_MODE, key, ivParameterSpec);
+
             return decCipher.doFinal(encryptedData);
-        } catch (IllegalBlockSizeException | BadPaddingException e) {
+        } catch (IllegalBlockSizeException |
+                BadPaddingException |
+                NoSuchPaddingException |
+                InvalidAlgorithmParameterException |
+                InvalidKeyException |
+                NoSuchAlgorithmException e) {
             throw new InvalidCryptoOperationException(e);
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public String decrypt(String encryptedData) throws InvalidCryptoOperationException {
-        byte[] decodedValue = Base64.getDecoder().decode(encryptedData);
-        byte[] decValue = decrypt(decodedValue);
-        return new String(decValue);
+        byte[] data = Base64.decode(encryptedData, Base64.DEFAULT);
+        byte[] decValue = decrypt(data);
+        return new String(decValue, StandardCharsets.UTF_8);
     }
 }

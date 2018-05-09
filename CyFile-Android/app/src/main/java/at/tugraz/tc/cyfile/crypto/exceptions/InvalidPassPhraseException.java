@@ -17,7 +17,4 @@ public class InvalidPassPhraseException extends KeyVaultServiceException {
         super(cause);
     }
 
-    public InvalidPassPhraseException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

@@ -17,7 +17,4 @@ public class KeyVaultLockedException extends KeyVaultServiceException {
         super(cause);
     }
 
-    public KeyVaultLockedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

@@ -4,6 +4,7 @@ import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.OnLifecycleEvent;
 
+import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 import at.tugraz.tc.cyfile.secret.SecretPrompter;
 
 /**
@@ -18,16 +19,20 @@ public class OnApplicationForegroundSecretPrompter implements SecretPrompter, Li
 
     private SecretPrompter realState;
 
-    public OnApplicationForegroundSecretPrompter(SecretPrompter state) {
+    private KeyVaultService keyVaultService;
+
+    public OnApplicationForegroundSecretPrompter(SecretPrompter state, KeyVaultService keyVaultService) {
         this.emptyState = new NoOpSecretPrompter();
         this.realState = state;
         this.currentState = state;
+        this.keyVaultService = keyVaultService;
     }
 
-    public OnApplicationForegroundSecretPrompter(SecretPrompter emptyState, SecretPrompter realState) {
+    public OnApplicationForegroundSecretPrompter(SecretPrompter emptyState, SecretPrompter realState, KeyVaultService keyVaultService) {
         this.emptyState = emptyState;
         this.realState = realState;
         this.currentState = realState;
+        this.keyVaultService = keyVaultService;
     }
 
     @Override
@@ -39,6 +44,7 @@ public class OnApplicationForegroundSecretPrompter implements SecretPrompter, Li
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private void onAppBackgrounded() {
+        keyVaultService.lockVault();
         currentState = realState;
         currentState.promptSecret();
     }

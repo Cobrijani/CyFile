@@ -42,7 +42,7 @@ dependencies {
     implementation "com.google.dagger:dagger-android-support:$dagger_version"
     implementation "com.blankj:utilcode:$util_version"
     implementation "com.andrognito.patternlockview:patternlockview:$pattern_lock_version"
-    implementation "android.arch.lifecycle:extensions:1.1.1"
+    implementation "android.arch.lifecycle:extensions:$lifecycle_version"
 
 
     //testing

@@ -62,6 +62,10 @@ public class SecureNoteServiceUnitTest {
         when(noteRepository.findOne(n.getId()))
                 .thenReturn(n);
 
+        when(cryptoService.decrypt(n.getTitle()))
+                .thenReturn(n.getTitle());
+        when(cryptoService.decrypt(n.getContent()))
+                .thenReturn(n.getContent());
 
         Note note = secureNoteService.findOne("existing-id");
 

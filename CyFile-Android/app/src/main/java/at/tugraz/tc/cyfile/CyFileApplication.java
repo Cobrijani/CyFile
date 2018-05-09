@@ -9,9 +9,11 @@ import com.blankj.utilcode.util.Utils;
 import java.util.HashSet;
 import java.util.Set;
 
+import at.tugraz.tc.cyfile.async.AsyncModule;
+import at.tugraz.tc.cyfile.async.impl.JobExecutor;
+import at.tugraz.tc.cyfile.crypto.AESCryptoService;
 import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 import at.tugraz.tc.cyfile.crypto.KeyVaultServiceImpl;
-import at.tugraz.tc.cyfile.crypto.NoOpCryptoService;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.injection.ApplicationComponent;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
@@ -40,8 +42,6 @@ public class CyFileApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Utils.init(this);
-
-
     }
 
     public static CyFileApplication get(Context context) {
@@ -55,15 +55,16 @@ public class CyFileApplication extends Application {
 
             keyVaultService.init("111222");
             SecretRepository secretRepository = new InMemorySecretRepository(new PinPatternSecret("111222"));
-            OnApplicationForegroundSecretPrompter prompter = new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(this));
+            OnApplicationForegroundSecretPrompter prompter = new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(this), keyVaultService);
 
             //add this prompter to the lifecycle so we which states
             ProcessLifecycleOwner.get().getLifecycle().addObserver(prompter);
 
             mApplicationComponent = DaggerApplicationComponent.builder()
                     .appModule(new AppModule(this))
-                    .noteModule(new NoteModule(new SecureNoteService(new InMemoryNoteRepository(getInitialNotes()), new NoOpCryptoService())))
-                    .secretModule(new SecretModule(new SecretManagerImpl(new SimplePinPatternSecretVerifier(secretRepository), secretRepository), prompter))
+                    .noteModule(new NoteModule(new SecureNoteService(new InMemoryNoteRepository(), new AESCryptoService(keyVaultService))))
+                    .asyncModule(new AsyncModule(new JobExecutor()))
+                    .secretModule(new SecretModule(new SecretManagerImpl(new SimplePinPatternSecretVerifier(secretRepository), secretRepository), prompter, keyVaultService))
                     .build();
         }
         return mApplicationComponent;

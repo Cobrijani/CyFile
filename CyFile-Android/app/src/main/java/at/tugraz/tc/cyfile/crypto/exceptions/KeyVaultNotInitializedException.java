@@ -17,7 +17,4 @@ public class KeyVaultNotInitializedException extends KeyVaultServiceException {
         super(cause);
     }
 
-    public KeyVaultNotInitializedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

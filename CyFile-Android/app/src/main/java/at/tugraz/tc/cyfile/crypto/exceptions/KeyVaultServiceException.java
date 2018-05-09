@@ -17,7 +17,4 @@ public class KeyVaultServiceException extends CryptoException {
         super(cause);
     }
 
-    public KeyVaultServiceException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

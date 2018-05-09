@@ -1,5 +1,6 @@
 package at.tugraz.tc.cyfile.note.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,18 +33,22 @@ public class SecureNoteService implements NoteService {
     @Override
     public List<Note> findAll() {
         List<Note> notes = repository.findAll();
+        List<Note> retVal = new ArrayList<>();
         try {
             for (Note note :
                     notes) {
-                note.setContent(cryptoService.decrypt(note.getContent()));
-                note.setTitle(cryptoService.decrypt(note.getTitle()));
+                Note create = new Note();
+                create.setContent(cryptoService.decrypt(note.getContent()));
+                create.setTitle(cryptoService.decrypt(note.getTitle()));
+                create.setId(note.getId());
+                retVal.add(create);
             }
         } catch (InvalidCryptoOperationException e) {
             e.printStackTrace();
             return Collections.emptyList();
         }
 
-        return notes;
+        return retVal;
     }
 
     @Override
@@ -51,9 +56,11 @@ public class SecureNoteService implements NoteService {
         Note note = repository.findOne(id);
         if (note != null) {
             try {
-                note.setTitle(cryptoService.decrypt(note.getTitle()));
-                note.setContent(cryptoService.decrypt(note.getContent()));
-                return note;
+                Note newNote = new Note();
+                newNote.setTitle(cryptoService.decrypt(note.getTitle()));
+                newNote.setContent(cryptoService.decrypt(note.getContent()));
+                newNote.setId(note.getId());
+                return newNote;
             } catch (InvalidCryptoOperationException e) {
                 e.printStackTrace();
             }
