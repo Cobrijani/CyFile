@@ -18,9 +18,8 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/default_margin_dp"
             android:tint="@color/icons"
-            app:srcCompat="@drawable/ic_android_black_24dp"/>
+            app:srcCompat="@drawable/ic_edit_black_24dp"/>
     </RelativeLayout>
-
 
     <!-- this view reveals when swipe left -->
     <RelativeLayout
