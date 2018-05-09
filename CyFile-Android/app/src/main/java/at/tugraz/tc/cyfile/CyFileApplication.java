@@ -9,6 +9,8 @@ import com.blankj.utilcode.util.Utils;
 import java.util.HashSet;
 import java.util.Set;
 
+import at.tugraz.tc.cyfile.crypto.KeyVaultService;
+import at.tugraz.tc.cyfile.crypto.KeyVaultServiceImpl;
 import at.tugraz.tc.cyfile.crypto.NoOpCryptoService;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.injection.ApplicationComponent;
@@ -40,7 +42,6 @@ public class CyFileApplication extends Application {
         Utils.init(this);
 
 
-
     }
 
     public static CyFileApplication get(Context context) {
@@ -49,6 +50,10 @@ public class CyFileApplication extends Application {
 
     public ApplicationComponent getComponent() {
         if (mApplicationComponent == null) {
+
+            KeyVaultService keyVaultService = new KeyVaultServiceImpl();
+
+            keyVaultService.init("111222");
             SecretRepository secretRepository = new InMemorySecretRepository(new PinPatternSecret("111222"));
             OnApplicationForegroundSecretPrompter prompter = new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(this));
 

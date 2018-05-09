@@ -62,8 +62,8 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok:$lombok_version"
 
     //BAM button from https://github.com/Nightonke/BoomMenu/wiki
-    compile "com.nightonke:boommenu:2.1.1"
-    compile 'com.android.support:design:27.1.1'
+    implementation "com.nightonke:boommenu:2.1.1"
+    implementation 'com.android.support:design:27.1.1'
 }
 
 
