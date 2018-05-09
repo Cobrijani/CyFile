@@ -6,17 +6,23 @@ import android.content.Context;
 
 import com.blankj.utilcode.util.Utils;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import at.tugraz.tc.cyfile.crypto.CryptoService;
 import at.tugraz.tc.cyfile.crypto.DummyKeyVaultService;
-import at.tugraz.tc.cyfile.crypto.AESCryptoService;
 import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 import at.tugraz.tc.cyfile.crypto.NoOpCryptoService;
 import at.tugraz.tc.cyfile.crypto.PrefixCryptoService;
+import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.injection.ApplicationComponent;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
+import at.tugraz.tc.cyfile.logging.AndroidLogger;
+import at.tugraz.tc.cyfile.logging.CyFileLogger;
 import at.tugraz.tc.cyfile.note.NoteModule;
 import at.tugraz.tc.cyfile.note.NoteRepository;
 import at.tugraz.tc.cyfile.note.impl.FileNoteRepository;
+import at.tugraz.tc.cyfile.note.impl.InMemoryNoteRepository;
 import at.tugraz.tc.cyfile.note.impl.SecureNoteService;
 import at.tugraz.tc.cyfile.secret.SecretModule;
 import at.tugraz.tc.cyfile.secret.SecretRepository;
@@ -67,8 +73,9 @@ public class CyFileApplication extends Application {
                     prompter,
                     keyVaultService
             );
+            CyFileLogger logger = new AndroidLogger();
             mApplicationComponent = DaggerApplicationComponent.builder()
-                    .appModule(new AppModule(this))
+                    .appModule(new AppModule(this, logger))
                     .noteModule(new NoteModule(new SecureNoteService(repository, cryptoService)))
                     .secretModule(secretModule)
                     .build();

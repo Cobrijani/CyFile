@@ -1,9 +1,7 @@
 package at.tugraz.tc.cyfile.note.impl;
 
 import android.content.Context;
-import android.util.Log;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 import at.tugraz.tc.cyfile.domain.Note;
+import at.tugraz.tc.cyfile.logging.CyFileLogger;
 import at.tugraz.tc.cyfile.note.NoteRepository;
 
 public class FileNoteRepository implements NoteRepository {
@@ -25,13 +24,15 @@ public class FileNoteRepository implements NoteRepository {
     private InMemoryNoteRepository inMemoryNoteRepository;
     private final Context context;
     private boolean initialized = false;
+    private final CyFileLogger logger;
 
-    public FileNoteRepository(Context context, String fileName) {
+    public FileNoteRepository(Context context, String fileName, CyFileLogger logger) {
         if (fileName == null) {
             fileName = DEFAULT_FILE_NAME;
         }
         this.fileName = fileName;
         this.context = context;
+        this.logger = logger;
     }
 
     @Override
@@ -50,9 +51,9 @@ public class FileNoteRepository implements NoteRepository {
         try (InputStream fis = getInputStream();
              ObjectInputStream is = new ObjectInputStream(fis)) {
             notes = (List<Note>) is.readObject();
-            Log.d("File IO", "loaded " + notes.size() + " notes from file");
+            logger.d("File IO", "loaded " + notes.size() + " notes from file");
         } catch (FileNotFoundException e) {
-            Log.d("File IO", "file not found, is this the first use?");
+            logger.d("File IO", "file not found, is this the first use?");
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -63,7 +64,7 @@ public class FileNoteRepository implements NoteRepository {
         try (FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
              ObjectOutputStream os = new ObjectOutputStream(fos)) {
             os.writeObject(notes);
-            Log.d("File IO", "saved " + notes.size() + " notes to file");
+            logger.d("File IO", "saved " + notes.size() + " notes to file");
         } catch (IOException e) {
             e.printStackTrace();
             throw new IllegalStateException("This should never happen. " +

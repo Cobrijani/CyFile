@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 import at.tugraz.tc.cyfile.AppModule;
 import at.tugraz.tc.cyfile.crypto.CryptoModule;
 import at.tugraz.tc.cyfile.crypto.KeyVaultService;
+import at.tugraz.tc.cyfile.logging.CyFileLogger;
 import at.tugraz.tc.cyfile.note.NoteModule;
 import at.tugraz.tc.cyfile.note.NoteService;
 import at.tugraz.tc.cyfile.secret.SecretManager;
@@ -21,6 +22,8 @@ public interface ApplicationComponent {
 
     @ApplicationContext
     Context context();
+
+    CyFileLogger logger();
 
     Application application();
 
