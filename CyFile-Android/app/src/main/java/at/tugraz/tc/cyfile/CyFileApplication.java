@@ -6,9 +6,12 @@ import android.content.Context;
 
 import com.blankj.utilcode.util.Utils;
 
+import at.tugraz.tc.cyfile.crypto.CryptoService;
 import at.tugraz.tc.cyfile.crypto.DummyKeyVaultService;
 import at.tugraz.tc.cyfile.crypto.AESCryptoService;
 import at.tugraz.tc.cyfile.crypto.KeyVaultService;
+import at.tugraz.tc.cyfile.crypto.NoOpCryptoService;
+import at.tugraz.tc.cyfile.crypto.PrefixCryptoService;
 import at.tugraz.tc.cyfile.injection.ApplicationComponent;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
 import at.tugraz.tc.cyfile.note.NoteModule;
@@ -49,7 +52,7 @@ public class CyFileApplication extends Application {
             OnApplicationForegroundSecretPrompter prompter = new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(this));
 
             KeyVaultService keyVaultService = new DummyKeyVaultService();
-            AESCryptoService cryptoService = new AESCryptoService(keyVaultService);
+            CryptoService cryptoService = new PrefixCryptoService();
 
             NoteRepository repository = new FileNoteRepository(this, null);
 
