@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreSpi;
@@ -20,6 +19,7 @@ import at.tugraz.tc.cyfile.crypto.exceptions.InvalidPassPhraseException;
 import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultAlreadyInitializedException;
 import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultLockedException;
 import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultNotInitializedException;
+import at.tugraz.tc.cyfile.crypto.impl.KeyVaultServiceImpl;
 import at.tugraz.tc.cyfile.crypto.mocks.MockedKeyGenerator;
 import at.tugraz.tc.cyfile.crypto.mocks.MockedKeyStore;
 
@@ -30,7 +30,6 @@ import static org.mockito.Mockito.when;
 public class KeyVaultServiceImplTest extends BaseUnitTest {
 
     KeyVaultServiceImpl keyVaultService;
-
 
     @Mock
     KeyGeneratorSpi keyGeneratorSpi;

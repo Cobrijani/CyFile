@@ -11,9 +11,9 @@ import java.util.Set;
 
 import at.tugraz.tc.cyfile.async.AsyncModule;
 import at.tugraz.tc.cyfile.async.impl.JobExecutor;
-import at.tugraz.tc.cyfile.crypto.AESCryptoService;
+import at.tugraz.tc.cyfile.crypto.impl.AESCryptoService;
 import at.tugraz.tc.cyfile.crypto.KeyVaultService;
-import at.tugraz.tc.cyfile.crypto.KeyVaultServiceImpl;
+import at.tugraz.tc.cyfile.crypto.impl.KeyVaultServiceImpl;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.injection.ApplicationComponent;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;

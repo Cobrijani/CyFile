@@ -1,4 +1,4 @@
-package at.tugraz.tc.cyfile.crypto;
+package at.tugraz.tc.cyfile.crypto.impl;
 
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
@@ -15,6 +15,7 @@ import java.security.cert.CertificateException;
 
 import javax.crypto.KeyGenerator;
 
+import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 import at.tugraz.tc.cyfile.crypto.exceptions.InvalidPassPhraseException;
 import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultAlreadyInitializedException;
 import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultLockedException;

@@ -1,10 +1,11 @@
-package at.tugraz.tc.cyfile.crypto;
+package at.tugraz.tc.cyfile.crypto.impl;
 
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.KeyGenerator;
 
+import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultAlreadyInitializedException;
 import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultNotInitializedException;
 

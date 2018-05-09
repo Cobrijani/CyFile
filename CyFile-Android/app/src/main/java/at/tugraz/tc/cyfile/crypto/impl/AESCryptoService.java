@@ -1,4 +1,4 @@
-package at.tugraz.tc.cyfile.crypto;
+package at.tugraz.tc.cyfile.crypto.impl;
 
 
 import android.util.Base64;
@@ -14,6 +14,10 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
+
+import at.tugraz.tc.cyfile.crypto.CryptoService;
+import at.tugraz.tc.cyfile.crypto.exceptions.InvalidCryptoOperationException;
+import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 
 public class AESCryptoService implements CryptoService {
     private KeyVaultService keyVaultService;

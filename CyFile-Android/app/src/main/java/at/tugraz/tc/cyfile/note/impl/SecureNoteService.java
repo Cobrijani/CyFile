@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import at.tugraz.tc.cyfile.crypto.CryptoService;
-import at.tugraz.tc.cyfile.crypto.InvalidCryptoOperationException;
+import at.tugraz.tc.cyfile.crypto.exceptions.InvalidCryptoOperationException;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.note.NoteRepository;
 import at.tugraz.tc.cyfile.note.NoteService;
