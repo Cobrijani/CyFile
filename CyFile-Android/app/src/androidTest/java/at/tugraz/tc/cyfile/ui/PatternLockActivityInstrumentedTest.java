@@ -9,10 +9,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import at.tugraz.tc.cyfile.BaseInstrumentedTest;
+import java.util.concurrent.Executor;
+
 import at.tugraz.tc.cyfile.AppModule;
+import at.tugraz.tc.cyfile.BaseInstrumentedTest;
 import at.tugraz.tc.cyfile.MainActivity;
 import at.tugraz.tc.cyfile.R;
+import at.tugraz.tc.cyfile.async.AsyncModule;
+import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
 import at.tugraz.tc.cyfile.note.NoteModule;
 import at.tugraz.tc.cyfile.note.NoteService;
@@ -46,12 +50,16 @@ public class PatternLockActivityInstrumentedTest extends BaseInstrumentedTest {
     @Mock
     private SecretManager secretManager;
 
+    @Mock
+    private KeyVaultService keyVaultService;
+
     @Before
     public void setup() {
         app.setComponent(DaggerApplicationComponent.builder()
                 .appModule(new AppModule(app))
                 .noteModule(new NoteModule(mock(NoteService.class)))
-                .secretModule(new SecretModule(secretManager, new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(app)))).build());
+                .asyncModule(new AsyncModule(mock(Executor.class)))
+                .secretModule(new SecretModule(secretManager, new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(app), keyVaultService), keyVaultService)).build());
     }
 
     @Test

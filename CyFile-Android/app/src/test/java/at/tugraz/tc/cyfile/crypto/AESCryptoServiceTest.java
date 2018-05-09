@@ -8,8 +8,12 @@ import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.KeyGenerator;
+
+import at.tugraz.tc.cyfile.BaseUnitTest;
+import at.tugraz.tc.cyfile.crypto.exceptions.InvalidCryptoOperationException;
+import at.tugraz.tc.cyfile.crypto.impl.AESCryptoService;
+import at.tugraz.tc.cyfile.crypto.impl.DummyKeyVaultService;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -25,7 +29,7 @@ import static org.mockito.Mockito.when;
  * Created by david on 3/21/2018.
  */
 
-public class AESCryptoServiceTest {
+public class AESCryptoServiceTest extends BaseUnitTest {
 
     private AESCryptoService cryptoService;
     private KeyVaultService dummyKeyVaultService = new DummyKeyVaultService();
@@ -61,7 +65,7 @@ public class AESCryptoServiceTest {
     public void testFailedUnlock() throws Exception {
         KeyVaultService svc = mock(KeyVaultService.class);
         Mockito.doThrow(new InvalidKeyException())
-                .when(svc).unlockVault(any(), any());
+                .when(svc).unlockVault(any());
         when(svc.getEncryptionKey()).thenReturn(null);
 
         cryptoService = new AESCryptoService(svc);
@@ -177,7 +181,7 @@ public class AESCryptoServiceTest {
     }
 
     @Test
-    public void testEncryptLongString()  throws InvalidCryptoOperationException {
+    public void testEncryptLongString() throws InvalidCryptoOperationException {
         setup(dummyKeyVaultService);
         String plain = "\"Nam vehicula tellus euismod, faucibus enim vitae, feugiat risus. Morbi in\\n\" +\n" +
                 "                        \"                pulvinar dolor, vitae ultricies diam. Cras sed turpis nec elit laoreet ultricies non\\n\" +\n" +

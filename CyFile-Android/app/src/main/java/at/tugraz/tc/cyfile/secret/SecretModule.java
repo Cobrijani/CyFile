@@ -2,6 +2,7 @@ package at.tugraz.tc.cyfile.secret;
 
 import javax.inject.Singleton;
 
+import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 import dagger.Module;
 import dagger.Provides;
 
@@ -12,9 +13,12 @@ public class SecretModule {
 
     private final SecretPrompter secretPrompter;
 
-    public SecretModule(SecretManager secretManager, SecretPrompter secretPrompter) {
+    private final KeyVaultService keyVaultService;
+
+    public SecretModule(SecretManager secretManager, SecretPrompter secretPrompter, KeyVaultService keyVaultService) {
         this.secretManager = secretManager;
         this.secretPrompter = secretPrompter;
+        this.keyVaultService = keyVaultService;
     }
 
     @Provides
@@ -27,5 +31,11 @@ public class SecretModule {
     @Singleton
     public SecretPrompter providesSecretPrompter() {
         return secretPrompter;
+    }
+
+    @Provides
+    @Singleton
+    public KeyVaultService providesKeyVaultService() {
+        return keyVaultService;
     }
 }

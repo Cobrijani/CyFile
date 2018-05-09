@@ -8,7 +8,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "at.tugraz.tc.cyfile"
-        minSdkVersion 19
+        minSdkVersion 23
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -45,7 +45,6 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
     implementation "com.android.support:design:$android_support_design_version"
     implementation "co.dift.ui.swipetoaction:library:$swipe_to_action_version"
-
 
     //testing
     testImplementation "junit:junit:$junit_version"

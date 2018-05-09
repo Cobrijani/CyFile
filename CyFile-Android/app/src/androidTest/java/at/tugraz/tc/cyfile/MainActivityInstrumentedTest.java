@@ -12,7 +12,10 @@ import org.mockito.Mock;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Executor;
 
+import at.tugraz.tc.cyfile.async.AsyncModule;
+import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.injection.ApplicationComponent;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
@@ -47,6 +50,9 @@ public class MainActivityInstrumentedTest extends BaseInstrumentedTest {
     private SecretManager secretManager;
 
     @Mock
+    private KeyVaultService keyVaultService;
+
+    @Mock
     private SecretPrompter secretPrompter;
 
     @Rule
@@ -59,7 +65,8 @@ public class MainActivityInstrumentedTest extends BaseInstrumentedTest {
         ApplicationComponent applicationComponent
                 = DaggerApplicationComponent.builder()
                 .noteModule(new NoteModule(noteService))
-                .secretModule(new SecretModule(secretManager, secretPrompter))
+                .asyncModule(new AsyncModule(mock(Executor.class)))
+                .secretModule(new SecretModule(secretManager, secretPrompter, keyVaultService))
                 .appModule(mock(AppModule.class))
                 .build();
 

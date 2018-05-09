@@ -2,6 +2,8 @@ package at.tugraz.tc.cyfile.crypto;
 
 import java.security.InvalidKeyException;
 
+import at.tugraz.tc.cyfile.crypto.exceptions.InvalidCryptoOperationException;
+
 /**
  * Service responsible for handling various cryptographic operations
  * Created by cobri on 3/21/2018.
