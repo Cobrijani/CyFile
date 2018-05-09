@@ -20,11 +20,14 @@ import at.tugraz.tc.cyfile.note.NoteRepository;
 public class FileNoteRepository implements NoteRepository {
     private static final String DEFAULT_FILE_NAME = "notes.bin";
 
-    private final String fileName;
+    private String fileName;
     private InMemoryNoteRepository inMemoryNoteRepository;
-    private final Context context;
+    private Context context;
     private boolean initialized = false;
-    private final CyFileLogger logger;
+    private CyFileLogger logger;
+
+    public FileNoteRepository() {
+    }
 
     public FileNoteRepository(Context context, String fileName, CyFileLogger logger) {
         if (fileName == null) {
