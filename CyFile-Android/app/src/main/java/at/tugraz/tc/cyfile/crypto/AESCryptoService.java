@@ -41,7 +41,7 @@ public class AESCryptoService implements CryptoService {
         return Base64.getEncoder().encodeToString(encryptedBytes);
     }
 
-    private boolean initEncryptionCipher() {
+    private void initEncryptionCipher() throws InvalidCryptoOperationException {
         Key key = keyVaultService.getEncryptionKey();
         currentIV = new byte[BLOCK_SIZE];
         SecureRandom random = new SecureRandom();
@@ -52,13 +52,11 @@ public class AESCryptoService implements CryptoService {
             encCipher = Cipher.getInstance(ALGORITHM);
             encCipher.init(Cipher.ENCRYPT_MODE, key, ivParameterSpec);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException | InvalidKeyException e) {
-            e.printStackTrace();
-            return false;
+            throw new InvalidCryptoOperationException(e);
         }
-        return true;
     }
 
-    private boolean initDecryptionCipher(byte[] iv) {
+    private void initDecryptionCipher(byte[] iv) throws InvalidCryptoOperationException {
         Key key = keyVaultService.getEncryptionKey();
         IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
 
@@ -66,27 +64,22 @@ public class AESCryptoService implements CryptoService {
             decCipher = Cipher.getInstance(ALGORITHM);
             decCipher.init(Cipher.DECRYPT_MODE, key, ivParameterSpec);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException | InvalidKeyException e) {
-            e.printStackTrace();
-            return false;
+            throw new InvalidCryptoOperationException(e);
         }
-        return true;
     }
 
     @Override
     public byte[] encrypt(byte[] data) throws InvalidCryptoOperationException {
         try {
-            boolean initSuccess = initEncryptionCipher();
-            if (initSuccess) {
-                byte[] encBytes = encCipher.doFinal(data);
-                byte[] ret = new byte[encBytes.length + currentIV.length];
-                System.arraycopy(currentIV, 0, ret, 0, currentIV.length);
-                System.arraycopy(encBytes, 0, ret, currentIV.length, encBytes.length);
-                return ret;
-            }
+            initEncryptionCipher();
+            byte[] encBytes = encCipher.doFinal(data);
+            byte[] ret = new byte[encBytes.length + currentIV.length];
+            System.arraycopy(currentIV, 0, ret, 0, currentIV.length);
+            System.arraycopy(encBytes, 0, ret, currentIV.length, encBytes.length);
+            return ret;
         } catch (IllegalBlockSizeException | BadPaddingException e) {
-            e.printStackTrace();
+            throw new InvalidCryptoOperationException(e);
         }
-        throw new InvalidCryptoOperationException();
     }
 
     @Override
@@ -100,9 +93,8 @@ public class AESCryptoService implements CryptoService {
             initDecryptionCipher(iv);
             return decCipher.doFinal(encryptedData);
         } catch (IllegalBlockSizeException | BadPaddingException e) {
-            e.printStackTrace();
+            throw new InvalidCryptoOperationException(e);
         }
-        throw new InvalidCryptoOperationException();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
