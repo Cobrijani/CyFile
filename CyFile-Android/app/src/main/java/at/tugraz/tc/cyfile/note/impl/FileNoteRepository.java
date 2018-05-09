@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashSet;
@@ -21,8 +22,9 @@ public class FileNoteRepository implements NoteRepository {
     private static final String DEFAULT_FILE_NAME = "notes.bin";
 
     private final String fileName;
-    private final InMemoryNoteRepository inMemoryNoteRepository;
+    private InMemoryNoteRepository inMemoryNoteRepository;
     private final Context context;
+    private boolean initialized = false;
 
     public FileNoteRepository(Context context, String fileName) {
         if (fileName == null) {
@@ -30,18 +32,26 @@ public class FileNoteRepository implements NoteRepository {
         }
         this.fileName = fileName;
         this.context = context;
+    }
 
+    @Override
+    public void initialize() {
         Set<Note> notes = loadNotesFromFile();
         inMemoryNoteRepository = new InMemoryNoteRepository(notes);
+        initialized = true;
+    }
+
+    public InputStream getInputStream() throws FileNotFoundException {
+        return context.openFileInput(fileName);
     }
 
     private Set<Note> loadNotesFromFile() {
         List<Note> notes = new LinkedList<>();
-        try (FileInputStream fis = context.openFileInput(fileName);
+        try (InputStream fis = getInputStream();
              ObjectInputStream is = new ObjectInputStream(fis)) {
             notes = (List<Note>) is.readObject();
             Log.d("File IO", "loaded " + notes.size() + " notes from file");
-        } catch (FileNotFoundException e ) {
+        } catch (FileNotFoundException e) {
             Log.d("File IO", "file not found, is this the first use?");
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -63,16 +73,25 @@ public class FileNoteRepository implements NoteRepository {
 
     @Override
     public List<Note> findAll() {
+        if (!initialized) {
+            throw new IllegalStateException("FileNoteRepository was not initialized");
+        }
         return inMemoryNoteRepository.findAll();
     }
 
     @Override
     public Note findOne(String id) {
+        if (!initialized) {
+            throw new IllegalStateException("FileNoteRepository was not initialized");
+        }
         return inMemoryNoteRepository.findOne(id);
     }
 
     @Override
     public Note save(Note note) {
+        if (!initialized) {
+            throw new IllegalStateException("FileNoteRepository was not initialized");
+        }
         inMemoryNoteRepository.save(note);
         List<Note> notes = inMemoryNoteRepository.findAll();
         if (note.getId().length() == 0) {
@@ -84,6 +103,9 @@ public class FileNoteRepository implements NoteRepository {
 
     @Override
     public void delete(String id) {
+        if (!initialized) {
+            throw new IllegalStateException("FileNoteRepository was not initialized");
+        }
         inMemoryNoteRepository.delete(id);
         List<Note> notes = inMemoryNoteRepository.findAll();
         if (notes.contains(new Note(id, "", ""))) {

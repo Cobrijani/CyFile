@@ -55,6 +55,7 @@ public class CyFileApplication extends Application {
             CryptoService cryptoService = new PrefixCryptoService();
 
             NoteRepository repository = new FileNoteRepository(this, null);
+            repository.initialize();
 
             //add this prompter to the lifecycle so we which states
             ProcessLifecycleOwner.get().getLifecycle().addObserver(prompter);

@@ -56,7 +56,7 @@ public class FileNoteRepositoryUnitTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        fileNoteRepository = new FileNoteRepository(null, context, anyString());
+//        fileNoteRepository = new FileNoteRepository(null, context, anyString());
     }
 
     //scheiß streams
