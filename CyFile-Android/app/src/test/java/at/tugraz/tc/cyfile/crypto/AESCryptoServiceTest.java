@@ -77,17 +77,21 @@ public class AESCryptoServiceTest {
         fail("Exception should have been thrown");
     }
 
-    @Test
-    public void testEncryptChangePasswordDecryptFail() throws InvalidCryptoOperationException,
+    @Test(expected = InvalidCryptoOperationException.class)
+    public void testEncryptChangePasswordDecryptFail() throws InvalidKeyException, InvalidCryptoOperationException,
             NoSuchAlgorithmException{
-        setup(dummyKeyVaultService);
-        Key key = new SecretKeySpec("new_password".getBytes(), "AES");
-        when(dummyKeyVaultService.getEncryptionKey()).thenReturn(key);
+        KeyGenerator keyGenerator;
+        keyGenerator = KeyGenerator.getInstance("AES");
+        keyGenerator.init(128);
+        Key key = keyGenerator.generateKey();
+        Key key2 = keyGenerator.generateKey();
+        KeyVaultService kvs = mock(KeyVaultService.class);
+        setup(kvs);
+        when(kvs.getEncryptionKey()).thenReturn(key);
         String plain = "Hello World!";
         byte[] encrypted = cryptoService.encrypt(plain.getBytes());
         assertNotSame(plain, encrypted);
-        key = new SecretKeySpec("new_password".getBytes(), "AES");
-        when(dummyKeyVaultService.getEncryptionKey()).thenReturn(key);
+        when(kvs.getEncryptionKey()).thenReturn(key2);
 
         // 16 for iv, then 16 for each started block of 16
         int expectedLength = (plain.length() / 16 + 2) * 16;

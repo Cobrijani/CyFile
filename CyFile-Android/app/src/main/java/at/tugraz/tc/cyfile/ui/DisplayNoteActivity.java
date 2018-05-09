@@ -1,10 +1,21 @@
 package at.tugraz.tc.cyfile.ui;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.TextView;
+
+import com.nightonke.boommenu.BoomButtons.ButtonPlaceEnum;
+import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
+import com.nightonke.boommenu.BoomButtons.SimpleCircleButton;
+import com.nightonke.boommenu.BoomMenuButton;
+import com.nightonke.boommenu.ButtonEnum;
+import com.nightonke.boommenu.Piece.PiecePlaceEnum;
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -19,7 +30,7 @@ public class DisplayNoteActivity extends BaseActivity {
     NoteService noteService;
 
     private Note loadedNote;
-    private TextView textView;
+    private TextView textContent;
     private TextView textTitle;
 
     @Override
@@ -29,15 +40,18 @@ public class DisplayNoteActivity extends BaseActivity {
 
         getActivityComponent().inject(this);
 
-        textView = findViewById(R.id.noteText);
-        textTitle = findViewById(R.id.TEXT_TITLE);
-
+        initView();
 
         Intent intent = getIntent();
         String noteId = intent.getStringExtra(MainActivity.NOTE_ID);
         loadNote(noteId);
 
         onOpenNote();
+    }
+
+    private void initView() {
+        textContent = findViewById(R.id.NOTE_CONTENT);
+        textTitle = findViewById(R.id.NOTE_TITLE);
     }
 
     public void loadNote(String noteId) {
@@ -52,13 +66,13 @@ public class DisplayNoteActivity extends BaseActivity {
         Log.d("Note Id", loadedNote.getId() + " ");
         Log.d("Note Content", loadedNote.getContent() + " ");
 
-        textView.setText(loadedNote.getContent());
+        textContent.setText(loadedNote.getContent());
         textTitle.setText(loadedNote.getTitle());
     }
 
     public void onSelectSaveNote(View v) {
         String noteTitle = textTitle.getText().toString();
-        String noteContent = textView.getText().toString();
+        String noteContent = textContent.getText().toString();
         Log.d("onSelectSaveNote", "Title:- " + noteTitle);
         Log.d("onSelectSaveNote", "Content:- " + noteContent);
 
