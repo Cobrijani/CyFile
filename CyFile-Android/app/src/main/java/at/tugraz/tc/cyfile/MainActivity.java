@@ -9,12 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -54,9 +49,8 @@ public class MainActivity extends BaseActivity {
         initializeNoteView();
     }
 
-    protected void initializeNoteView()
-    {
-        recyclerView = (RecyclerView) findViewById(R.id.noteList);
+    protected void initializeNoteView() {
+        recyclerView = findViewById(R.id.noteList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
@@ -67,12 +61,9 @@ public class MainActivity extends BaseActivity {
         swipeToAction = new SwipeToAction(recyclerView, new SwipeToAction.SwipeListener<Note>() {
             @Override
             public boolean swipeLeft(final Note itemData) {
-                displaySnackbar("remove " + itemData.getTitle() + "?", "Confirm", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onSelectDeleteNote(itemData.getId());
-                        updateNoteList();
-                    }
+                displaySnackbar("remove " + itemData.getTitle() + "?", "Confirm", v -> {
+                    onSelectDeleteNote(itemData.getId());
+                    updateNoteList();
                 });
                 return true;
             }
@@ -128,7 +119,6 @@ public class MainActivity extends BaseActivity {
 
     public void onSelectDeleteNote(String noteId) {
         Log.d("onSelectDeleteNote", "on select delete note: " + noteId);
-
 
 
         noteService.delete(noteId);
