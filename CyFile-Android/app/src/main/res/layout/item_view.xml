@@ -14,9 +14,9 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="@dimen/default_margin_dp"
             android:tint="@color/icons"
             app:srcCompat="@drawable/ic_android_black_24dp"/>
     </RelativeLayout>
@@ -32,9 +32,9 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="20dp"
+            android:layout_marginEnd="@dimen/default_margin_dp"
             android:tint="@color/icons"
             app:srcCompat="@drawable/ic_delete_black_24dp"/>
     </RelativeLayout>
@@ -67,23 +67,24 @@
             android:layout_marginTop="@dimen/minimal_margin_dp"
             android:layout_marginStart="@dimen/small_margin_dp"
             android:singleLine="true"
-            android:textSize="16dp"
+            android:textSize="@dimen/note_title_text_size"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/author"
-            android:layout_marginStart="@dimen/small_margin_dp"
+            android:id="@+id/content"
+            android:maxLines="@integer/maxContentLines"
+            android:layout_alignStart="@id/title"
+            android:layout_toEndOf="@id/note_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/title"
             android:layout_below="@+id/title"
-            android:textSize="14dp" />
+            android:textSize="@dimen/note_content_text_size" />
     </RelativeLayout>
 
 
     <!-- just a divider -->
     <View android:background="@color/divider"
         android:layout_width="fill_parent"
-        android:layout_height="0.5dp" />
+        android:layout_height="@dimen/note_divider_height" />
 
 </FrameLayout>

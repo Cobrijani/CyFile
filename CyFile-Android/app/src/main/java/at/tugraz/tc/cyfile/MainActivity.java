@@ -36,9 +36,9 @@ public class MainActivity extends BaseActivity {
     @Inject
     SecretPrompter secretPrompter;
 
-    RecyclerView recyclerView;
-    NotesAdapter adapter;
-    SwipeToAction swipeToAction;
+    private RecyclerView recyclerView;
+    private NotesAdapter adapter;
+    private SwipeToAction swipeToAction;
 
     public static final String NOTE_ID = "NOTE_ID";
 
@@ -48,9 +48,10 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         getActivityComponent().inject(this);
         secretPrompter.promptSecret();
+        initializeNoteView();
     }
 
-    protected void initializeNoteList()
+    protected void initializeNoteView()
     {
         recyclerView = (RecyclerView) findViewById(R.id.noteList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -63,7 +64,6 @@ public class MainActivity extends BaseActivity {
         swipeToAction = new SwipeToAction(recyclerView, new SwipeToAction.SwipeListener<Note>() {
             @Override
             public boolean swipeLeft(final Note itemData) {
-
                 return true;
             }
 
@@ -87,8 +87,11 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        updateNoteList();
+    }
 
-        initializeNoteList();
+    private void updateNoteList() {
+        adapter.updateData(noteService.findAll());
     }
 
 

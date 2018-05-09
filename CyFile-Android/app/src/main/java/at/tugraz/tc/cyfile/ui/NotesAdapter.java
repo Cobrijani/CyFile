@@ -22,19 +22,24 @@ public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     /** References to the views for each data item **/
     public class NoteViewHolder extends SwipeToAction.ViewHolder<Note> {
         public TextView titleView;
-        public TextView authorView;
+        public TextView contentView;
 
         public NoteViewHolder(View v) {
             super(v);
 
             titleView = (TextView) v.findViewById(R.id.title);
-            authorView = (TextView) v.findViewById(R.id.author);
+            contentView = (TextView) v.findViewById(R.id.content);
         }
     }
 
     /** Constructor **/
     public NotesAdapter(List<Note> items) {
         this.items = items;
+    }
+
+    public void updateData(List<Note> notes){
+        this.items = notes;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -60,7 +65,7 @@ public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         Note item = items.get(position);
         NoteViewHolder vh = (NoteViewHolder) holder;
         vh.titleView.setText(item.getTitle());
-        vh.authorView.setText(item.getContent());
+        vh.contentView.setText(item.getContent());
         vh.data = item;
     }
 }
