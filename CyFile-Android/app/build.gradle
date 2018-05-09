@@ -42,7 +42,9 @@ dependencies {
     implementation "com.google.dagger:dagger-android-support:$dagger_version"
     implementation "com.blankj:utilcode:$util_version"
     implementation "com.andrognito.patternlockview:patternlockview:$pattern_lock_version"
-    implementation "android.arch.lifecycle:extensions:1.1.1"
+    implementation "android.arch.lifecycle:extensions:$lifecycle_version"
+    implementation "com.android.support:design:$android_support_design_version"
+    implementation "co.dift.ui.swipetoaction:library:$swipe_to_action_version"
 
 
     //testing
@@ -60,12 +62,6 @@ dependencies {
     annotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"
     compileOnly "org.projectlombok:lombok:$lombok_version"
     annotationProcessor "org.projectlombok:lombok:$lombok_version"
-
-    //BAM button from https://github.com/Nightonke/BoomMenu/wiki
-    compile "com.nightonke:boommenu:2.1.1"
-    compile 'com.android.support:design:27.1.1'
-    compile 'co.dift.ui.swipetoaction:library:1.1'
-
 }
 
 
