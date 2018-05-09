@@ -1,38 +1,71 @@
 language: android
 jdk: oraclejdk8
-sudo: false
+sudo: required
 
+
+before_cache:
+   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+   - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    - $HOME/.gradle/caches
+    - $HOME/.gradle/wrapper
+
+env:
+  global:
+    - ANDROID_API_LEVEL=27
+    - EMULATOR_API_LEVEL=19
+    - ANDROID_BUILD_TOOLS=27.0.3
+    - ADB_INSTALL_TIMEOUT=5 # minutes
+    - secure: "MFBIzwq7ZDqs5vt7jr1zIVNXfdfykX3EgmJbmKAReAeSPFulIH3PzDYr9kBnpvHDKbZ0Z6/EnWWfE0/CjYc8OJoiXpHMV4/gTLbLNsIJL9e0UdCJWbxc2iyN71gwCJdZlijg0QfhTf6N5X85iNOymHKgpbzlSAK3xKVec/NOs4PEGa2lEQVvQo1eyONknyK2ly4bdmGmiDW1LBMkwfTvu3+zR27qD+rpqPhM6VsjAHrmFiPSpJ9yCc1vv9kHj1ii584Y93/a6NLpVBFsUwRZG8YNOizo6cw4dfXcUO+O+hBG7mDj2l87kQicgxO6ZJKaAHIPOcfC/rbqmw4Qu9EQz6Kf05K6ILYFQJ4ewgeuoVme5VpEXnavf4udwdMKmS8tMZWKdh3Np5fPqMd0LQqxN33mHPo0Khn6Rx0jSrADNk614Nce3L0XU0BzKZod5vv6AIw54uAvaCaGAcbSyMw6Z1RrZf2T6oQvuWt2hs4mao9JWPYluXsBcn5TGKzUqLYlc2AeyYod5Q9PTAnZv3y7H9q8fxWRNmjqbsftZvQGeVxQ0j4ERqJ6KvlxWhb6FIl7Wh76Dn1DkQE3TpDZbHSoI4kZSVheiLK9lFap6ngKrpdkuAy4dhuYCjTu7FiROLm9eh3daYPr90kxNh45EXk6xMAMnzseKLKBvKs9v83cUnY="
+    - secure: "XNrXfYnk5Z0xarVwKqbl70motHIY7eK+gyfK2ENTNbozYakZd9m1h4PE6PNcM0n9Q2WRIyT80AiISeWD0UpYbS1d8R4o6X/twCBKrCUIHGYftwXLuwFPJvbO0XPOiyyA43ae8mqBcljMgxtShgpD0NM1Z2Ggfa1GFoTUCwm8PSD6p999D61SooS8cocAXoo1KhfOfVlsRxXH/JxLvLjp3jMf+VIEPD/M1dJbya0x+0uNXLXZV7413Mfjx85oer1SJNBw0DKMysTpFbay3JNZM0Wt0Z15QPRjU7Sn5OOuJjzFtQZAkFMbL2LynSyJUHHfgYl+r54rNx9JSBMMwhp5plUznhxmlhstduvx31u6VVar3te4/+My+oQAeiTgmXXlQxFERtcKRVp09ZRUd42wCMfSb0MODryM4eY5gEh3wD5/M1RkSWSkm/eIEakTaTJhIPovgbQUGa3Q2R2kYkzD7QawQiLtNwa5BHEtDBXw9NaLCGP0hh3/aXbMSmpyvxz5wWFRLWY2GtyLccpg0g2bKkNzPQKNoJuq2uja4jFhhNlEhX40EmzuV8CYPdeZ+kA8R79x3cc+5E6S9PrL9UX0WpvM8C0YbdTA1n/RMEJmjL2bMuvQN7b0SFM8nvhm90ZaBdEYYE8T2D5AK2MWdOSfmY+55wxTYzDhZkTIhv9+tYk="
 android:
-  components:
-    - platform-tools
-    - tools
-    - build-tools-27.0.3
-    - android-19
-    - android-27
-
-    # Support library
-    - extra-android-support
-    - extra-android-m2repository
-
-    - sys-img-x86-android-27
-    - sys-img-armeabi-v7a-android-19
-  licenses:
-   - 'android-sdk-license-.+'
+ components:
+   - tools
+   - platform-tools
+   - build-tools-$ANDROID_BUILD_TOOLS
+   - android-$ANDROID_API
+   - android-$EMULATOR_API_LEVEL
+   - extra-google-m2repository
+   - extra-android-m2repository # for design library
+   - addon-google_apis-google-19 # google play services
+   - sys-img-armeabi-v7a-addon-google_apis-google-$ANDROID_API_LEVEL
+   - sys-img-armeabi-v7a-addon-google_apis-google-$EMULATOR_API_LEVEL
+   - sys-img-armeabi-v7a-google_apis-$EMULATOR_API_LEVEL
+   - sys-img-armeabi-v7a-google_apis-$ANDROID_API_LEVEL
+ licenses:
+   - android-sdk-preview-license-.+
+   - android-sdk-license-.+
+   - google-gdk-license-.+
 
 before_install:
-- yes | sdkmanager "platforms;android-27"
-
-before_script:
+  - yes | sdkmanager "platforms;android-27"
+  - mkdir "$ANDROID_HOME/licenses" || true
+  - echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
+  - echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
   - cd CyFile-Android
   - chmod +x gradlew
-  - echo no | android create avd --force -n test -t android-19 --abi armeabi-v7a
-  - emulator -avd test -no-window -skin 1080x1920 &
-  - ./gradlew check
+ # - openssl aes-256-cbc -K $encrypted_51c6121dfd24_key -iv $encrypted_51c6121dfd24_iv -in cyfile-release-keystore.jks.enc -out cyfile-release-keystore.jks -d
+  - ./gradlew dependencies || true
+
+before_script:
+  - echo no | android create avd --force -n test -t android-$EMULATOR_API_LEVEL --abi google_apis/armeabi-v7a
+  - emulator -avd test -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
-
 script:
   - echo "Travis branch is $TRAVIS_BRANCH"
   - echo "Travis branch is in pull request $TRAVIS_PULL+REQUEST"
   - ./gradlew test
-  - ./gradlew connectedAndroidTest
+  - "./gradlew clean build connectedCheck -PdisablePreDex --stacktrace"
+
+
+# before_deploy:
+# - cp $TRAVIS_BUILD_DIR/.keystore $HOME
+# - cd app/build/outputs/apk/
+# - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/keystore.jks -storepass $storepass -keypass $keypass app-release-unsigned.apk cyfile-sign-key
+
+# # Verification
+# - jarsigner -verify app-release-unsigned.apk
+# - "${ANDROID_HOME}/build-tools/$ANDROID_BUILD_TOOLS/zipalign -v 4 app-release-unsigned.apk yourapp.apk"
