@@ -11,6 +11,8 @@ import java.util.Arrays;
 
 import javax.crypto.KeyGenerator;
 
+import at.tugraz.tc.cyfile.BaseUnitTest;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotSame;
@@ -25,7 +27,7 @@ import static org.mockito.Mockito.when;
  * Created by david on 3/21/2018.
  */
 
-public class AESCryptoServiceTest {
+public class AESCryptoServiceTest extends BaseUnitTest {
 
     private AESCryptoService cryptoService;
     private KeyVaultService dummyKeyVaultService = new DummyKeyVaultService();
@@ -45,7 +47,7 @@ public class AESCryptoServiceTest {
     //TODO this won't work until we reinitialize the cipher on every encrypt/decrypt
     @Ignore
     @Test
-    public void testRelockedVault()  throws InvalidCryptoOperationException{
+    public void testRelockedVault() throws InvalidCryptoOperationException {
         setup(dummyKeyVaultService);
         String plain = "Hello World!";
         String encrypted = cryptoService.encrypt(plain);
@@ -77,7 +79,7 @@ public class AESCryptoServiceTest {
 
     @Test(expected = InvalidCryptoOperationException.class)
     public void testEncryptChangePasswordDecryptFail() throws InvalidKeyException, InvalidCryptoOperationException,
-            NoSuchAlgorithmException{
+            NoSuchAlgorithmException {
         KeyGenerator keyGenerator;
         keyGenerator = KeyGenerator.getInstance("AES");
         keyGenerator.init(128);
@@ -174,7 +176,7 @@ public class AESCryptoServiceTest {
 
     @Ignore
     @Test
-    public void testEncryptDifferentCryptoServiceInstances () throws InvalidKeyException, InvalidCryptoOperationException {
+    public void testEncryptDifferentCryptoServiceInstances() throws InvalidKeyException, InvalidCryptoOperationException {
         //TODO this can't work until we initialize the iv for every encryption
         setup(dummyKeyVaultService);
         String plain = "";
@@ -188,7 +190,7 @@ public class AESCryptoServiceTest {
     }
 
     @Test
-    public void testEncryptLongString()  throws InvalidCryptoOperationException {
+    public void testEncryptLongString() throws InvalidCryptoOperationException {
         setup(dummyKeyVaultService);
         String plain = "\"Nam vehicula tellus euismod, faucibus enim vitae, feugiat risus. Morbi in\\n\" +\n" +
                 "                        \"                pulvinar dolor, vitae ultricies diam. Cras sed turpis nec elit laoreet ultricies non\\n\" +\n" +

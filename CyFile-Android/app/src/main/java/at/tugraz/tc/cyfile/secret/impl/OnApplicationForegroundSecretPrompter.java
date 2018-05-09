@@ -3,7 +3,6 @@ package at.tugraz.tc.cyfile.secret.impl;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.OnLifecycleEvent;
-import android.util.Log;
 
 import at.tugraz.tc.cyfile.secret.SecretPrompter;
 
@@ -41,11 +40,12 @@ public class OnApplicationForegroundSecretPrompter implements SecretPrompter, Li
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private void onAppBackgrounded() {
         currentState = realState;
+        currentState.promptSecret();
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     private void onAppForegrounded() {
-        currentState.promptSecret();
+
     }
 
 
