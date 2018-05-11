@@ -36,7 +36,7 @@ public class DisplayNoteActivity extends BaseActivity {
         initView();
 
         Intent intent = getIntent();
-        String noteId = intent.getStringExtra(MainActivity.NOTE_ID);
+        String noteId = intent.getStringExtra(ListNoteActivity.NOTE_ID);
         loadNote(noteId);
 
         onOpenNote();
@@ -78,7 +78,7 @@ public class DisplayNoteActivity extends BaseActivity {
 
     public void onSelectDeleteNote(View v) {
         Intent intent = getIntent();
-        String noteId = intent.getStringExtra(MainActivity.NOTE_ID);
+        String noteId = intent.getStringExtra(ListNoteActivity.NOTE_ID);
 
         noteService.delete(noteId);
 

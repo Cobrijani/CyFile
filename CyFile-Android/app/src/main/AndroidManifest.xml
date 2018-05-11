@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="at.tugraz.tc.cyfile">
 
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
+
+
     <application
         android:name=".CyFileApplication"
         android:allowBackup="true"
@@ -23,6 +26,16 @@
         <activity
             android:name=".ui.DisplayNoteActivity"
             android:launchMode="singleInstance" />
+        <activity
+            android:name=".ui.ListNoteActivity"
+            android:launchMode="singleInstance" />
+
+        <receiver android:name=".ui.CallReceiverActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL">
+                </action>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -6,32 +6,4 @@
     android:layout_height="match_parent"
     tools:context="at.tugraz.tc.cyfile.MainActivity">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/noteList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </RelativeLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/BTN_ADD"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/default_margin_dp"
-        android:layout_marginBottom="@dimen/default_margin_dp"
-        android:onClick="onSelectAddNote"
-        android:tint="@android:color/white"
-        app:backgroundTint="@color/teal"
-        app:borderWidth="@dimen/default_fab_border_dp"
-        app:elevation="@dimen/default_fab_elevation_dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add" />
-
-
 </android.support.constraint.ConstraintLayout>
