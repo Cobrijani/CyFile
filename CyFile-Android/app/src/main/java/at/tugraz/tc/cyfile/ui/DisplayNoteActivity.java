@@ -1,18 +1,13 @@
 package at.tugraz.tc.cyfile.ui;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import javax.inject.Inject;
 
-import at.tugraz.tc.cyfile.MainActivity;
 import at.tugraz.tc.cyfile.R;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.note.NoteService;
