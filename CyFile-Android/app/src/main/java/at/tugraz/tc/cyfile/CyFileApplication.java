@@ -2,7 +2,9 @@ package at.tugraz.tc.cyfile;
 
 import android.app.Application;
 import android.arch.lifecycle.ProcessLifecycleOwner;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.pm.PackageManager;
 
 import com.blankj.utilcode.util.Utils;
 
@@ -22,6 +24,7 @@ import at.tugraz.tc.cyfile.note.impl.InMemoryNoteRepository;
 import at.tugraz.tc.cyfile.note.impl.SecureNoteService;
 import at.tugraz.tc.cyfile.secret.SecretModule;
 import at.tugraz.tc.cyfile.secret.SecretRepository;
+import at.tugraz.tc.cyfile.secret.impl.DefaultAppHidingModule;
 import at.tugraz.tc.cyfile.secret.impl.InMemorySecretRepository;
 import at.tugraz.tc.cyfile.secret.impl.OnApplicationForegroundSecretPrompter;
 import at.tugraz.tc.cyfile.secret.impl.PinPatternSecret;
@@ -64,7 +67,12 @@ public class CyFileApplication extends Application {
                     .appModule(new AppModule(this))
                     .noteModule(new NoteModule(new SecureNoteService(new InMemoryNoteRepository(), new AESCryptoService(keyVaultService))))
                     .asyncModule(new AsyncModule(new JobExecutor()))
-                    .secretModule(new SecretModule(new SecretManagerImpl(new SimplePinPatternSecretVerifier(secretRepository), secretRepository), prompter, keyVaultService))
+                    .secretModule(new SecretModule(
+                            new SecretManagerImpl(
+                            new SimplePinPatternSecretVerifier(secretRepository), secretRepository),
+                            prompter,
+                            keyVaultService,
+                            new DefaultAppHidingModule()))
                     .build();
         }
         return mApplicationComponent;
@@ -75,6 +83,19 @@ public class CyFileApplication extends Application {
         this.mApplicationComponent = applicationComponent;
     }
 
+    private void hideApp() {
+        PackageManager p = getPackageManager();
+        ComponentName componentName = new ComponentName(this, MainActivity.class);
+        p.setComponentEnabledSetting(componentName,
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+    }
+
+    private void displayApp() {
+        PackageManager p = getPackageManager();
+        ComponentName componentName = new ComponentName(this, MainActivity.class);
+        p.setComponentEnabledSetting(componentName,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+    }
 
     private Set<Note> getInitialNotes() {
         Set<Note> initialNotes = new HashSet<>();

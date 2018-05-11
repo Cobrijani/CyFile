@@ -24,6 +24,7 @@ import at.tugraz.tc.cyfile.note.NoteService;
 import at.tugraz.tc.cyfile.secret.SecretManager;
 import at.tugraz.tc.cyfile.secret.SecretModule;
 import at.tugraz.tc.cyfile.secret.SecretPrompter;
+import at.tugraz.tc.cyfile.secret.impl.DefaultAppHidingModule;
 import at.tugraz.tc.cyfile.ui.DisplayNoteActivity;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -66,7 +67,7 @@ public class MainActivityInstrumentedTest extends BaseInstrumentedTest {
                 = DaggerApplicationComponent.builder()
                 .noteModule(new NoteModule(noteService))
                 .asyncModule(new AsyncModule(mock(Executor.class)))
-                .secretModule(new SecretModule(secretManager, secretPrompter, keyVaultService))
+                .secretModule(new SecretModule(secretManager, secretPrompter, keyVaultService, new DefaultAppHidingModule()))
                 .appModule(mock(AppModule.class))
                 .build();
 

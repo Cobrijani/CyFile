@@ -22,6 +22,7 @@ import at.tugraz.tc.cyfile.note.NoteModule;
 import at.tugraz.tc.cyfile.note.NoteService;
 import at.tugraz.tc.cyfile.secret.SecretManager;
 import at.tugraz.tc.cyfile.secret.SecretModule;
+import at.tugraz.tc.cyfile.secret.impl.DefaultAppHidingModule;
 import at.tugraz.tc.cyfile.secret.impl.OnApplicationForegroundSecretPrompter;
 import at.tugraz.tc.cyfile.secret.impl.PinPatternSecretPrompter;
 
@@ -59,7 +60,11 @@ public class PatternLockActivityInstrumentedTest extends BaseInstrumentedTest {
                 .appModule(new AppModule(app))
                 .noteModule(new NoteModule(mock(NoteService.class)))
                 .asyncModule(new AsyncModule(mock(Executor.class)))
-                .secretModule(new SecretModule(secretManager, new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(app), keyVaultService), keyVaultService)).build());
+                .secretModule(new SecretModule(
+                        secretManager,
+                        new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(app), keyVaultService),
+                        keyVaultService,
+                        new DefaultAppHidingModule())).build());
     }
 
     @Test

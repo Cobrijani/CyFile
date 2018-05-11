@@ -15,10 +15,14 @@ public class SecretModule {
 
     private final KeyVaultService keyVaultService;
 
-    public SecretModule(SecretManager secretManager, SecretPrompter secretPrompter, KeyVaultService keyVaultService) {
+    private final AppHidingModule appHidingModule;
+
+    public SecretModule(SecretManager secretManager, SecretPrompter secretPrompter,
+                        KeyVaultService keyVaultService, AppHidingModule appHidingModule) {
         this.secretManager = secretManager;
         this.secretPrompter = secretPrompter;
         this.keyVaultService = keyVaultService;
+        this.appHidingModule = appHidingModule;
     }
 
     @Provides
@@ -37,5 +41,11 @@ public class SecretModule {
     @Singleton
     public KeyVaultService providesKeyVaultService() {
         return keyVaultService;
+    }
+
+    @Provides
+    @Singleton
+    public AppHidingModule providesAppHidingModule() {
+        return appHidingModule;
     }
 }
