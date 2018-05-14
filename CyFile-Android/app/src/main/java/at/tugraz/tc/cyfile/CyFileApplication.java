@@ -60,7 +60,9 @@ public class CyFileApplication extends Application {
             KeyVaultService keyVaultService = new DummyKeyVaultService();
             CryptoService cryptoService = new PrefixCryptoService();
 
-            NoteRepository repository = new FileNoteRepository(this, null);
+            CyFileLogger logger = new AndroidLogger();
+
+            NoteRepository repository = new FileNoteRepository(this, null, logger);
             repository.initialize();
 
             //add this prompter to the lifecycle so we which states
@@ -73,7 +75,7 @@ public class CyFileApplication extends Application {
                     prompter,
                     keyVaultService
             );
-            CyFileLogger logger = new AndroidLogger();
+
             mApplicationComponent = DaggerApplicationComponent.builder()
                     .appModule(new AppModule(this, logger))
                     .noteModule(new NoteModule(new SecureNoteService(repository, cryptoService)))

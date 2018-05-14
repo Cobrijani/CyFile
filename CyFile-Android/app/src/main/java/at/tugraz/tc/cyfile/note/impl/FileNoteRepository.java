@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,6 +50,10 @@ public class FileNoteRepository implements NoteRepository {
         return context.openFileInput(fileName);
     }
 
+    public OutputStream getOutputStream() throws FileNotFoundException {
+        return context.openFileOutput(fileName, Context.MODE_PRIVATE);
+    }
+
     private Set<Note> loadNotesFromFile() {
         List<Note> notes = new LinkedList<>();
         try (InputStream fis = getInputStream();
@@ -64,7 +69,7 @@ public class FileNoteRepository implements NoteRepository {
     }
 
     private void saveNotesToFile(List<Note> notes) {
-        try (FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+        try (OutputStream fos = getOutputStream();
              ObjectOutputStream os = new ObjectOutputStream(fos)) {
             os.writeObject(notes);
             logger.d("File IO", "saved " + notes.size() + " notes to file");

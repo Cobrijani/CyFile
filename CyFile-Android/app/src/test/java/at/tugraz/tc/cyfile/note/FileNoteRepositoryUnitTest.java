@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -81,10 +82,40 @@ public class FileNoteRepositoryUnitTest {
         Assert.assertEquals("name2", actual2.getTitle());
     }
 
+    private OutputStream createOutputStream() throws IOException {
+        ByteArrayOutputStream bas = new ByteArrayOutputStream(2048);
 
+        return bas;
+    }
 
-    //anderer Test umgekehrt, OutputStream in InputStream verpacken -
-    // darin schreiben und dann wieder einlesen und sehen ob gleich
+    @Test
+    public void saveNoteToFileWithSuccess() throws Exception {
+        Note n = new Note("my-id1", "name", "content");
+        Note n1 = new Note("my-id2", "name2", "content2");
+        List<Note> notes = new LinkedList<>();
+        notes.add(n1);
+
+        FileNoteRepository spyRepository = Mockito.spy(new FileNoteRepository(context, null, logger));
+
+        ByteArrayOutputStream os = (ByteArrayOutputStream) createOutputStream();
+
+        Mockito.doReturn(os).when(spyRepository).getOutputStream();
+        Mockito.doReturn(createInputStream(notes)).when(spyRepository).getInputStream();
+
+        spyRepository.initialize();
+
+        Note actual = spyRepository.save(n);
+        Assert.assertNotNull(actual);
+
+        byte[] buffer = os.toByteArray();
+        ByteArrayInputStream is = new ByteArrayInputStream(buffer);
+
+        Mockito.doReturn(is).when(spyRepository).getInputStream();
+
+        List<Note> actualList = spyRepository.findAll();
+        Assert.assertNotNull(actualList);
+        //Assert.assertTrue(actualList.size() == 2);
+    }
 }
 
 
