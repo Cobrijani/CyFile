@@ -16,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -91,9 +92,12 @@ public class FileNoteRepositoryUnitTest {
     @Test
     public void saveNoteToFileWithSuccess() throws Exception {
         Note n = new Note("my-id1", "name", "content");
-        Note n1 = new Note("my-id2", "name2", "content2");
         List<Note> notes = new LinkedList<>();
-        notes.add(n1);
+        notes.add(n);
+
+        Note nSave = new Note();
+        nSave.setTitle("name2");
+        nSave.setContent("content2");
 
         FileNoteRepository spyRepository = Mockito.spy(new FileNoteRepository(context, null, logger));
 
@@ -104,17 +108,16 @@ public class FileNoteRepositoryUnitTest {
 
         spyRepository.initialize();
 
-        Note actual = spyRepository.save(n);
-        Assert.assertNotNull(actual);
+        Note saved = spyRepository.save(nSave);
+        Assert.assertNotNull(saved);
 
         byte[] buffer = os.toByteArray();
         ByteArrayInputStream is = new ByteArrayInputStream(buffer);
+        ObjectInputStream ois = new ObjectInputStream(is);
+        List<Note> actual = (List<Note>) ois.readObject();
 
-        Mockito.doReturn(is).when(spyRepository).getInputStream();
-
-        List<Note> actualList = spyRepository.findAll();
-        Assert.assertNotNull(actualList);
-        //Assert.assertTrue(actualList.size() == 2);
+        Assert.assertTrue(actual.size() == 2);
+        Assert.assertTrue(actual.contains(nSave));
     }
 }
 
