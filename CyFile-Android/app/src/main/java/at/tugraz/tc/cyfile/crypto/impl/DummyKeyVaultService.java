@@ -1,15 +1,24 @@
-package at.tugraz.tc.cyfile.crypto;
+package at.tugraz.tc.cyfile.crypto.impl;
 
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.KeyGenerator;
 
+import at.tugraz.tc.cyfile.crypto.KeyVaultService;
+import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultAlreadyInitializedException;
+import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultNotInitializedException;
+
 public class DummyKeyVaultService implements KeyVaultService {
     private Key key;
 
     @Override
-    public void unlockVault(String passphrase, String algo) {
+    public void init(String passphrase) throws KeyVaultAlreadyInitializedException {
+
+    }
+
+    @Override
+    public void unlockVault(String passphrase) throws KeyVaultNotInitializedException {
         KeyGenerator keyGenerator;
         try {
             keyGenerator = KeyGenerator.getInstance("AES");

@@ -15,8 +15,7 @@ public class SecretModule {
 
     private final KeyVaultService keyVaultService;
 
-    public SecretModule(SecretManager secretManager, SecretPrompter secretPrompter,
-                        KeyVaultService keyVaultService) {
+    public SecretModule(SecretManager secretManager, SecretPrompter secretPrompter, KeyVaultService keyVaultService) {
         this.secretManager = secretManager;
         this.secretPrompter = secretPrompter;
         this.keyVaultService = keyVaultService;
@@ -36,5 +35,7 @@ public class SecretModule {
 
     @Provides
     @Singleton
-    public KeyVaultService providesKeyVaultService() { return keyVaultService; }
+    public KeyVaultService providesKeyVaultService() {
+        return keyVaultService;
+    }
 }

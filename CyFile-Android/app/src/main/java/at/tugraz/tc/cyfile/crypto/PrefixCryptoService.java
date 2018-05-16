@@ -2,6 +2,7 @@ package at.tugraz.tc.cyfile.crypto;
 
 import java.security.InvalidKeyException;
 
+import at.tugraz.tc.cyfile.crypto.exceptions.InvalidCryptoOperationException;
 import kotlin.NotImplementedError;
 
 /**
@@ -11,22 +12,22 @@ import kotlin.NotImplementedError;
 public class PrefixCryptoService implements CryptoService {
     public static final String PREFIX = "PLEASE DON'T READ ";
     @Override
-    public byte[] encrypt(byte[] data) throws InvalidCryptoOperationException {
+    public byte[] encrypt(byte[] data) {
         throw new NotImplementedError();
     }
 
     @Override
-    public String encrypt(String data) throws InvalidCryptoOperationException {
+    public String encrypt(String data) {
         return PREFIX + data;
     }
 
     @Override
-    public byte[] decrypt(byte[] cipherData) throws InvalidCryptoOperationException {
+    public byte[] decrypt(byte[] cipherData) {
         throw new NotImplementedError();
     }
 
     @Override
-    public String decrypt(String cipherData) throws InvalidCryptoOperationException {
+    public String decrypt(String cipherData) {
         return cipherData.replaceAll(PREFIX, "");
     }
 

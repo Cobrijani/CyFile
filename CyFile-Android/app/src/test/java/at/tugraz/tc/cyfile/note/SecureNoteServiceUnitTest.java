@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import at.tugraz.tc.cyfile.crypto.CryptoService;
-import at.tugraz.tc.cyfile.crypto.InvalidCryptoOperationException;
+import at.tugraz.tc.cyfile.crypto.exceptions.InvalidCryptoOperationException;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.note.impl.SecureNoteService;
 
@@ -62,6 +62,10 @@ public class SecureNoteServiceUnitTest {
         when(noteRepository.findOne(n.getId()))
                 .thenReturn(n);
 
+        when(cryptoService.decrypt(n.getTitle()))
+                .thenReturn(n.getTitle());
+        when(cryptoService.decrypt(n.getContent()))
+                .thenReturn(n.getContent());
 
         Note note = secureNoteService.findOne("existing-id");
 

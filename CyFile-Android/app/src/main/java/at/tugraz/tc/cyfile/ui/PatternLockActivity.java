@@ -62,15 +62,10 @@ public class PatternLockActivity extends BaseActivity
 
     @Override
     public void onComplete(List<PatternLockView.Dot> pattern) {
-        PinPatternSecret secret = new PinPatternSecret(pattern);
-        if (secretManager.verify(secret)) {
+        PinPatternSecret pinPatternSecret = new PinPatternSecret(pattern);
+        if (secretManager.verify(pinPatternSecret)) {
             mPatternLockView.setViewMode(CORRECT);
-            try {
-                keyVaultService.unlockVault(secret.getSecretValue(), null);
-            } catch (InvalidKeyException e) {
-                e.printStackTrace();
-                throw new IllegalStateException("Key was verified but rejected by the KeyVaultService");
-            }
+            keyVaultService.unlockVault(pinPatternSecret.getSecretValue());
             finish();
         } else {
             Toast.makeText(this, "Invalid pin", Toast.LENGTH_LONG).show();

@@ -1,17 +1,19 @@
 package at.tugraz.tc.cyfile.crypto;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 import java.util.Arrays;
 
 import javax.crypto.KeyGenerator;
-import javax.crypto.spec.SecretKeySpec;
+
+import at.tugraz.tc.cyfile.BaseUnitTest;
+import at.tugraz.tc.cyfile.crypto.exceptions.InvalidCryptoOperationException;
+import at.tugraz.tc.cyfile.crypto.impl.AESCryptoService;
+import at.tugraz.tc.cyfile.crypto.impl.DummyKeyVaultService;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -27,7 +29,7 @@ import static org.mockito.Mockito.when;
  * Created by david on 3/21/2018.
  */
 
-public class AESCryptoServiceTest {
+public class AESCryptoServiceTest extends BaseUnitTest {
 
     private AESCryptoService cryptoService;
     private KeyVaultService dummyKeyVaultService = new DummyKeyVaultService();
@@ -44,9 +46,7 @@ public class AESCryptoServiceTest {
     private int blockSize = 16;
 
 
-    //TODO this won't work until we reinitialize the cipher on every encrypt/decrypt
-    @Ignore
-    @Test
+    @Test(expected = InvalidCryptoOperationException.class)
     public void testRelockedVault()  throws InvalidCryptoOperationException{
         setup(dummyKeyVaultService);
         String plain = "Hello World!";
@@ -61,25 +61,20 @@ public class AESCryptoServiceTest {
         assertNull(decrypted);
     }
 
-    @Test
+    @Test (expected = InvalidKeyException.class)
     public void testFailedUnlock() throws Exception {
         KeyVaultService svc = mock(KeyVaultService.class);
         Mockito.doThrow(new InvalidKeyException())
-                .when(svc).unlockVault(any(), any());
+                .when(svc).unlockVault(any());
         when(svc.getEncryptionKey()).thenReturn(null);
 
         cryptoService = new AESCryptoService(svc);
-        try {
-            cryptoService.init("any pass");
-        } catch (InvalidKeyException e) {
-            return;
-        }
-        fail("Exception should have been thrown");
+        cryptoService.init("any pass");
     }
 
     @Test(expected = InvalidCryptoOperationException.class)
-    public void testEncryptChangePasswordDecryptFail() throws InvalidKeyException, InvalidCryptoOperationException,
-            NoSuchAlgorithmException{
+    public void testEncryptChangePasswordDecryptFail() throws InvalidCryptoOperationException,
+            NoSuchAlgorithmException {
         KeyGenerator keyGenerator;
         keyGenerator = KeyGenerator.getInstance("AES");
         keyGenerator.init(128);
@@ -101,8 +96,6 @@ public class AESCryptoServiceTest {
         assertFalse(plain.equals(decrypted));
     }
 
-
-    //TODO tests with byte-arrays and not strings
 
     @Test
     public void testEncryptDecryptString() throws InvalidCryptoOperationException {
@@ -174,10 +167,8 @@ public class AESCryptoServiceTest {
                 .equals(plain));
     }
 
-    @Ignore
-    @Test
+    @Test(expected = InvalidCryptoOperationException.class)
     public void testEncryptDifferentCryptoServiceInstances () throws InvalidKeyException, InvalidCryptoOperationException {
-        //TODO this can't work until we initialize the iv for every encryption
         setup(dummyKeyVaultService);
         String plain = "";
         String encrypted = cryptoService.encrypt(plain);
@@ -190,7 +181,7 @@ public class AESCryptoServiceTest {
     }
 
     @Test
-    public void testEncryptLongString()  throws InvalidCryptoOperationException {
+    public void testEncryptLongString() throws InvalidCryptoOperationException {
         setup(dummyKeyVaultService);
         String plain = "\"Nam vehicula tellus euismod, faucibus enim vitae, feugiat risus. Morbi in\\n\" +\n" +
                 "                        \"                pulvinar dolor, vitae ultricies diam. Cras sed turpis nec elit laoreet ultricies non\\n\" +\n" +

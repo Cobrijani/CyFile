@@ -6,15 +6,13 @@ import android.content.Context;
 
 import com.blankj.utilcode.util.Utils;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import at.tugraz.tc.cyfile.async.AsyncModule;
+import at.tugraz.tc.cyfile.async.impl.JobExecutor;
 import at.tugraz.tc.cyfile.crypto.CryptoService;
-import at.tugraz.tc.cyfile.crypto.DummyKeyVaultService;
 import at.tugraz.tc.cyfile.crypto.KeyVaultService;
-import at.tugraz.tc.cyfile.crypto.NoOpCryptoService;
 import at.tugraz.tc.cyfile.crypto.PrefixCryptoService;
-import at.tugraz.tc.cyfile.domain.Note;
+import at.tugraz.tc.cyfile.crypto.impl.KeyVaultServiceImpl;
+import at.tugraz.tc.cyfile.crypto.impl.NoOpCryptoService;
 import at.tugraz.tc.cyfile.injection.ApplicationComponent;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
 import at.tugraz.tc.cyfile.logging.AndroidLogger;
@@ -22,7 +20,6 @@ import at.tugraz.tc.cyfile.logging.CyFileLogger;
 import at.tugraz.tc.cyfile.note.NoteModule;
 import at.tugraz.tc.cyfile.note.NoteRepository;
 import at.tugraz.tc.cyfile.note.impl.FileNoteRepository;
-import at.tugraz.tc.cyfile.note.impl.InMemoryNoteRepository;
 import at.tugraz.tc.cyfile.note.impl.SecureNoteService;
 import at.tugraz.tc.cyfile.secret.SecretModule;
 import at.tugraz.tc.cyfile.secret.SecretRepository;
@@ -54,12 +51,12 @@ public class CyFileApplication extends Application {
 
     public ApplicationComponent getComponent() {
         if (mApplicationComponent == null) {
+
+            KeyVaultService keyVaultService = new KeyVaultServiceImpl();
+
+            keyVaultService.init("111222");
             SecretRepository secretRepository = new InMemorySecretRepository(new PinPatternSecret("111222"));
-            OnApplicationForegroundSecretPrompter prompter = new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(this));
-
-            KeyVaultService keyVaultService = new DummyKeyVaultService();
-            CryptoService cryptoService = new PrefixCryptoService();
-
+            OnApplicationForegroundSecretPrompter prompter = new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(this), keyVaultService);
             CyFileLogger logger = new AndroidLogger();
 
             NoteRepository repository = new FileNoteRepository(this, null, logger);
@@ -77,8 +74,12 @@ public class CyFileApplication extends Application {
             );
 
             mApplicationComponent = DaggerApplicationComponent.builder()
-                    .appModule(new AppModule(this, logger))
-                    .noteModule(new NoteModule(new SecureNoteService(repository, cryptoService)))
+                    .appModule(new AppModule(this, new AndroidLogger()))
+                    .noteModule(new NoteModule(
+                            new SecureNoteService(
+                                    repository,
+                                    new NoOpCryptoService())))
+                    .asyncModule(new AsyncModule(new JobExecutor()))
                     .secretModule(secretModule)
                     .build();
         }

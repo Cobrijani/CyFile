@@ -62,8 +62,8 @@ public class FileNoteRepository implements NoteRepository {
             logger.d("File IO", "loaded " + notes.size() + " notes from file");
         } catch (FileNotFoundException e) {
             logger.d("File IO", "file not found, is this the first use?");
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (IOException | ClassNotFoundException | ClassCastException e) {
+            throw new IllegalStateException(e);
         }
         return new HashSet<>(notes);
     }
