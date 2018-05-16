@@ -6,6 +6,7 @@ import android.content.Context;
 import javax.inject.Singleton;
 
 import at.tugraz.tc.cyfile.injection.ApplicationContext;
+import at.tugraz.tc.cyfile.logging.CyFileLogger;
 import dagger.Module;
 import dagger.Provides;
 
@@ -19,8 +20,11 @@ public class AppModule {
 
     private Application mApplication;
 
-    public AppModule(Application application) {
-        mApplication = application;
+    public CyFileLogger logger;
+
+    public AppModule(Application mApplication, CyFileLogger logger) {
+        this.mApplication = mApplication;
+        this.logger = logger;
     }
 
     @Provides
@@ -34,5 +38,9 @@ public class AppModule {
     Context provideContext() {
         return mApplication;
     }
+
+    @Provides
+    @Singleton
+    CyFileLogger provideLogger() { return logger; }
 
 }

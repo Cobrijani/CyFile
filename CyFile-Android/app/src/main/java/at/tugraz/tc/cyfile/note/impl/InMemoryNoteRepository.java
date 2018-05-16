@@ -74,4 +74,9 @@ public class InMemoryNoteRepository implements NoteRepository {
             }
         }
     }
+
+    @Override
+    public void initialize() {
+        //nothing to do
+    }
 }

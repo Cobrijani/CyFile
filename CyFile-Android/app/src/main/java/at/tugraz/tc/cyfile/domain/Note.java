@@ -1,8 +1,11 @@
 package at.tugraz.tc.cyfile.domain;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,19 +17,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public final class Note {
+@AllArgsConstructor
+public final class Note implements Serializable {
 
     private String id;
 
     private String title;
 
     private String content;
-
-    public Note(String id, String title, String content) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-    }
 
     @Override
     public boolean equals(Object o) {
