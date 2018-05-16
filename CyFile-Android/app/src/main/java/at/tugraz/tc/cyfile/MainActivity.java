@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import javax.inject.Inject;
 
+import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultLockedException;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.note.NoteService;
 import at.tugraz.tc.cyfile.secret.SecretPrompter;
@@ -94,7 +95,11 @@ public class MainActivity extends BaseActivity {
     }
 
     private void updateNoteList() {
-        adapter.updateData(noteService.findAll());
+        try {
+            adapter.updateData(noteService.findAll());
+        } catch (KeyVaultLockedException e) {
+            e.printStackTrace();
+        }
     }
 
 

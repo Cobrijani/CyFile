@@ -45,10 +45,13 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
     implementation "com.android.support:design:$android_support_design_version"
     implementation "co.dift.ui.swipetoaction:library:$swipe_to_action_version"
+    implementation "org.apache.commons:commons-lang3:$apache_commons_version"
 
     //testing
     testImplementation "junit:junit:$junit_version"
     testImplementation "org.mockito:mockito-core:$mockito_version"
+    testImplementation "nl.jqno.equalsverifier:equalsverifier:$equal_verifier_version"
+
 
     //android testing
     androidTestImplementation "com.android.support.test:runner:$test_runner_version"

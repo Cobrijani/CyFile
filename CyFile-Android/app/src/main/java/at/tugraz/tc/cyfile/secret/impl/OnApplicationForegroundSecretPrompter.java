@@ -45,12 +45,13 @@ public class OnApplicationForegroundSecretPrompter implements SecretPrompter, Li
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private void onAppBackgrounded() {
         keyVaultService.lockVault();
-        currentState = realState;
-        currentState.promptSecret();
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     private void onAppForegrounded() {
+
+        currentState = realState;
+        currentState.promptSecret();
 
     }
 
