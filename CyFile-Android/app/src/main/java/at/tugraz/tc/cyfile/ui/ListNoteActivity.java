@@ -1,6 +1,8 @@
 package at.tugraz.tc.cyfile.ui;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 
 import javax.inject.Inject;
 
+import at.tugraz.tc.cyfile.MainActivity;
 import at.tugraz.tc.cyfile.R;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.note.NoteService;
@@ -45,6 +48,20 @@ public class ListNoteActivity extends BaseActivity  {
         initializeNoteView();
     }
 
+    private void hideApp() {
+        PackageManager p = getPackageManager();
+        ComponentName componentName = new ComponentName(this, MainActivity.class);
+        p.setComponentEnabledSetting(componentName,
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+    }
+
+    private void displayApp() {
+        PackageManager p = getPackageManager();
+        ComponentName componentName = new ComponentName(this, MainActivity.class);
+        p.setComponentEnabledSetting(componentName,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+    }
+
     protected void initializeNoteView() {
         recyclerView = findViewById(R.id.noteList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -57,16 +74,13 @@ public class ListNoteActivity extends BaseActivity  {
         swipeToAction = new SwipeToAction(recyclerView, new SwipeToAction.SwipeListener<Note>() {
             @Override
             public boolean swipeLeft(final Note itemData) {
-                displaySnackbar("remove " + itemData.getTitle() + "?", "Confirm", v -> {
-                    onSelectDeleteNote(itemData.getId());
-                    updateNoteList();
-                });
+                hideApp();
                 return true;
             }
 
             @Override
             public boolean swipeRight(Note itemData) {
-                openNoteInDetailActivity(itemData.getId());
+                displayApp();
                 return true;
             }
 

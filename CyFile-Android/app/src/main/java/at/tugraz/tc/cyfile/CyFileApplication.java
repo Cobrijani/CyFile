@@ -16,6 +16,7 @@ import at.tugraz.tc.cyfile.async.impl.JobExecutor;
 import at.tugraz.tc.cyfile.crypto.impl.AESCryptoService;
 import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 import at.tugraz.tc.cyfile.crypto.impl.KeyVaultServiceImpl;
+import at.tugraz.tc.cyfile.crypto.impl.NoOpCryptoService;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.injection.ApplicationComponent;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
@@ -65,7 +66,7 @@ public class CyFileApplication extends Application {
 
             mApplicationComponent = DaggerApplicationComponent.builder()
                     .appModule(new AppModule(this))
-                    .noteModule(new NoteModule(new SecureNoteService(new InMemoryNoteRepository(), new AESCryptoService(keyVaultService))))
+                    .noteModule(new NoteModule(new SecureNoteService(new InMemoryNoteRepository(), new NoOpCryptoService())))
                     .asyncModule(new AsyncModule(new JobExecutor()))
                     .secretModule(new SecretModule(
                             new SecretManagerImpl(
@@ -81,20 +82,6 @@ public class CyFileApplication extends Application {
     // Needed to replace the component with a test specific one
     public void setComponent(ApplicationComponent applicationComponent) {
         this.mApplicationComponent = applicationComponent;
-    }
-
-    private void hideApp() {
-        PackageManager p = getPackageManager();
-        ComponentName componentName = new ComponentName(this, MainActivity.class);
-        p.setComponentEnabledSetting(componentName,
-                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-    }
-
-    private void displayApp() {
-        PackageManager p = getPackageManager();
-        ComponentName componentName = new ComponentName(this, MainActivity.class);
-        p.setComponentEnabledSetting(componentName,
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
     }
 
     private Set<Note> getInitialNotes() {
