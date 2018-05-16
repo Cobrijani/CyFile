@@ -13,7 +13,9 @@ import at.tugraz.tc.cyfile.BaseInstrumentedTest;
 import at.tugraz.tc.cyfile.AppModule;
 import at.tugraz.tc.cyfile.MainActivity;
 import at.tugraz.tc.cyfile.R;
+import at.tugraz.tc.cyfile.crypto.DummyKeyVaultService;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
+import at.tugraz.tc.cyfile.logging.NoOpLogger;
 import at.tugraz.tc.cyfile.note.NoteModule;
 import at.tugraz.tc.cyfile.note.NoteService;
 import at.tugraz.tc.cyfile.secret.SecretManager;
@@ -49,9 +51,11 @@ public class PatternLockActivityInstrumentedTest extends BaseInstrumentedTest {
     @Before
     public void setup() {
         app.setComponent(DaggerApplicationComponent.builder()
-                .appModule(new AppModule(app))
+                .appModule(new AppModule(app, new NoOpLogger()))
                 .noteModule(new NoteModule(mock(NoteService.class)))
-                .secretModule(new SecretModule(secretManager, new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(app)))).build());
+                .secretModule(new SecretModule(secretManager,
+                        new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(app)),
+                        new DummyKeyVaultService())).build());
     }
 
     @Test
