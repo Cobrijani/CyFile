@@ -47,21 +47,21 @@ public class InMemoryNoteRepository implements NoteRepository {
         if (note == null) {
             throw new IllegalArgumentException("Cannot be null");
         }
-        //insert
-        if (note.getId() == null) {
-            note.setId(UUID.randomUUID().toString());
-            noteSet.add(note);
-            return note;
-        } else {
-            for (Note n : noteSet) {
-                if (n.getId().equals(note.getId())) {
-                    n.setTitle(note.getTitle());
-                    n.setContent(note.getContent());
-                    return n;
-                }
+
+        for (Note n : noteSet) {
+            if (n.getId().equals(note.getId())) {
+                n.setTitle(note.getTitle());
+                n.setContent(note.getContent());
+                return n;
             }
         }
-        return null;
+        //set id for null
+        if (note.getId() == null) {
+            note.setId(UUID.randomUUID().toString());
+        }
+        noteSet.add(note);
+        return note;
+
     }
 
     @Override

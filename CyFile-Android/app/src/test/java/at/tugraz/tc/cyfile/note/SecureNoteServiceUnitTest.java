@@ -57,6 +57,20 @@ public class SecureNoteServiceUnitTest {
     }
 
     @Test
+    public void findAllShouldReturnEmptyCollectionWhenInternalErrorOccurs() throws InvalidCryptoOperationException {
+        when(noteRepository.findAll())
+                .thenReturn(Arrays.asList(new Note("1", "name1", "content1")
+                        , new Note("2", "name2", "content2")));
+        when(cryptoService.decrypt(anyString()))
+                .thenThrow(InvalidCryptoOperationException.class);
+        List<Note> notes = secureNoteService.findAll();
+
+        verify(cryptoService, atLeastOnce()).decrypt(anyString());
+        verify(noteRepository, times(1)).findAll();
+        Assert.assertEquals(0, notes.size());
+    }
+
+    @Test
     public void findOneShouldFirstDecryptTheNoteThanReturnIt() throws InvalidCryptoOperationException {
         Note n = new Note("existing-id", "name", "content");
         when(noteRepository.findOne(n.getId()))
@@ -90,6 +104,24 @@ public class SecureNoteServiceUnitTest {
     }
 
     @Test
+    public void findOneShouldReturnNullIfInternalErrorOccurs() throws InvalidCryptoOperationException {
+        Note n = new Note("existing-id", "name", "content");
+        when(noteRepository.findOne(n.getId()))
+                .thenReturn(n);
+
+        when(cryptoService.decrypt(n.getTitle()))
+                .thenThrow(InvalidCryptoOperationException.class);
+        when(cryptoService.decrypt(n.getContent()))
+                .thenThrow(InvalidCryptoOperationException.class);
+
+        Note note = secureNoteService.findOne("existing-id");
+
+        verify(cryptoService, atLeastOnce()).decrypt(anyString());
+        verify(noteRepository, times(1)).findOne("existing-id");
+        Assert.assertNull(note);
+    }
+
+    @Test
     public void saveShouldEncryptNewDataAndUpdateOrInsertToStorage() throws InvalidCryptoOperationException {
         secureNoteService.save(new Note("id", "name", "test"));
 
@@ -100,6 +132,20 @@ public class SecureNoteServiceUnitTest {
     @Test(expected = IllegalArgumentException.class)
     public void saveShouldThrowAnErrorIfNoteIsNull() {
         secureNoteService.save(null);
+    }
+
+    @Test
+    public void saveShouldReturnNullIfInternalErrorOccurs() throws InvalidCryptoOperationException {
+        when(cryptoService.decrypt(anyString()))
+                .thenThrow(InvalidCryptoOperationException.class);
+
+        when(cryptoService.encrypt(anyString()))
+                .thenThrow(InvalidCryptoOperationException.class);
+
+        Note n = secureNoteService.save(new Note("id", "name", "test"));
+
+        verify(cryptoService, atLeastOnce()).encrypt(anyString());
+        Assert.assertNull(n);
     }
 
     @Test
