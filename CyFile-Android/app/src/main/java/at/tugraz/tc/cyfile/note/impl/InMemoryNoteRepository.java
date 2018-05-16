@@ -61,7 +61,7 @@ public class InMemoryNoteRepository implements NoteRepository {
                 }
             }
         }
-        return null;
+        throw new IllegalStateException("trying to update a note with an id that was not in the note-set");
     }
 
     @Override
@@ -73,5 +73,10 @@ public class InMemoryNoteRepository implements NoteRepository {
                 return;
             }
         }
+    }
+
+    @Override
+    public void initialize() {
+        //nothing to do
     }
 }

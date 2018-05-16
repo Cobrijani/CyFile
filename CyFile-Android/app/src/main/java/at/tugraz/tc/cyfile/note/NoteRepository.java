@@ -40,4 +40,6 @@ public interface NoteRepository {
      * @param id id of a note
      */
     void delete(String id);
+
+    void initialize();
 }

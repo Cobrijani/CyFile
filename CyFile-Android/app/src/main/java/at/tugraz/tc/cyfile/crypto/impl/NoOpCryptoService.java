@@ -18,9 +18,7 @@ public class NoOpCryptoService implements CryptoService {
     }
 
     @Override
-    public String encrypt(String data) {
-        return data;
-    }
+    public String encrypt(String data) { return data; }
 
     @Override
     public byte[] decrypt(byte[] cipherData) {

@@ -6,6 +6,7 @@ import android.widget.Toast;
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
 
+import java.security.InvalidKeyException;
 import java.util.List;
 
 import javax.inject.Inject;
