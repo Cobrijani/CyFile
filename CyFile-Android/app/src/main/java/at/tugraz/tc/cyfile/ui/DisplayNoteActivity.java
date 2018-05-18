@@ -1,8 +1,12 @@
 package at.tugraz.tc.cyfile.ui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
@@ -38,8 +42,46 @@ public class DisplayNoteActivity extends BaseActivity {
         Intent intent = getIntent();
         String noteId = intent.getStringExtra(MainActivity.NOTE_ID);
         loadNote(noteId);
+        if (loadedNote.getTitle() == null)
+        {
+            greyOutDeleteButton();
+        }
+
 
         onOpenNote();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (textContent.getText() != loadedNote.getContent() ||
+                textTitle.getText() != loadedNote.getTitle())
+        {
+            AlertDialog alertDialog = new AlertDialog.Builder(DisplayNoteActivity.this).create();
+            alertDialog.setTitle("Leave?");
+            alertDialog.setMessage("Are you sure you want to leave without saving?");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "No",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = getIntent();
+                            String noteId = intent.getStringExtra(MainActivity.NOTE_ID);
+                            noteService.delete(noteId);
+                            finish();
+                        }
+                    });
+            alertDialog.show();
+        }
+    }
+
+    private void greyOutDeleteButton() {
+        FloatingActionButton deleteButton = findViewById(R.id.BTN_DEL);
+        deleteButton.setBackgroundTintList(DisplayNoteActivity.this.getResources().getColorStateList(R.color.colorGreyedOutDeleteButton));
+        deleteButton.setClickable(false);
     }
 
     private void initView() {
@@ -77,11 +119,24 @@ public class DisplayNoteActivity extends BaseActivity {
     }
 
     public void onSelectDeleteNote(View v) {
-        Intent intent = getIntent();
-        String noteId = intent.getStringExtra(MainActivity.NOTE_ID);
-
-        noteService.delete(noteId);
-
-        finish();
+        AlertDialog alertDialog = new AlertDialog.Builder(DisplayNoteActivity.this).create();
+        alertDialog.setTitle("Delete Note?");
+        alertDialog.setMessage("Are you sure you want to delete \"" + loadedNote.getTitle() + "\"?");
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
+                new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = getIntent();
+                String noteId = intent.getStringExtra(MainActivity.NOTE_ID);
+                noteService.delete(noteId);
+                finish();
+            }
+        });
+        alertDialog.show();
     }
 }
