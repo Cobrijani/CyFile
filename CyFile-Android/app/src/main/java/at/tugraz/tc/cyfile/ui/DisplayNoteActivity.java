@@ -30,6 +30,8 @@ public class DisplayNoteActivity extends BaseActivity {
     private TextView textContent;
     private TextView textTitle;
 
+    private boolean newNote;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,21 +44,35 @@ public class DisplayNoteActivity extends BaseActivity {
         Intent intent = getIntent();
         String noteId = intent.getStringExtra(MainActivity.NOTE_ID);
         loadNote(noteId);
+        newNote = false;
         if (loadedNote.getTitle() == null)
         {
+            newNote = true;
             greyOutDeleteButton();
         }
-
 
         onOpenNote();
     }
 
     @Override
     public void onBackPressed() {
-        if (textContent.getText() != loadedNote.getContent() ||
-                textTitle.getText() != loadedNote.getTitle())
+        boolean something_changed = false;
+        boolean a = !textContent.getText().toString().equals("");
+        boolean b = !textTitle.getText().toString().equals("");
+        if ((newNote && (!textContent.getText().toString().equals("") || !textTitle.getText().toString().equals(""))) ||
+                (!newNote && (!textContent.getText().toString().equals(loadedNote.getContent()) ||
+                        !textTitle.getText().toString().equals(loadedNote.getTitle()))))
+        {
+            something_changed = true;
+        }
+        if (!something_changed)
+        {
+            finish();
+        }
+        else
         {
             AlertDialog alertDialog = new AlertDialog.Builder(DisplayNoteActivity.this).create();
+            //TODO: remove hardcoded values
             alertDialog.setTitle("Leave?");
             alertDialog.setMessage("Are you sure you want to leave without saving?");
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "No",
@@ -68,14 +84,12 @@ public class DisplayNoteActivity extends BaseActivity {
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = getIntent();
-                            String noteId = intent.getStringExtra(MainActivity.NOTE_ID);
-                            noteService.delete(noteId);
                             finish();
                         }
                     });
             alertDialog.show();
         }
+
     }
 
     private void greyOutDeleteButton() {
@@ -110,6 +124,8 @@ public class DisplayNoteActivity extends BaseActivity {
         String noteContent = textContent.getText().toString();
         Log.d("onSelectSaveNote", "Title:- " + noteTitle);
         Log.d("onSelectSaveNote", "Content:- " + noteContent);
+
+
 
         loadedNote.setTitle(noteTitle);
         loadedNote.setContent(noteContent);
