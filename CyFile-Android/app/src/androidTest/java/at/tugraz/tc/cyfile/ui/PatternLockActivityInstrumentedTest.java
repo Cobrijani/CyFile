@@ -17,6 +17,7 @@ import at.tugraz.tc.cyfile.MainActivity;
 import at.tugraz.tc.cyfile.R;
 import at.tugraz.tc.cyfile.async.AsyncModule;
 import at.tugraz.tc.cyfile.crypto.KeyVaultService;
+import at.tugraz.tc.cyfile.crypto.impl.DummyKeyVaultService;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
 import at.tugraz.tc.cyfile.logging.NoOpLogger;
 import at.tugraz.tc.cyfile.note.NoteModule;
@@ -51,18 +52,17 @@ public class PatternLockActivityInstrumentedTest extends BaseInstrumentedTest {
     @Mock
     private SecretManager secretManager;
 
-    @Mock
-    private KeyVaultService keyVaultService;
-
     @Before
     public void setup() {
+        DummyKeyVaultService keyVaultService = new DummyKeyVaultService();
         app.setComponent(DaggerApplicationComponent.builder()
                 .appModule(new AppModule(app, new NoOpLogger()))
                 .noteModule(new NoteModule(mock(NoteService.class)))
                 .asyncModule(new AsyncModule(mock(Executor.class)))
                 .secretModule(new SecretModule(secretManager,
-                        new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(app)),
-                        new DummyKeyVaultService())).build());
+                        new OnApplicationForegroundSecretPrompter(
+                                new PinPatternSecretPrompter(app), keyVaultService),
+                        keyVaultService)).build());
     }
 
     @Test

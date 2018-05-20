@@ -14,14 +14,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-import at.tugraz.tc.cyfile.crypto.DummyKeyVaultService;
-import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 import at.tugraz.tc.cyfile.async.AsyncModule;
 import at.tugraz.tc.cyfile.crypto.KeyVaultService;
+import at.tugraz.tc.cyfile.crypto.impl.DummyKeyVaultService;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.injection.ApplicationComponent;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
-import at.tugraz.tc.cyfile.logging.NoOpLogger;
 import at.tugraz.tc.cyfile.logging.NoOpLogger;
 import at.tugraz.tc.cyfile.note.NoteModule;
 import at.tugraz.tc.cyfile.note.NoteService;
