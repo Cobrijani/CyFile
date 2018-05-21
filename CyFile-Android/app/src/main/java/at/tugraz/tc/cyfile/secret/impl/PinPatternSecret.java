@@ -2,6 +2,10 @@ package at.tugraz.tc.cyfile.secret.impl;
 
 import com.andrognito.patternlockview.PatternLockView;
 
+import org.apache.commons.codec.binary.Base64;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import at.tugraz.tc.cyfile.secret.Secret;
@@ -37,5 +41,12 @@ public class PinPatternSecret implements Secret {
         }
 
         return null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof PinPatternSecret
+                && ((PinPatternSecret) o).getSecretValue()
+                .equals(this.getSecretValue()));
     }
 }

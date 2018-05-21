@@ -1,12 +1,12 @@
 package at.tugraz.tc.cyfile.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
 
-import java.security.InvalidKeyException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -20,8 +20,9 @@ import at.tugraz.tc.cyfile.secret.impl.PinPatternSecret;
 import static com.andrognito.patternlockview.PatternLockView.PatternViewMode.CORRECT;
 import static com.andrognito.patternlockview.PatternLockView.PatternViewMode.WRONG;
 
-public class PatternLockActivity extends BaseActivity
-        implements PatternLockViewListener {
+public class PatternLockActivity extends BaseActivity {
+
+    public static final int PATTERN_MIN_LENGTH = 3;
 
     @Inject
     SecretManager secretManager;
@@ -42,7 +43,15 @@ public class PatternLockActivity extends BaseActivity
         getActivityComponent().inject(this);
 
         mPatternLockView = findViewById(R.id.pattern_lock_view);
-        mPatternLockView.addPatternLockListener(this);
+
+        PatternLockActivityListener patternListener;
+        if (secretManager.secretIsSet()) {
+            patternListener = new VerifyPatternLockListener(this);
+        } else {
+            patternListener = new PromptPatternLockListener(this);
+        }
+
+        mPatternLockView.addPatternLockListener(patternListener);
     }
 
     @Override
@@ -50,31 +59,84 @@ public class PatternLockActivity extends BaseActivity
         moveTaskToBack(true);
     }
 
-    @Override
-    public void onStarted() {
+    abstract class PatternLockActivityListener implements PatternLockViewListener {
+        final Context context;
 
-    }
+        public PatternLockActivityListener(Context context) {
+            this.context = context;
+        }
 
-    @Override
-    public void onProgress(List<PatternLockView.Dot> progressPattern) {
+        @Override
+        public void onStarted() {
+        }
 
-    }
+        @Override
+        public void onProgress(List<PatternLockView.Dot> progressPattern) {
+        }
 
-    @Override
-    public void onComplete(List<PatternLockView.Dot> pattern) {
-        PinPatternSecret pinPatternSecret = new PinPatternSecret(pattern);
-        if (secretManager.verify(pinPatternSecret)) {
-            mPatternLockView.setViewMode(CORRECT);
-            keyVaultService.unlockVault(pinPatternSecret.getSecretValue());
-            finish();
-        } else {
-            Toast.makeText(this, "Invalid pin", Toast.LENGTH_LONG).show();
-            mPatternLockView.setViewMode(WRONG);
+
+        @Override
+        public void onCleared() {
         }
     }
 
-    @Override
-    public void onCleared() {
+    class PromptPatternLockListener extends PatternLockActivityListener {
+        private PinPatternSecret firstEnteredSecret;
 
+        public PromptPatternLockListener(Context context) {
+            super(context);
+        }
+
+        //TODO no hardcoded texts
+        @Override
+        public void onComplete(List<PatternLockView.Dot> pattern) {
+            if (pattern.size() >= PATTERN_MIN_LENGTH) {
+                PinPatternSecret pinPatternSecret = new PinPatternSecret(pattern);
+                if (firstEnteredSecret == null) {
+                    Toast.makeText(context, "Please confirm", Toast.LENGTH_LONG).show();
+                    firstEnteredSecret = pinPatternSecret;
+                    mPatternLockView.clearPattern();
+                } else {
+                    verifySecondPattern(pinPatternSecret);
+                }
+            } else {
+                Toast.makeText(context, "Pattern too short...", Toast.LENGTH_LONG).show();
+                mPatternLockView.clearPattern();
+            }
+        }
+
+        private void verifySecondPattern(PinPatternSecret pinPatternSecret) {
+            if (pinPatternSecret.equals(firstEnteredSecret)) {
+                mPatternLockView.setViewMode(CORRECT);
+                secretManager.setSecret(pinPatternSecret);
+                keyVaultService.init(pinPatternSecret.getSecretValue());
+                finish();
+            } else {
+                Toast.makeText(context, "Different", Toast.LENGTH_LONG).show();
+                mPatternLockView.clearPattern();
+                firstEnteredSecret = null;
+            }
+        }
+
+    }
+
+    class VerifyPatternLockListener extends PatternLockActivityListener {
+
+        public VerifyPatternLockListener(Context context) {
+            super(context);
+        }
+
+        @Override
+        public void onComplete(List<PatternLockView.Dot> pattern) {
+            PinPatternSecret pinPatternSecret = new PinPatternSecret(pattern);
+            if (secretManager.verify(pinPatternSecret)) {
+                mPatternLockView.setViewMode(CORRECT);
+                keyVaultService.unlockVault(pinPatternSecret.getSecretValue());
+                finish();
+            } else {
+                Toast.makeText(context, "Invalid pin", Toast.LENGTH_LONG).show();
+                mPatternLockView.setViewMode(WRONG);
+            }
+        }
     }
 }

@@ -23,6 +23,8 @@ import at.tugraz.tc.cyfile.note.impl.FileNoteRepository;
 import at.tugraz.tc.cyfile.note.impl.SecureNoteService;
 import at.tugraz.tc.cyfile.secret.SecretModule;
 import at.tugraz.tc.cyfile.secret.SecretRepository;
+import at.tugraz.tc.cyfile.secret.impl.HashPinPatternSecretVerifier;
+import at.tugraz.tc.cyfile.secret.impl.HashSecretRepository;
 import at.tugraz.tc.cyfile.secret.impl.InMemorySecretRepository;
 import at.tugraz.tc.cyfile.secret.impl.OnApplicationForegroundSecretPrompter;
 import at.tugraz.tc.cyfile.secret.impl.PinPatternSecret;
@@ -54,8 +56,7 @@ public class CyFileApplication extends Application {
 
             KeyVaultService keyVaultService = new KeyVaultServiceImpl();
 
-            keyVaultService.init("111222");
-            SecretRepository secretRepository = new InMemorySecretRepository(new PinPatternSecret("111222"));
+            SecretRepository secretRepository = new HashSecretRepository(this, null);
             OnApplicationForegroundSecretPrompter prompter = new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(this), keyVaultService);
             CyFileLogger logger = new AndroidLogger();
 
@@ -67,7 +68,7 @@ public class CyFileApplication extends Application {
 
             SecretModule secretModule = new SecretModule(
                     new SecretManagerImpl(
-                            new SimplePinPatternSecretVerifier(secretRepository),
+                            new HashPinPatternSecretVerifier(secretRepository),
                             secretRepository),
                     prompter,
                     keyVaultService
