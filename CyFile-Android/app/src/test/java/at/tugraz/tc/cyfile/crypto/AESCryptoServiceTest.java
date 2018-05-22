@@ -12,6 +12,7 @@ import javax.crypto.KeyGenerator;
 
 import at.tugraz.tc.cyfile.BaseUnitTest;
 import at.tugraz.tc.cyfile.crypto.exceptions.InvalidCryptoOperationException;
+import at.tugraz.tc.cyfile.crypto.exceptions.InvalidPassPhraseException;
 import at.tugraz.tc.cyfile.crypto.impl.AESCryptoService;
 import at.tugraz.tc.cyfile.crypto.impl.DummyKeyVaultService;
 
@@ -61,10 +62,10 @@ public class AESCryptoServiceTest extends BaseUnitTest {
         assertNull(decrypted);
     }
 
-    @Test (expected = InvalidKeyException.class)
+    @Test (expected = InvalidPassPhraseException.class)
     public void testFailedUnlock() throws Exception {
         KeyVaultService svc = mock(KeyVaultService.class);
-        Mockito.doThrow(new InvalidKeyException())
+        Mockito.doThrow(new InvalidPassPhraseException())
                 .when(svc).unlockVault(any());
         when(svc.getEncryptionKey()).thenReturn(null);
 
