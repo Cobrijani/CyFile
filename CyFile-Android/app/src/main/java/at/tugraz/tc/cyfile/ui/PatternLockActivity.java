@@ -13,6 +13,7 @@ import javax.inject.Inject;
 
 import at.tugraz.tc.cyfile.R;
 import at.tugraz.tc.cyfile.crypto.KeyVaultService;
+import at.tugraz.tc.cyfile.logging.CyFileLogger;
 import at.tugraz.tc.cyfile.secret.SecretManager;
 import at.tugraz.tc.cyfile.secret.SecretPrompter;
 import at.tugraz.tc.cyfile.secret.impl.PinPatternSecret;
@@ -33,10 +34,14 @@ public class PatternLockActivity extends BaseActivity {
     @Inject
     KeyVaultService keyVaultService;
 
+    @Inject
+    CyFileLogger logger;
+
     private PatternLockView mPatternLockView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        logger.d("PatternLockActivity", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pattern_lock);
 
@@ -46,8 +51,10 @@ public class PatternLockActivity extends BaseActivity {
 
         PatternLockActivityListener patternListener;
         if (secretManager.secretIsSet()) {
+            logger.d("PatternLockActivity", "secret is set");
             patternListener = new VerifyPatternLockListener(this);
         } else {
+            logger.d("PatternLockActivity", "no secret set");
             patternListener = new PromptPatternLockListener(this);
         }
 
@@ -86,12 +93,6 @@ public class PatternLockActivity extends BaseActivity {
         public PromptPatternLockListener(Context context) {
             super(context);
         }
-
-//        @Override
-//        public void onStarted() {
-////            Toast.makeText(context, "Enter new key", Toast.LENGTH_LONG).show();
-////            super.onStarted();
-//        }
 
         //TODO no hardcoded texts
         @Override
