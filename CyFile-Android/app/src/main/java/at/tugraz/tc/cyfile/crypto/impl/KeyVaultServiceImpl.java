@@ -105,10 +105,9 @@ public class KeyVaultServiceImpl implements KeyVaultService {
                 secretKey = this.keyStore.getKey(KEY_ALIAS, passphrase.toCharArray());
             } else {
                 throw new KeyVaultServiceException("Configuration is invalid - contact programmer!");
-
             }
         } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | UnrecoverableKeyException e) {
-            throw new InvalidPassPhraseException("Passphrase is invalid");
+            throw new InvalidPassPhraseException("Passphrase is invalid", e);
         }
         logger.d("KeyVaultService", "KVS unlocked");
         internalState = State.UNLOCKED;
