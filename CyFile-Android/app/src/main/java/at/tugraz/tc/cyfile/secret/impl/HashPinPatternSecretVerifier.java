@@ -18,7 +18,7 @@ import at.tugraz.tc.cyfile.secret.SecretRepository;
 import at.tugraz.tc.cyfile.secret.SecretVerifier;
 
 public class HashPinPatternSecretVerifier implements SecretVerifier {
-
+    //TODO move constant
     public static final String DEFAULT_FILE_NAME = "secret";
     private final SecretRepository repository;
 

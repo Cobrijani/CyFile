@@ -11,6 +11,13 @@ import at.tugraz.tc.cyfile.secret.Secret;
 public class HashedSecret implements Secret {
     private final String secretValue;
 
+    public HashedSecret(String secretValue) {
+        if (secretValue.length() == 0) {
+            throw new IllegalStateException("Hash of secret can't be empty");
+        }
+        this.secretValue = secretValue;
+    }
+
     public HashedSecret(Secret secret) {
         secretValue = getSHADigest(secret);
     }

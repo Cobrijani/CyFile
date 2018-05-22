@@ -5,9 +5,12 @@ import android.content.Context;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
+import at.tugraz.tc.cyfile.logging.CyFileLogger;
 import at.tugraz.tc.cyfile.secret.Secret;
 import at.tugraz.tc.cyfile.secret.SecretRepository;
 
@@ -16,10 +19,28 @@ public class HashSecretRepository implements SecretRepository {
 
     private final String fileName;
     private final Context context;
+    private final CyFileLogger logger;
 
-    public HashSecretRepository(Context context, String fileName) {
+    public HashSecretRepository(Context context, String fileName, CyFileLogger logger) {
         this.fileName = fileName != null ? fileName : HashPinPatternSecretVerifier.DEFAULT_FILE_NAME;
         this.context = context;
+        this.logger = logger;
+        readSecret();
+    }
+
+    private void readSecret() {
+        try  (ObjectInputStream ois = new ObjectInputStream(getInputStream())) {
+            this.secret = new HashedSecret((String) ois.readObject());
+            logger.d("HashSecretRepository", "Loaded secret");
+        } catch (FileNotFoundException e) {
+            logger.d("HashSecretRepository", "No secret found, is this the first run?");
+        } catch (IOException | ClassNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    InputStream getInputStream() throws FileNotFoundException {
+        return context.openFileInput(fileName);
     }
 
     OutputStream getOutputStream() throws FileNotFoundException {

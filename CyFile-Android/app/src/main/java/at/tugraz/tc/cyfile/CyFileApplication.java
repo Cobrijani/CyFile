@@ -58,7 +58,7 @@ public class CyFileApplication extends Application {
             CyFileLogger logger = new AndroidLogger();
             KeyVaultService keyVaultService = new KeyVaultServiceImpl(logger);
 
-            SecretRepository secretRepository = new HashSecretRepository(this, null);
+            SecretRepository secretRepository = new HashSecretRepository(this, null, logger);
             OnApplicationForegroundSecretPrompter prompter = new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(this), keyVaultService);
 
             NoteRepository repository = new FileNoteRepository(this, null, logger);
