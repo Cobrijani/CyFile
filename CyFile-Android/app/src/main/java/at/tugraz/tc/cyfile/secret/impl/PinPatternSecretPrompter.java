@@ -21,7 +21,7 @@ public class PinPatternSecretPrompter implements SecretPrompter {
 
     @Override
     public void promptSecret() {
-ad        Intent intent = new Intent(context, PatternLockActivity.class);
+        Intent intent = new Intent(context, PatternLockActivity.class);
         startActivity(intent);
     }
 
