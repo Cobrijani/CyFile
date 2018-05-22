@@ -87,11 +87,11 @@ public class PatternLockActivity extends BaseActivity {
             super(context);
         }
 
-        @Override
-        public void onStarted() {
-            Toast.makeText(context, "Enter new key", Toast.LENGTH_LONG).show();
-            super.onStarted();
-        }
+//        @Override
+//        public void onStarted() {
+////            Toast.makeText(context, "Enter new key", Toast.LENGTH_LONG).show();
+////            super.onStarted();
+//        }
 
         //TODO no hardcoded texts
         @Override

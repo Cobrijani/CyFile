@@ -31,10 +31,6 @@ public class AESCryptoService implements CryptoService {
         this.keyVaultService = keyVaultService;
     }
 
-    public void init(String passphrase) throws InvalidKeyException {
-        keyVaultService.unlockVault(passphrase);
-    }
-
     @Override
     public String encrypt(String data) throws InvalidCryptoOperationException {
         byte[] encryptedBytes = encrypt(data.getBytes(StandardCharsets.UTF_8));

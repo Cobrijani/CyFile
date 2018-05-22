@@ -31,8 +31,4 @@ public class PrefixCryptoService implements CryptoService {
         return cipherData.replaceAll(PREFIX, "");
     }
 
-    @Override
-    public void init(String passphrase) throws InvalidKeyException {
-
-    }
 }
