@@ -46,6 +46,7 @@ dependencies {
     implementation "com.android.support:design:$android_support_design_version"
     implementation "co.dift.ui.swipetoaction:library:$swipe_to_action_version"
     implementation "org.apache.commons:commons-lang3:$apache_commons_version"
+    implementation "commons-codec:commons-codec:$apache_codec_version"
 
     //testing
     testImplementation "junit:junit:$junit_version"

@@ -1,7 +1,7 @@
 package at.tugraz.tc.cyfile.crypto.impl;
 
 
-import android.util.Base64;
+import org.apache.commons.codec.binary.*;
 
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
@@ -23,7 +23,7 @@ public class AESCryptoService implements CryptoService {
     private KeyVaultService keyVaultService;
 
     private static final int BLOCK_SIZE = 16;
-    private static final String ALGORITHM = "AES/CBC/PKCS7Padding";
+    private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
     private static final String PROVIDER = "AndroidKeyStore";
 
 
@@ -38,7 +38,7 @@ public class AESCryptoService implements CryptoService {
     @Override
     public String encrypt(String data) throws InvalidCryptoOperationException {
         byte[] encryptedBytes = encrypt(data.getBytes(StandardCharsets.UTF_8));
-        return Base64.encodeToString(encryptedBytes, Base64.DEFAULT);
+        return Base64.encodeBase64String(encryptedBytes);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class AESCryptoService implements CryptoService {
     }
 
     public String decrypt(String encryptedData) throws InvalidCryptoOperationException {
-        byte[] data = Base64.decode(encryptedData, Base64.DEFAULT);
+        byte[] data = Base64.decodeBase64(encryptedData);
         byte[] decValue = decrypt(data);
         return new String(decValue, StandardCharsets.UTF_8);
     }
