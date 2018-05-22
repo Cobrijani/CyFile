@@ -21,9 +21,11 @@ import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultAlreadyInitializedException
 import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultLockedException;
 import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultNotInitializedException;
 import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultServiceException;
+import at.tugraz.tc.cyfile.logging.CyFileLogger;
 
 public class KeyVaultServiceImpl implements KeyVaultService {
 
+    private final CyFileLogger logger;
     private Key secretKey;
     private static final String KEY_ALIAS = "cyfile-encryption-key";
     private static final String KEYSTORE_PROVIDER = "AndroidKeyStore";
@@ -38,13 +40,15 @@ public class KeyVaultServiceImpl implements KeyVaultService {
         LOCKED
     }
 
-    public KeyVaultServiceImpl(KeyGenerator keyGenerator, KeyStore keyStore) {
+    public KeyVaultServiceImpl(KeyGenerator keyGenerator, KeyStore keyStore, CyFileLogger logger) {
         this.secretKey = null;
         this.keyStore = keyStore;
         this.generator = keyGenerator;
+        this.logger = logger;
     }
 
-    public KeyVaultServiceImpl() {
+    public KeyVaultServiceImpl(CyFileLogger logger) {
+        this.logger = logger;
         this.secretKey = null;
         try {
             this.keyStore = KeyStore.getInstance(KEYSTORE_PROVIDER);
@@ -78,7 +82,7 @@ public class KeyVaultServiceImpl implements KeyVaultService {
             throw new KeyVaultAlreadyInitializedException();
         }
 
-
+        this.logger.d("KeyVaultService", "Generating key");
         secretKey = generator.generateKey();
         internalState = State.LOCKED;
     }
@@ -106,7 +110,7 @@ public class KeyVaultServiceImpl implements KeyVaultService {
         } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | UnrecoverableKeyException e) {
             throw new InvalidPassPhraseException("Passphrase is invalid");
         }
-
+        logger.d("KeyVaultService", "KVS unlocked");
         internalState = State.UNLOCKED;
 
     }

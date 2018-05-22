@@ -1,6 +1,7 @@
 package at.tugraz.tc.cyfile.crypto.impl;
 
-import org.apache.commons.codec.binary.Base64;
+
+import android.util.Base64;
 
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
@@ -22,7 +23,7 @@ public class AESCryptoService implements CryptoService {
     private KeyVaultService keyVaultService;
 
     private static final int BLOCK_SIZE = 16;
-    private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
+    private static final String ALGORITHM = "AES/CBC/PKCS7Padding";
     private static final String PROVIDER = "AndroidKeyStore";
 
 
@@ -37,7 +38,15 @@ public class AESCryptoService implements CryptoService {
     @Override
     public String encrypt(String data) throws InvalidCryptoOperationException {
         byte[] encryptedBytes = encrypt(data.getBytes(StandardCharsets.UTF_8));
-        return Base64.encodeBase64String(encryptedBytes);
+        return encodeBase64(encryptedBytes);
+    }
+
+    private String encodeBase64(byte[] encryptedBytes) {
+        return Base64.encodeToString(encryptedBytes, Base64.DEFAULT);
+    }
+
+    private byte[] decodeBase64(String encoded) {
+        return Base64.decode(encoded, Base64.DEFAULT);
     }
 
     @Override
@@ -49,7 +58,6 @@ public class AESCryptoService implements CryptoService {
         try {
             encCipher = Cipher.getInstance(ALGORITHM);
             encCipher.init(Cipher.ENCRYPT_MODE, key);
-
             currentIV = encCipher.getIV();
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
             throw new InvalidCryptoOperationException(e);
@@ -92,7 +100,7 @@ public class AESCryptoService implements CryptoService {
     }
 
     public String decrypt(String encryptedData) throws InvalidCryptoOperationException {
-        byte[] data = Base64.decodeBase64(encryptedData);
+        byte[] data = decodeBase64(encryptedData);
         byte[] decValue = decrypt(data);
         return new String(decValue, StandardCharsets.UTF_8);
     }

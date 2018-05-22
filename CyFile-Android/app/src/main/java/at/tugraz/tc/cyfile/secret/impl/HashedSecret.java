@@ -1,6 +1,7 @@
 package at.tugraz.tc.cyfile.secret.impl;
 
-import org.apache.commons.codec.binary.Base64;
+
+import android.util.Base64;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -26,7 +27,11 @@ public class HashedSecret implements Secret {
 
         md.update(secret.getSecretValue().getBytes());
         byte[] digest = md.digest();
-        return Base64.encodeBase64String(digest);
+        return encodeBase64(digest);
+    }
+
+    private String encodeBase64(byte[] bytes) {
+        return Base64.encodeToString(bytes, android.util.Base64.DEFAULT);
     }
 
     @Override

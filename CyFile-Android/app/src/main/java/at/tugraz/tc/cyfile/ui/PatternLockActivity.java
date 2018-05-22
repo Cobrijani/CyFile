@@ -87,6 +87,12 @@ public class PatternLockActivity extends BaseActivity {
             super(context);
         }
 
+        @Override
+        public void onStarted() {
+            Toast.makeText(context, "Enter new key", Toast.LENGTH_LONG).show();
+            super.onStarted();
+        }
+
         //TODO no hardcoded texts
         @Override
         public void onComplete(List<PatternLockView.Dot> pattern) {
@@ -109,7 +115,9 @@ public class PatternLockActivity extends BaseActivity {
             if (pinPatternSecret.equals(firstEnteredSecret)) {
                 mPatternLockView.setViewMode(CORRECT);
                 secretManager.setSecret(pinPatternSecret);
-                keyVaultService.init(pinPatternSecret.getSecretValue());
+                String passphrase = pinPatternSecret.getSecretValue();
+                keyVaultService.init(passphrase);
+                keyVaultService.unlockVault(passphrase);
                 finish();
             } else {
                 Toast.makeText(context, "Different", Toast.LENGTH_LONG).show();

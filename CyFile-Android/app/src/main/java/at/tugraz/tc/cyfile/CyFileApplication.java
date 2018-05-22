@@ -11,6 +11,7 @@ import at.tugraz.tc.cyfile.async.impl.JobExecutor;
 import at.tugraz.tc.cyfile.crypto.CryptoService;
 import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 import at.tugraz.tc.cyfile.crypto.PrefixCryptoService;
+import at.tugraz.tc.cyfile.crypto.impl.AESCryptoService;
 import at.tugraz.tc.cyfile.crypto.impl.KeyVaultServiceImpl;
 import at.tugraz.tc.cyfile.crypto.impl.NoOpCryptoService;
 import at.tugraz.tc.cyfile.injection.ApplicationComponent;
@@ -54,11 +55,11 @@ public class CyFileApplication extends Application {
     public ApplicationComponent getComponent() {
         if (mApplicationComponent == null) {
 
-            KeyVaultService keyVaultService = new KeyVaultServiceImpl();
+            CyFileLogger logger = new AndroidLogger();
+            KeyVaultService keyVaultService = new KeyVaultServiceImpl(logger);
 
             SecretRepository secretRepository = new HashSecretRepository(this, null);
             OnApplicationForegroundSecretPrompter prompter = new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(this), keyVaultService);
-            CyFileLogger logger = new AndroidLogger();
 
             NoteRepository repository = new FileNoteRepository(this, null, logger);
             repository.initialize();
@@ -74,12 +75,13 @@ public class CyFileApplication extends Application {
                     keyVaultService
             );
 
+            CryptoService cryptoService = new AESCryptoService(keyVaultService);
             mApplicationComponent = DaggerApplicationComponent.builder()
                     .appModule(new AppModule(this, new AndroidLogger()))
                     .noteModule(new NoteModule(
                             new SecureNoteService(
                                     repository,
-                                    new NoOpCryptoService())))
+                                    cryptoService)))
                     .asyncModule(new AsyncModule(new JobExecutor()))
                     .secretModule(secretModule)
                     .build();
