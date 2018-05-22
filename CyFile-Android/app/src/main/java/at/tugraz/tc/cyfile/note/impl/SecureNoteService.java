@@ -63,6 +63,7 @@ public class SecureNoteService implements NoteService {
                 return newNote;
             } catch (InvalidCryptoOperationException e) {
                 e.printStackTrace();
+                return null;
             }
         }
         return null;
@@ -79,8 +80,8 @@ public class SecureNoteService implements NoteService {
             return repository.save(note);
         } catch (InvalidCryptoOperationException e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     @Override
