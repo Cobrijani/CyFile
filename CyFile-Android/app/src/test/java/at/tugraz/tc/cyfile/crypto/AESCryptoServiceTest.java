@@ -21,7 +21,6 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotSame;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -37,18 +36,13 @@ public class AESCryptoServiceTest extends BaseUnitTest {
 
     public void setup(KeyVaultService keyVaultService) {
         cryptoService = new AESCryptoService(keyVaultService);
-        try {
-            cryptoService.init("any pass");
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        }
     }
 
     private int blockSize = 16;
 
 
     @Test(expected = InvalidCryptoOperationException.class)
-    public void testRelockedVault()  throws InvalidCryptoOperationException{
+    public void testRelockedVault() throws InvalidCryptoOperationException {
         setup(dummyKeyVaultService);
         String plain = "Hello World!";
         String encrypted = cryptoService.encrypt(plain);
@@ -62,7 +56,7 @@ public class AESCryptoServiceTest extends BaseUnitTest {
         assertNull(decrypted);
     }
 
-    @Test (expected = InvalidPassPhraseException.class)
+    @Test(expected = InvalidPassPhraseException.class)
     public void testFailedUnlock() throws Exception {
         KeyVaultService svc = mock(KeyVaultService.class);
         Mockito.doThrow(new InvalidPassPhraseException())
@@ -70,7 +64,6 @@ public class AESCryptoServiceTest extends BaseUnitTest {
         when(svc.getEncryptionKey()).thenReturn(null);
 
         cryptoService = new AESCryptoService(svc);
-        cryptoService.init("any pass");
     }
 
     @Test(expected = InvalidCryptoOperationException.class)
@@ -169,14 +162,13 @@ public class AESCryptoServiceTest extends BaseUnitTest {
     }
 
     @Test(expected = InvalidCryptoOperationException.class)
-    public void testEncryptDifferentCryptoServiceInstances () throws InvalidKeyException, InvalidCryptoOperationException {
+    public void testEncryptDifferentCryptoServiceInstances() throws InvalidKeyException, InvalidCryptoOperationException {
         setup(dummyKeyVaultService);
         String plain = "";
         String encrypted = cryptoService.encrypt(plain);
         assertNotSame(plain, encrypted);
         assertTrue(encrypted.length() > 0);
         AESCryptoService cryptoService2 = new AESCryptoService(dummyKeyVaultService);
-        cryptoService2.init("any pass");
         String decrypted = cryptoService2.decrypt(encrypted);
         assertEquals(plain, decrypted);
     }

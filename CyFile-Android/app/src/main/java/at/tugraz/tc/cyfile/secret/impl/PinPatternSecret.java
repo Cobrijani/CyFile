@@ -2,14 +2,9 @@ package at.tugraz.tc.cyfile.secret.impl;
 
 import com.andrognito.patternlockview.PatternLockView;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import java.util.List;
 
-import at.tugraz.tc.cyfile.secret.Secret;
-
-public class PinPatternSecret implements Secret {
+public class PinPatternSecret extends AbstractSecret {
 
     private List<PatternLockView.Dot> dotList;
 
@@ -42,23 +37,5 @@ public class PinPatternSecret implements Secret {
         return null;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
 
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Secret that = (Secret) o;
-
-        return new EqualsBuilder()
-                .append(this.getSecretValue(), that.getSecretValue())
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .append(this.getSecretValue())
-                .toHashCode();
-    }
 }

@@ -8,7 +8,7 @@ import java.security.NoSuchAlgorithmException;
 
 import at.tugraz.tc.cyfile.secret.Secret;
 
-public class HashedSecret implements Secret {
+public class HashedSecret extends AbstractSecret {
     private final String secretValue;
 
     public HashedSecret(String secretValue) {
@@ -46,9 +46,4 @@ public class HashedSecret implements Secret {
         return this.secretValue;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof HashedSecret
-                && ((HashedSecret) obj).getSecretValue() == this.getSecretValue();
-    }
 }
