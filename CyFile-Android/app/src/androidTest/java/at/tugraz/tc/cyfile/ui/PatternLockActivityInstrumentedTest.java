@@ -1,6 +1,11 @@
 package at.tugraz.tc.cyfile.ui;
 
 import android.content.Intent;
+import android.support.test.espresso.ViewAction;
+import android.support.test.espresso.action.GeneralLocation;
+import android.support.test.espresso.action.GeneralSwipeAction;
+import android.support.test.espresso.action.Press;
+import android.support.test.espresso.action.Swipe;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.rule.ActivityTestRule;
 
@@ -120,6 +125,21 @@ public class PatternLockActivityInstrumentedTest extends BaseInstrumentedTest {
                 .perform(ViewActions.swipeRight())
                 .perform(ViewActions.click())
                 .perform(ViewActions.swipeDown())
+                .check(matches(isDisplayed()));
+    }
+
+
+    @Test
+    public void setFalsePinPatternCenterBottom() {
+        when(secretManager.secretIsSet())
+                .thenReturn(false);
+
+        mainActivityActivityTestRule.launchActivity(new Intent());
+
+        onView(withId(R.id.pattern_lock_view))
+                .perform(swipeFromCenterToBottom())
+                .perform(ViewActions.click())
+                .perform(swipeFromCenterToBottom())
                 .check(matches(isDisplayed()));
     }
 }
