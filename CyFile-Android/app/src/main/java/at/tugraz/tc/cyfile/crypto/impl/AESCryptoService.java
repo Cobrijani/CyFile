@@ -37,11 +37,11 @@ public class AESCryptoService implements CryptoService {
         return encodeBase64(encryptedBytes);
     }
 
-    private String encodeBase64(byte[] encryptedBytes) {
+    public String encodeBase64(byte[] encryptedBytes) {
         return Base64.encodeToString(encryptedBytes, Base64.DEFAULT);
     }
 
-    private byte[] decodeBase64(String encoded) {
+    public byte[] decodeBase64(String encoded) {
         return Base64.decode(encoded, Base64.DEFAULT);
     }
 

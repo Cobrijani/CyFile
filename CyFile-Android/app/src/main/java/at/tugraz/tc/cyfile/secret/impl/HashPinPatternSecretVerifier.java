@@ -18,8 +18,6 @@ import at.tugraz.tc.cyfile.secret.SecretRepository;
 import at.tugraz.tc.cyfile.secret.SecretVerifier;
 
 public class HashPinPatternSecretVerifier implements SecretVerifier {
-    //TODO move constant
-    public static final String DEFAULT_FILE_NAME = "secret";
     private final SecretRepository repository;
 
     public HashPinPatternSecretVerifier(SecretRepository repository) {
@@ -28,7 +26,6 @@ public class HashPinPatternSecretVerifier implements SecretVerifier {
 
     @Override
     public boolean verify(Secret secret) {
-        HashedSecret hashedSecret = new HashedSecret(secret);
-        return repository.getSecret().equals(hashedSecret);
+        return repository.getSecret().equals(secret);
     }
 }

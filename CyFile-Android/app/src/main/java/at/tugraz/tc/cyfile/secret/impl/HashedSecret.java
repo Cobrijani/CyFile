@@ -3,28 +3,38 @@ package at.tugraz.tc.cyfile.secret.impl;
 
 import android.util.Base64;
 
+import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 import at.tugraz.tc.cyfile.secret.Secret;
 
-public class HashedSecret extends AbstractSecret {
+public class HashedSecret extends AbstractSecret implements Serializable {
     private final String secretValue;
+    private final String pepper;
 
-    public HashedSecret(String secretValue) {
-        if (secretValue.length() == 0) {
-            throw new IllegalStateException("Hash of secret can't be empty");
-        }
-        this.secretValue = secretValue;
-    }
+    public static final int PEPPER_LENGTH = 8;
+    private static final String SALT = "F52FBD32B2B3B86FF88EF";
 
     public HashedSecret(Secret secret) {
-        secretValue = getSHADigest(secret);
+        pepper = getPepper();
+        this.secretValue = getHashForSecret(secret, pepper);
     }
 
-    private String getSHADigest(Secret secret) {
-        //TODO we should definitely add salt
+    private String getHashForSecret(Secret secret, String pepper) {
+        String secretValue = secret.getSecretValue() + SALT + pepper;
+        return getSHADigest(secretValue);
+    }
 
+    private String getPepper() {
+        SecureRandom random = new SecureRandom();
+        byte[] bytes = new byte[PEPPER_LENGTH];
+        random.nextBytes(bytes);
+        return encodeBase64(bytes);
+    }
+
+    private String getSHADigest(String secretValue) {
         MessageDigest md;
         try {
             md = MessageDigest.getInstance("SHA-256");
@@ -32,12 +42,12 @@ public class HashedSecret extends AbstractSecret {
             throw new IllegalStateException(e);
         }
 
-        md.update(secret.getSecretValue().getBytes());
+        md.update(secretValue.getBytes());
         byte[] digest = md.digest();
         return encodeBase64(digest);
     }
 
-    private String encodeBase64(byte[] bytes) {
+    public String encodeBase64(byte[] bytes) {
         return Base64.encodeToString(bytes, android.util.Base64.DEFAULT);
     }
 
@@ -46,4 +56,15 @@ public class HashedSecret extends AbstractSecret {
         return this.secretValue;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof  HashedSecret) {
+            return ((HashedSecret) o).getSecretValue().equals(this.getSecretValue());
+        }
+
+        if (o instanceof Secret) {
+            return getHashForSecret((Secret) o, this.pepper).equals(this.getSecretValue());
+        }
+        return false;
+    }
 }

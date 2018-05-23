@@ -15,6 +15,7 @@ import at.tugraz.tc.cyfile.secret.Secret;
 import at.tugraz.tc.cyfile.secret.SecretRepository;
 
 public class HashSecretRepository implements SecretRepository {
+    public static final String DEFAULT_FILE_NAME = "secret";
     private HashedSecret secret;
 
     private final String fileName;
@@ -22,15 +23,15 @@ public class HashSecretRepository implements SecretRepository {
     private final CyFileLogger logger;
 
     public HashSecretRepository(Context context, String fileName, CyFileLogger logger) {
-        this.fileName = fileName != null ? fileName : HashPinPatternSecretVerifier.DEFAULT_FILE_NAME;
+        this.fileName = fileName != null ? fileName : DEFAULT_FILE_NAME;
         this.context = context;
         this.logger = logger;
         readSecret();
     }
 
     private void readSecret() {
-        try  (ObjectInputStream ois = new ObjectInputStream(getInputStream())) {
-            this.secret = new HashedSecret((String) ois.readObject());
+        try (ObjectInputStream ois = new ObjectInputStream(getInputStream())) {
+            this.secret = (HashedSecret) ois.readObject();
             logger.d("HashSecretRepository", "Loaded secret");
         } catch (FileNotFoundException e) {
             logger.d("HashSecretRepository", "No secret found, is this the first run?");
@@ -55,13 +56,11 @@ public class HashSecretRepository implements SecretRepository {
     @Override
     public boolean saveSecret(Secret secret) {
         this.secret = new HashedSecret(secret);
-        String digest = this.secret.getSecretValue();
         try (ObjectOutputStream oos = new ObjectOutputStream(getOutputStream())) {
-            oos.writeObject(digest);
+            oos.writeObject(this.secret);
             return true;
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
-        //TODO make check if file exists
     }
 }

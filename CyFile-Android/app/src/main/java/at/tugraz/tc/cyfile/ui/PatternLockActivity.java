@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -46,7 +47,6 @@ public class PatternLockActivity extends BaseActivity {
         logger.d("PatternLockActivity", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pattern_lock);
-
 
         mPatternLockView = findViewById(R.id.pattern_lock_view);
 
@@ -95,11 +95,16 @@ public class PatternLockActivity extends BaseActivity {
             super(context);
         }
 
+        @Override
+        public void onStarted() {
+            Toast.makeText(context, "Please enter a new pattern", Toast.LENGTH_LONG).show();
+        }
+
         //TODO no hardcoded texts
         @Override
         public void onComplete(List<PatternLockView.Dot> pattern) {
             if (pattern.size() >= PATTERN_MIN_LENGTH) {
-                PinPatternSecret pinPatternSecret = new PinPatternSecret(pattern);
+                PinPatternSecret pinPatternSecret = new PinPatternSecret(new LinkedList<>(pattern));
                 if (firstEnteredSecret == null) {
                     Toast.makeText(context, "Please confirm", Toast.LENGTH_LONG).show();
                     firstEnteredSecret = pinPatternSecret;
@@ -127,7 +132,6 @@ public class PatternLockActivity extends BaseActivity {
                 firstEnteredSecret = null;
             }
         }
-
     }
 
     class VerifyPatternLockListener extends PatternLockActivityListener {
@@ -145,11 +149,10 @@ public class PatternLockActivity extends BaseActivity {
                 try {
                     keyVaultService.unlockVault(pinPatternSecret.getSecretValue());
                 } catch (KeyVaultNotInitializedException e) {
-                    // in case we have a secret stored and its valid, but we didnt initialize the key vault
+                    // in case we have a secret stored and its valid, but we didn't initialize the key vault
                     keyVaultService.init(pinPatternSecret.getSecretValue());
                     keyVaultService.unlockVault(pinPatternSecret.getSecretValue());
                 }
-
                 finish();
             } else {
                 Toast.makeText(context, "Invalid pin", Toast.LENGTH_LONG).show();
