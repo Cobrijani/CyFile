@@ -72,16 +72,15 @@ public class DisplayNoteActivity extends BaseActivity {
         else
         {
             AlertDialog alertDialog = new AlertDialog.Builder(DisplayNoteActivity.this).create();
-            //TODO: remove hardcoded values
-            alertDialog.setTitle("Leave?");
-            alertDialog.setMessage("Are you sure you want to leave without saving?");
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "No",
+            alertDialog.setTitle(getResources().getString(R.string.back_confirmation_title));
+            alertDialog.setMessage(getResources().getString(R.string.back_confirmation_content));
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.no),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                         }
                     });
-            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getResources().getString(R.string.yes),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             finish();
@@ -136,15 +135,16 @@ public class DisplayNoteActivity extends BaseActivity {
 
     public void onSelectDeleteNote(View v) {
         AlertDialog alertDialog = new AlertDialog.Builder(DisplayNoteActivity.this).create();
-        alertDialog.setTitle("Delete Note?");
-        alertDialog.setMessage("Are you sure you want to delete \"" + loadedNote.getTitle() + "\"?");
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "No",
+        alertDialog.setTitle(getResources().getString(R.string.delete_confirmation_title));
+        alertDialog.setMessage(getResources().getString(R.string.delete_confirmation_content)
+                +" \"" + loadedNote.getTitle() + "\"?");
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.no),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
                 });
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getResources().getString(R.string.yes),
                 new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = getIntent();

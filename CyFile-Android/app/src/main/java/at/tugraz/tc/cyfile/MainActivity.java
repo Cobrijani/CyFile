@@ -124,15 +124,16 @@ public class MainActivity extends BaseActivity {
         Log.d("onSelectDeleteNote", "on select delete note: " + noteId);
 
         AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-        alertDialog.setTitle("Delete Note?");
-        alertDialog.setMessage("Are you sure you want to delete \"" + noteService.findOne(noteId).getTitle() + "\"?");
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "No",
+        alertDialog.setTitle(getResources().getString(R.string.delete_confirmation_title));
+        alertDialog.setMessage(getResources().getString(R.string.delete_confirmation_content)
+                + " \"" + noteService.findOne(noteId).getTitle() + "\"?");
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.no),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
                 });
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getResources().getString(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         noteService.delete(noteId);
