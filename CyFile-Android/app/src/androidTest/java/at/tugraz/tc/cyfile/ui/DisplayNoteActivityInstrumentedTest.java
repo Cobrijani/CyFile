@@ -186,7 +186,43 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
 
     }
 
-    
+    @Test
+    public void testBackDialogExistingNoteNothingChanged() {
+        Intent startIntent = new Intent();
+        Note note = testNotes.get(0);
+        startIntent.putExtra(MainActivity.NOTE_ID, note.getId());
+
+        testRule.launchActivity(startIntent);
+
+        Espresso.pressBack();
+
+        onView(withText("Are you sure you want to leave without saving?")).check(matches(not(isDisplayed())));
+    }
+
+    @Test
+    public void testBackDialogExistingNoteChanged() {
+        Intent startIntent = new Intent();
+        Note note = testNotes.get(0);
+        startIntent.putExtra(MainActivity.NOTE_ID, note.getId());
+
+        testRule.launchActivity(startIntent);
+
+        onView(withId(R.id.NOTE_TITLE))
+                .perform(ViewActions.clearText())
+                .perform(ViewActions.typeText("New title"))
+                .perform(closeSoftKeyboard());
+
+        onView(withId(R.id.NOTE_CONTENT))
+                .perform(ViewActions.clearText())
+                .perform(ViewActions.typeText("Next text"))
+                .perform(closeSoftKeyboard());
+
+        Espresso.pressBack();
+
+        onView(withText("Are you sure you want to leave without saving?")).check(matches(isDisplayed()));
+
+    }
+
 
     @Test
     public void testNotSavedBack() {
