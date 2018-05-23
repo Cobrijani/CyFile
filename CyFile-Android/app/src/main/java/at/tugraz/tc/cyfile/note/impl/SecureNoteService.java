@@ -1,5 +1,6 @@
 package at.tugraz.tc.cyfile.note.impl;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,12 +42,16 @@ public class SecureNoteService implements NoteService {
                 create.setContent(cryptoService.decrypt(note.getContent()));
                 create.setTitle(cryptoService.decrypt(note.getTitle()));
                 create.setId(note.getId());
+                create.setDateTimeCreated(note.getDateTimeCreated());
+                create.setDateTimeModified(note.getDateTimeModified());
                 retVal.add(create);
             }
         } catch (InvalidCryptoOperationException e) {
             e.printStackTrace();
             return Collections.emptyList();
         }
+
+        Collections.sort(retVal, (n1, n2) -> n1.getDateTimeModified().compareTo(n2.getDateTimeModified()));
 
         return retVal;
     }
@@ -60,6 +65,8 @@ public class SecureNoteService implements NoteService {
                 newNote.setTitle(cryptoService.decrypt(note.getTitle()));
                 newNote.setContent(cryptoService.decrypt(note.getContent()));
                 newNote.setId(note.getId());
+                newNote.setDateTimeCreated(note.getDateTimeCreated());
+                newNote.setDateTimeModified(note.getDateTimeModified());
                 return newNote;
             } catch (InvalidCryptoOperationException e) {
                 e.printStackTrace();
@@ -77,6 +84,11 @@ public class SecureNoteService implements NoteService {
         try {
             note.setContent(cryptoService.encrypt(note.getContent()));
             note.setTitle(cryptoService.encrypt(note.getTitle()));
+            if(note.getDateTimeCreated() == null) {
+                note.setDateTimeCreated(new Timestamp(System.currentTimeMillis()).getTime());
+            }
+
+            note.setDateTimeModified(new Timestamp(System.currentTimeMillis()).getTime());
             return repository.save(note);
         } catch (InvalidCryptoOperationException e) {
             e.printStackTrace();
