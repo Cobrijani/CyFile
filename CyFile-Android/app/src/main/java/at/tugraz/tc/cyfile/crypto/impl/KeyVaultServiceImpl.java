@@ -82,9 +82,21 @@ public class KeyVaultServiceImpl implements KeyVaultService {
             throw new KeyVaultAlreadyInitializedException();
         }
 
-        this.logger.d("KeyVaultService", "Generating key");
-        secretKey = generator.generateKey();
-        internalState = State.LOCKED;
+
+        try {
+            this.keyStore.load(null);
+            if (!keyStore.containsAlias(KEY_ALIAS)) {
+                this.logger.d("KeyVaultService", "Generating key");
+                this.secretKey = generator.generateKey();
+            }
+            internalState = State.LOCKED;
+        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {
+            e.printStackTrace();
+
+            // if error occurs than just leave it in init state
+            internalState = State.INIT;
+
+        }
     }
 
     @Override

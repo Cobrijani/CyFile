@@ -13,6 +13,7 @@ import javax.inject.Inject;
 
 import at.tugraz.tc.cyfile.R;
 import at.tugraz.tc.cyfile.crypto.KeyVaultService;
+import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultNotInitializedException;
 import at.tugraz.tc.cyfile.logging.CyFileLogger;
 import at.tugraz.tc.cyfile.secret.SecretManager;
 import at.tugraz.tc.cyfile.secret.SecretPrompter;
@@ -41,11 +42,11 @@ public class PatternLockActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getActivityComponent().inject(this);
         logger.d("PatternLockActivity", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pattern_lock);
 
-        getActivityComponent().inject(this);
 
         mPatternLockView = findViewById(R.id.pattern_lock_view);
 
@@ -140,7 +141,15 @@ public class PatternLockActivity extends BaseActivity {
             PinPatternSecret pinPatternSecret = new PinPatternSecret(pattern);
             if (secretManager.verify(pinPatternSecret)) {
                 mPatternLockView.setViewMode(CORRECT);
-                keyVaultService.unlockVault(pinPatternSecret.getSecretValue());
+
+                try {
+                    keyVaultService.unlockVault(pinPatternSecret.getSecretValue());
+                } catch (KeyVaultNotInitializedException e) {
+                    // in case we have a secret stored and its valid, but we didnt initialize the key vault
+                    keyVaultService.init(pinPatternSecret.getSecretValue());
+                    keyVaultService.unlockVault(pinPatternSecret.getSecretValue());
+                }
+
                 finish();
             } else {
                 Toast.makeText(context, "Invalid pin", Toast.LENGTH_LONG).show();

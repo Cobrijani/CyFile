@@ -13,4 +13,14 @@ public class AndroidLogger implements CyFileLogger {
     public void e(String tag, String msg) {
         Log.e(tag, msg);
     }
+
+    @Override
+    public void i(String tag, String msg) {
+        Log.i(tag, msg);
+    }
+
+    @Override
+    public void w(String tag, String msg) {
+        Log.w(tag, msg);
+    }
 }
