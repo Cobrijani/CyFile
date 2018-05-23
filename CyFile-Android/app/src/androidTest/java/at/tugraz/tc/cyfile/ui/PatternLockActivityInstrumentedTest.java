@@ -18,7 +18,7 @@ import at.tugraz.tc.cyfile.R;
 import at.tugraz.tc.cyfile.async.AsyncModule;
 import at.tugraz.tc.cyfile.crypto.impl.DummyKeyVaultService;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
-import at.tugraz.tc.cyfile.logging.NoOpLogger;
+import at.tugraz.tc.cyfile.logging.impl.NoOpLogger;
 import at.tugraz.tc.cyfile.note.NoteModule;
 import at.tugraz.tc.cyfile.note.NoteService;
 import at.tugraz.tc.cyfile.secret.SecretManager;
