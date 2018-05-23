@@ -135,10 +135,10 @@ public class MainActivity extends BaseActivity {
                 .setAction(actionName, action);
 
         View v = snack.getView();
-        v.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        v.setBackgroundColor(getResources().getColor(R.color.primary));
         ((TextView) v.findViewById(android.support.design.R.id.snackbar_text)).setTextColor(Color.WHITE);
         ((TextView) v.findViewById(android.support.design.R.id.snackbar_action))
-                .setTextColor(getResources().getColor(R.color.colorDeleteButton));
+                .setTextColor(getResources().getColor(R.color.primary_dark));
 
         snack.show();
     }

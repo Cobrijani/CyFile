@@ -94,7 +94,7 @@ public class DisplayNoteActivity extends BaseActivity {
 
     private void greyOutDeleteButton() {
         FloatingActionButton deleteButton = findViewById(R.id.BTN_DEL);
-        deleteButton.setBackgroundTintList(DisplayNoteActivity.this.getResources().getColorStateList(R.color.colorGreyedOutDeleteButton));
+        deleteButton.setBackgroundTintList(DisplayNoteActivity.this.getResources().getColorStateList(R.color.divider));
         deleteButton.setClickable(false);
     }
 
