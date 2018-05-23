@@ -42,6 +42,8 @@ import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard
 import static android.support.test.espresso.action.ViewActions.pressBack;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.intent.Intents.intended;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -162,7 +164,7 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
 
         Espresso.pressBack();
 
-        onView(withText("Are you sure you want to leave without saving?")).check(matches(not(isDisplayed())));
+        onView(withText("Are you sure you want to leave without saving?")).check(doesNotExist());
     }
 
     @Test
@@ -184,7 +186,6 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
         Espresso.pressBack();
 
         onView(withText("Are you sure you want to leave without saving?")).check(matches(isDisplayed()));
-
     }
 
     @Test
@@ -197,7 +198,7 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
 
         Espresso.pressBack();
 
-        onView(withText("Are you sure you want to leave without saving?")).check(matches(not(isDisplayed())));
+        onView(withText("Are you sure you want to leave without saving?")).check(doesNotExist());
     }
 
     @Test
