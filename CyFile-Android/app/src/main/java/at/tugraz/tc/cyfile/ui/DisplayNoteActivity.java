@@ -1,8 +1,12 @@
 package at.tugraz.tc.cyfile.ui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
@@ -30,6 +34,8 @@ public class DisplayNoteActivity extends BaseActivity {
     private TextView textContent;
     private TextView textTitle;
 
+    private boolean newNote;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,8 +48,57 @@ public class DisplayNoteActivity extends BaseActivity {
         Intent intent = getIntent();
         String noteId = intent.getStringExtra(MainActivity.NOTE_ID);
         loadNote(noteId);
+        newNote = false;
+        if (loadedNote.getTitle() == null)
+        {
+            newNote = true;
+            greyOutDeleteButton();
+        }
 
         onOpenNote();
+    }
+
+    @Override
+    public void onBackPressed() {
+        boolean something_changed = false;
+        boolean a = !textContent.getText().toString().equals("");
+        boolean b = !textTitle.getText().toString().equals("");
+        if ((newNote && (!textContent.getText().toString().equals("") || !textTitle.getText().toString().equals(""))) ||
+                (!newNote && (!textContent.getText().toString().equals(loadedNote.getContent()) ||
+                        !textTitle.getText().toString().equals(loadedNote.getTitle()))))
+        {
+            something_changed = true;
+        }
+        if (!something_changed)
+        {
+            finish();
+        }
+        else
+        {
+            AlertDialog alertDialog = new AlertDialog.Builder(DisplayNoteActivity.this).create();
+            alertDialog.setTitle(getResources().getString(R.string.back_confirmation_title));
+            alertDialog.setMessage(getResources().getString(R.string.back_confirmation_content));
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.no),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getResources().getString(R.string.yes),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
+            alertDialog.show();
+        }
+
+    }
+
+    private void greyOutDeleteButton() {
+        FloatingActionButton deleteButton = findViewById(R.id.BTN_DEL);
+        deleteButton.setBackgroundTintList(DisplayNoteActivity.this.getResources().getColorStateList(R.color.divider));
+        deleteButton.setClickable(false);
     }
 
     private void initView() {
@@ -73,6 +128,8 @@ public class DisplayNoteActivity extends BaseActivity {
         logger.d("onSelectSaveNote", "Title:- " + noteTitle);
         logger.d("onSelectSaveNote", "Content:- " + noteContent);
 
+
+
         loadedNote.setTitle(noteTitle);
         loadedNote.setContent(noteContent);
 
@@ -81,11 +138,25 @@ public class DisplayNoteActivity extends BaseActivity {
     }
 
     public void onSelectDeleteNote(View v) {
-        Intent intent = getIntent();
-        String noteId = intent.getStringExtra(MainActivity.NOTE_ID);
-
-        noteService.delete(noteId);
-
-        finish();
+        AlertDialog alertDialog = new AlertDialog.Builder(DisplayNoteActivity.this).create();
+        alertDialog.setTitle(getResources().getString(R.string.delete_confirmation_title));
+        alertDialog.setMessage(getResources().getString(R.string.delete_confirmation_content)
+                +" \"" + loadedNote.getTitle() + "\"?");
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.no),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getResources().getString(R.string.yes),
+                new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = getIntent();
+                String noteId = intent.getStringExtra(MainActivity.NOTE_ID);
+                noteService.delete(noteId);
+                finish();
+            }
+        });
+        alertDialog.show();
     }
 }
