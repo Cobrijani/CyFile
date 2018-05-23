@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import at.tugraz.tc.cyfile.R;
@@ -23,12 +25,14 @@ public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public class NoteViewHolder extends SwipeToAction.ViewHolder<Note> {
         public TextView titleView;
         public TextView contentView;
+        public TextView modifiedView;
 
         public NoteViewHolder(View v) {
             super(v);
 
             titleView = (TextView) v.findViewById(R.id.title);
             contentView = (TextView) v.findViewById(R.id.content);
+            modifiedView = (TextView) v.findViewById(R.id.modified);
         }
     }
 
@@ -66,6 +70,7 @@ public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         NoteViewHolder vh = (NoteViewHolder) holder;
         vh.titleView.setText(item.getTitle());
         vh.contentView.setText(item.getContent());
+        vh.modifiedView.setText(new SimpleDateFormat("dd.MM.yyyy").format(new Date(item.getDateTimeModified() * 1000)));
         vh.data = item;
     }
 }
