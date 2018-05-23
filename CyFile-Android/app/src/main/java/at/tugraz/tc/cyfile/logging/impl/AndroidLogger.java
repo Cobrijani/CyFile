@@ -1,6 +1,8 @@
-package at.tugraz.tc.cyfile.logging;
+package at.tugraz.tc.cyfile.logging.impl;
 
 import android.util.Log;
+
+import at.tugraz.tc.cyfile.logging.CyFileLogger;
 
 public class AndroidLogger implements CyFileLogger {
 
