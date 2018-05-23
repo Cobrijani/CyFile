@@ -17,6 +17,7 @@ import javax.inject.Inject;
 
 import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultLockedException;
 import at.tugraz.tc.cyfile.domain.Note;
+import at.tugraz.tc.cyfile.logging.CyFileLogger;
 import at.tugraz.tc.cyfile.note.NoteService;
 import at.tugraz.tc.cyfile.secret.SecretPrompter;
 import at.tugraz.tc.cyfile.ui.BaseActivity;
@@ -36,6 +37,9 @@ public class MainActivity extends BaseActivity {
 
     @Inject
     SecretPrompter secretPrompter;
+
+    @Inject
+    CyFileLogger logger;
 
     private RecyclerView recyclerView;
     private NotesAdapter adapter;
@@ -100,11 +104,10 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-
     private void openNoteInDetailActivity(String noteId) {
         Note noteMessage = noteService.findOne(noteId);
-        Log.d("Note Id", noteMessage.getId());
-        Log.d("Note Content", noteMessage.getContent());
+        logger.d("Note Id", noteMessage.getId());
+        logger.d("Note Content", noteMessage.getContent());
 
         Intent intent = new Intent(this, DisplayNoteActivity.class);
 
@@ -114,7 +117,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public void onSelectAddNote(View v) {
-        Log.d("onSelectAddNote", "on select add new note");
+        logger.d("onSelectAddNote", "on select add new note");
 
         Intent intent = new Intent(this, DisplayNoteActivity.class);
         startActivity(intent);

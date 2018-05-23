@@ -28,6 +28,7 @@ import at.tugraz.tc.cyfile.crypto.impl.NoOpCryptoService;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.injection.ApplicationComponent;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
+import at.tugraz.tc.cyfile.logging.NoOpLogger;
 import at.tugraz.tc.cyfile.note.NoteModule;
 import at.tugraz.tc.cyfile.note.impl.InMemoryNoteRepository;
 import at.tugraz.tc.cyfile.note.impl.SecureNoteService;
@@ -73,7 +74,7 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
                 = DaggerApplicationComponent.builder()
                 .noteModule(new NoteModule(new SecureNoteService(new InMemoryNoteRepository(new HashSet<>(testNotes)), new NoOpCryptoService())))
                 .secretModule(new SecretModule(secretManager, mock(SecretPrompter.class), mock(KeyVaultService.class)))
-                .appModule(mock(AppModule.class))
+                .appModule(new AppModule(app, new NoOpLogger()))
                 .asyncModule(new AsyncModule(mock(Executor.class)))
                 .build();
 

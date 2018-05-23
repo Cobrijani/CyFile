@@ -19,12 +19,16 @@ import javax.inject.Inject;
 import at.tugraz.tc.cyfile.MainActivity;
 import at.tugraz.tc.cyfile.R;
 import at.tugraz.tc.cyfile.domain.Note;
+import at.tugraz.tc.cyfile.logging.CyFileLogger;
 import at.tugraz.tc.cyfile.note.NoteService;
 
 public class DisplayNoteActivity extends BaseActivity {
 
     @Inject
     NoteService noteService;
+
+    @Inject
+    CyFileLogger logger;
 
     private Note loadedNote;
     private TextView textContent;
@@ -111,8 +115,8 @@ public class DisplayNoteActivity extends BaseActivity {
     }
 
     public void onOpenNote() {
-        Log.d("Note Id", loadedNote.getId() + " ");
-        Log.d("Note Content", loadedNote.getContent() + " ");
+        logger.d("Note Id", loadedNote.getId() + " ");
+        logger.d("Note Content", loadedNote.getContent() + " ");
 
         textContent.setText(loadedNote.getContent());
         textTitle.setText(loadedNote.getTitle());
@@ -121,8 +125,8 @@ public class DisplayNoteActivity extends BaseActivity {
     public void onSelectSaveNote(View v) {
         String noteTitle = textTitle.getText().toString();
         String noteContent = textContent.getText().toString();
-        Log.d("onSelectSaveNote", "Title:- " + noteTitle);
-        Log.d("onSelectSaveNote", "Content:- " + noteContent);
+        logger.d("onSelectSaveNote", "Title:- " + noteTitle);
+        logger.d("onSelectSaveNote", "Content:- " + noteContent);
 
 
 

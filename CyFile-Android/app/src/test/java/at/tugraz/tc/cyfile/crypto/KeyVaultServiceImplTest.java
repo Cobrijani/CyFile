@@ -19,6 +19,7 @@ import at.tugraz.tc.cyfile.crypto.exceptions.InvalidPassPhraseException;
 import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultAlreadyInitializedException;
 import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultLockedException;
 import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultNotInitializedException;
+import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultServiceException;
 import at.tugraz.tc.cyfile.crypto.impl.KeyVaultServiceImpl;
 import at.tugraz.tc.cyfile.crypto.mocks.MockedKeyGenerator;
 import at.tugraz.tc.cyfile.crypto.mocks.MockedKeyStore;
@@ -86,8 +87,14 @@ public class KeyVaultServiceImplTest extends BaseUnitTest {
 
     @Test
     public void keyVaultServiceShouldUnlockWithoutErrorWhenPerformingInitAndUnlock() {
-
         keyVaultService.init(correctPass);
+        keyVaultService.unlockVault(correctPass);
+    }
+
+    @Test
+    public void keyVaultServiceShouldUnlockWithoutErrorWhenPerformingInitAndMultipleUnlock() {
+        keyVaultService.init(correctPass);
+        keyVaultService.unlockVault(correctPass);
         keyVaultService.unlockVault(correctPass);
     }
 
@@ -95,6 +102,14 @@ public class KeyVaultServiceImplTest extends BaseUnitTest {
     public void keyVaultServiceShouldThrowErrorWhenUnlockingWithWrongPassphrase() {
         keyVaultService.init(correctPass);
         keyVaultService.unlockVault(wrongPass);
+    }
+
+    @Test(expected = KeyVaultServiceException.class)
+    public void keyVaultServiceShouldThrowErrorWhenAliasDoesNotExist() {
+        when(keyStoreSpi.engineContainsAlias(any()))
+                .thenReturn(false);
+        keyVaultService.init(correctPass);
+        keyVaultService.unlockVault(correctPass);
     }
 
     @Test(expected = KeyVaultAlreadyInitializedException.class)
