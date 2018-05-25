@@ -1,23 +1,25 @@
 package at.tugraz.tc.cyfile.secret.impl;
 
 
-import android.util.Base64;
 
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
+import at.tugraz.tc.cyfile.crypto.Base64;
 import at.tugraz.tc.cyfile.secret.Secret;
 
 public class HashedSecret extends AbstractSecret implements Serializable {
     private final String secretValue;
     private final String pepper;
+    private final Base64 encoder;
 
     public static final int PEPPER_LENGTH = 8;
     private static final String SALT = "F52FBD32B2B3B86FF88EF";
 
-    public HashedSecret(Secret secret) {
+    public HashedSecret(Secret secret, Base64 encoder) {
+        this.encoder = encoder;
         pepper = getPepper();
         this.secretValue = getHashForSecret(secret, pepper);
     }
@@ -31,7 +33,7 @@ public class HashedSecret extends AbstractSecret implements Serializable {
         SecureRandom random = new SecureRandom();
         byte[] bytes = new byte[PEPPER_LENGTH];
         random.nextBytes(bytes);
-        return encodeBase64(bytes);
+        return this.encoder.encode(bytes);
     }
 
     private String getSHADigest(String secretValue) {
@@ -44,11 +46,7 @@ public class HashedSecret extends AbstractSecret implements Serializable {
 
         md.update(secretValue.getBytes());
         byte[] digest = md.digest();
-        return encodeBase64(digest);
-    }
-
-    public String encodeBase64(byte[] bytes) {
-        return Base64.encodeToString(bytes, android.util.Base64.DEFAULT);
+        return this.encoder.encode(digest);
     }
 
     @Override

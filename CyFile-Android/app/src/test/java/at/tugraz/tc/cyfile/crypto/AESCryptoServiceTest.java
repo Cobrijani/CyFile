@@ -37,7 +37,7 @@ public class AESCryptoServiceTest extends BaseUnitTest {
     private KeyVaultService dummyKeyVaultService = new DummyKeyVaultService();
 
     public void setupKVS(KeyVaultService keyVaultService) {
-        cryptoService = spy(new AESCryptoService(keyVaultService, AESCryptoService.TEST_ALGORITHM));
+        cryptoService = spy(new AESCryptoService(keyVaultService, encoder, AESCryptoService.TEST_ALGORITHM));
         setupCryptoSvc(cryptoService);
         keyVaultService.unlockVault("asdf");
     }
@@ -172,7 +172,7 @@ public class AESCryptoServiceTest extends BaseUnitTest {
         String encrypted = cryptoService.encrypt(plain);
         assertNotSame(plain, encrypted);
         assertTrue(encrypted.length() > 0);
-        AESCryptoService cryptoService2 = spy(new AESCryptoService(dummyKeyVaultService, AESCryptoService.TEST_ALGORITHM));
+        AESCryptoService cryptoService2 = spy(new AESCryptoService(dummyKeyVaultService, encoder, AESCryptoService.TEST_ALGORITHM));
         setupCryptoSvc(cryptoService2);
         String decrypted = cryptoService2.decrypt(encrypted);
         assertEquals(plain, decrypted);

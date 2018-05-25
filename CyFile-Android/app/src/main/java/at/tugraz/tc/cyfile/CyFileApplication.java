@@ -12,6 +12,7 @@ import at.tugraz.tc.cyfile.crypto.CryptoService;
 import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 import at.tugraz.tc.cyfile.crypto.impl.AESCryptoService;
 import at.tugraz.tc.cyfile.crypto.impl.KeyVaultServiceImpl;
+import at.tugraz.tc.cyfile.crypto.impl.NativeBase64;
 import at.tugraz.tc.cyfile.injection.ApplicationComponent;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
 import at.tugraz.tc.cyfile.logging.impl.AndroidLogger;
@@ -53,7 +54,8 @@ public class CyFileApplication extends Application {
             CyFileLogger logger = new AndroidLogger();
             KeyVaultService keyVaultService = new KeyVaultServiceImpl(logger);
 
-            SecretRepository secretRepository = new HashSecretRepository(this, null, logger);
+            NativeBase64 encoder = new NativeBase64();
+            SecretRepository secretRepository = new HashSecretRepository(this, null, logger, encoder);
             OnApplicationForegroundSecretPrompter prompter = new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(this), keyVaultService);
 
             NoteRepository repository = new FileNoteRepository(this, null, logger);
@@ -70,7 +72,7 @@ public class CyFileApplication extends Application {
                     keyVaultService
             );
 
-            CryptoService cryptoService = new AESCryptoService(keyVaultService, AESCryptoService.DEFAULT_ALGORITHM);
+            CryptoService cryptoService = new AESCryptoService(keyVaultService, encoder, AESCryptoService.DEFAULT_ALGORITHM);
             mApplicationComponent = DaggerApplicationComponent.builder()
                     .appModule(new AppModule(this, new AndroidLogger()))
                     .noteModule(new NoteModule(

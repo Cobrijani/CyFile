@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
+import at.tugraz.tc.cyfile.crypto.Base64;
 import at.tugraz.tc.cyfile.logging.CyFileLogger;
 import at.tugraz.tc.cyfile.secret.Secret;
 import at.tugraz.tc.cyfile.secret.SecretRepository;
@@ -21,11 +22,13 @@ public class HashSecretRepository implements SecretRepository {
     private final String fileName;
     private final Context context;
     private final CyFileLogger logger;
+    private final Base64 encoder;
 
-    public HashSecretRepository(Context context, String fileName, CyFileLogger logger) {
+    public HashSecretRepository(Context context, String fileName, CyFileLogger logger, Base64 encoder) {
         this.fileName = fileName != null ? fileName : DEFAULT_FILE_NAME;
         this.context = context;
         this.logger = logger;
+        this.encoder = encoder;
         readSecret();
     }
 
@@ -55,7 +58,7 @@ public class HashSecretRepository implements SecretRepository {
 
     @Override
     public boolean saveSecret(Secret secret) {
-        this.secret = new HashedSecret(secret);
+        this.secret = new HashedSecret(secret, encoder);
         try (ObjectOutputStream oos = new ObjectOutputStream(getOutputStream())) {
             oos.writeObject(this.secret);
             return true;
