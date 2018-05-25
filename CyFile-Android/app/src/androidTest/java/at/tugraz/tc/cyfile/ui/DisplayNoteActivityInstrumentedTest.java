@@ -3,6 +3,7 @@ package at.tugraz.tc.cyfile.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.Espresso;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.rule.ActivityTestRule;
@@ -41,10 +42,13 @@ import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard
 import static android.support.test.espresso.action.ViewActions.pressBack;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.intent.Intents.intended;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static junit.framework.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
@@ -150,6 +154,77 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
         onView(withText("Next text"))
                 .check(matches(isDisplayed()));
     }
+
+    @Test
+    public void testBackDialogNewNoteNothingChanged() {
+        Intent startIntent = new Intent();
+        // New Note created
+
+        testRule.launchActivity(startIntent);
+
+        Espresso.pressBack();
+
+        onView(withText("Are you sure you want to leave without saving?")).check(doesNotExist());
+    }
+
+    @Test
+    public void testBackDialogNewNoteChanged() {
+        Intent startIntent = new Intent();
+
+        testRule.launchActivity(startIntent);
+
+        onView(withId(R.id.NOTE_TITLE))
+                .perform(ViewActions.clearText())
+                .perform(ViewActions.typeText("New title"))
+                .perform(closeSoftKeyboard());
+
+        onView(withId(R.id.NOTE_CONTENT))
+                .perform(ViewActions.clearText())
+                .perform(ViewActions.typeText("Next text"))
+                .perform(closeSoftKeyboard());
+
+        Espresso.pressBack();
+
+        onView(withText("Are you sure you want to leave without saving?")).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void testBackDialogExistingNoteNothingChanged() {
+        Intent startIntent = new Intent();
+        Note note = testNotes.get(0);
+        startIntent.putExtra(MainActivity.NOTE_ID, note.getId());
+
+        testRule.launchActivity(startIntent);
+
+        Espresso.pressBack();
+
+        onView(withText("Are you sure you want to leave without saving?")).check(doesNotExist());
+    }
+
+    @Test
+    public void testBackDialogExistingNoteChanged() {
+        Intent startIntent = new Intent();
+        Note note = testNotes.get(0);
+        startIntent.putExtra(MainActivity.NOTE_ID, note.getId());
+
+        testRule.launchActivity(startIntent);
+
+        onView(withId(R.id.NOTE_TITLE))
+                .perform(ViewActions.clearText())
+                .perform(ViewActions.typeText("New title"))
+                .perform(closeSoftKeyboard());
+
+        onView(withId(R.id.NOTE_CONTENT))
+                .perform(ViewActions.clearText())
+                .perform(ViewActions.typeText("Next text"))
+                .perform(closeSoftKeyboard());
+
+        Espresso.pressBack();
+
+        onView(withText("Are you sure you want to leave without saving?")).check(matches(isDisplayed()));
+
+    }
+
 
     @Test
     public void testNotSavedBack() {

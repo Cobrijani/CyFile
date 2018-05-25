@@ -1,5 +1,7 @@
 package at.tugraz.tc.cyfile;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -69,10 +71,7 @@ public class MainActivity extends BaseActivity {
         swipeToAction = new SwipeToAction(recyclerView, new SwipeToAction.SwipeListener<Note>() {
             @Override
             public boolean swipeLeft(final Note itemData) {
-                displaySnackbar("remove " + itemData.getTitle() + "?", "Confirm", v -> {
-                    onSelectDeleteNote(itemData.getId());
-                    updateNoteList();
-                });
+                onSelectDeleteNote(itemData.getId());
                 return true;
             }
 
@@ -81,7 +80,6 @@ public class MainActivity extends BaseActivity {
                 openNoteInDetailActivity(itemData.getId());
                 return true;
             }
-
 
             @Override
             public void onClick(Note itemData) {
@@ -131,22 +129,24 @@ public class MainActivity extends BaseActivity {
     public void onSelectDeleteNote(String noteId) {
         Log.d("onSelectDeleteNote", "on select delete note: " + noteId);
 
-
-        noteService.delete(noteId);
-
+        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+        alertDialog.setTitle(getResources().getString(R.string.delete_confirmation_title));
+        alertDialog.setMessage(getResources().getString(R.string.delete_confirmation_content)
+                + " \"" + noteService.findOne(noteId).getTitle() + "\"?");
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.no),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getResources().getString(R.string.yes),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        noteService.delete(noteId);
+                        updateNoteList();
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
     }
-
-    private void displaySnackbar(String text, String actionName, View.OnClickListener action) {
-        Snackbar snack = Snackbar.make(findViewById(android.R.id.content), text, Snackbar.LENGTH_LONG)
-                .setAction(actionName, action);
-
-        View v = snack.getView();
-        v.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        ((TextView) v.findViewById(android.support.design.R.id.snackbar_text)).setTextColor(Color.WHITE);
-        ((TextView) v.findViewById(android.support.design.R.id.snackbar_action))
-                .setTextColor(getResources().getColor(R.color.colorDeleteButton));
-
-        snack.show();
-    }
-
 }

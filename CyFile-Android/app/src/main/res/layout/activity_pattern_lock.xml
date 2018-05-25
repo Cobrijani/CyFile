@@ -10,7 +10,7 @@
         android:id="@+id/pattern_lock_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary"
+        android:background="@color/primary"
         app:wrongStateColor="#FF2D00"
         app:correctStateColor="#00FFA4"
         app:dotAnimationDuration="200"
