@@ -12,6 +12,7 @@ import javax.crypto.KeyGenerator;
 import at.tugraz.tc.cyfile.BaseUnitTest;
 import at.tugraz.tc.cyfile.crypto.exceptions.InvalidCryptoOperationException;
 import at.tugraz.tc.cyfile.crypto.impl.AESCryptoService;
+import at.tugraz.tc.cyfile.crypto.impl.ApacheCodecBase64;
 import at.tugraz.tc.cyfile.crypto.impl.DummyKeyVaultService;
 
 import static junit.framework.Assert.assertEquals;
@@ -37,21 +38,11 @@ public class AESCryptoServiceTest extends BaseUnitTest {
     private KeyVaultService dummyKeyVaultService = new DummyKeyVaultService();
 
     public void setupKVS(KeyVaultService keyVaultService) {
-        cryptoService = spy(new AESCryptoService(keyVaultService, encoder, AESCryptoService.TEST_ALGORITHM));
-        setupCryptoSvc(cryptoService);
+        cryptoService = spy(new AESCryptoService(keyVaultService, new ApacheCodecBase64(), AESCryptoService.TEST_ALGORITHM));
         keyVaultService.unlockVault("asdf");
     }
 
-    private void setupCryptoSvc(AESCryptoService cryptoService) {
-        doAnswer(invocation ->
-                new org.apache.commons.codec.binary.Base64().decode((String) invocation.getArguments()[0]))
-                .when(cryptoService)
-                .decodeBase64(anyString());
-        doAnswer(invocation ->
-                new org.apache.commons.codec.binary.Base64().encodeToString((byte[]) invocation.getArguments()[0]))
-                .when(cryptoService)
-                .encodeBase64(any(byte[].class));
-    }
+
 
     private int blockSize = 16;
 
@@ -172,8 +163,7 @@ public class AESCryptoServiceTest extends BaseUnitTest {
         String encrypted = cryptoService.encrypt(plain);
         assertNotSame(plain, encrypted);
         assertTrue(encrypted.length() > 0);
-        AESCryptoService cryptoService2 = spy(new AESCryptoService(dummyKeyVaultService, encoder, AESCryptoService.TEST_ALGORITHM));
-        setupCryptoSvc(cryptoService2);
+        AESCryptoService cryptoService2 = spy(new AESCryptoService(dummyKeyVaultService, new ApacheCodecBase64(), AESCryptoService.TEST_ALGORITHM));
         String decrypted = cryptoService2.decrypt(encrypted);
         assertEquals(plain, decrypted);
     }
