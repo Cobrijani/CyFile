@@ -1,7 +1,6 @@
 package at.tugraz.tc.cyfile.crypto;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -12,7 +11,6 @@ import javax.crypto.KeyGenerator;
 
 import at.tugraz.tc.cyfile.BaseUnitTest;
 import at.tugraz.tc.cyfile.crypto.exceptions.InvalidCryptoOperationException;
-import at.tugraz.tc.cyfile.crypto.exceptions.InvalidPassPhraseException;
 import at.tugraz.tc.cyfile.crypto.impl.AESCryptoService;
 import at.tugraz.tc.cyfile.crypto.impl.DummyKeyVaultService;
 
@@ -22,7 +20,11 @@ import static junit.framework.Assert.assertNotSame;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 /**
@@ -34,16 +36,28 @@ public class AESCryptoServiceTest extends BaseUnitTest {
     private AESCryptoService cryptoService;
     private KeyVaultService dummyKeyVaultService = new DummyKeyVaultService();
 
-    public void setup(KeyVaultService keyVaultService) {
-        cryptoService = new AESCryptoService(keyVaultService);
+    public void setupKVS(KeyVaultService keyVaultService) {
+        cryptoService = spy(new AESCryptoService(keyVaultService, AESCryptoService.TEST_ALGORITHM));
+        setupCryptoSvc(cryptoService);
+        keyVaultService.unlockVault("asdf");
+    }
+
+    private void setupCryptoSvc(AESCryptoService cryptoService) {
+        doAnswer(invocation ->
+                new org.apache.commons.codec.binary.Base64().decode((String) invocation.getArguments()[0]))
+                .when(cryptoService)
+                .decodeBase64(anyString());
+        doAnswer(invocation ->
+                new org.apache.commons.codec.binary.Base64().encodeToString((byte[]) invocation.getArguments()[0]))
+                .when(cryptoService)
+                .encodeBase64(any(byte[].class));
     }
 
     private int blockSize = 16;
 
-
     @Test(expected = InvalidCryptoOperationException.class)
     public void testRelockedVault() throws InvalidCryptoOperationException {
-        setup(dummyKeyVaultService);
+        setupKVS(dummyKeyVaultService);
         String plain = "Hello World!";
         String encrypted = cryptoService.encrypt(plain);
 
@@ -56,16 +70,6 @@ public class AESCryptoServiceTest extends BaseUnitTest {
         assertNull(decrypted);
     }
 
-    @Test(expected = InvalidPassPhraseException.class)
-    public void testFailedUnlock() throws Exception {
-        KeyVaultService svc = mock(KeyVaultService.class);
-        Mockito.doThrow(new InvalidPassPhraseException())
-                .when(svc).unlockVault(any());
-        when(svc.getEncryptionKey()).thenReturn(null);
-
-        cryptoService = new AESCryptoService(svc);
-    }
-
     @Test(expected = InvalidCryptoOperationException.class)
     public void testEncryptChangePasswordDecryptFail() throws InvalidCryptoOperationException,
             NoSuchAlgorithmException {
@@ -75,7 +79,7 @@ public class AESCryptoServiceTest extends BaseUnitTest {
         Key key = keyGenerator.generateKey();
         Key key2 = keyGenerator.generateKey();
         KeyVaultService kvs = mock(KeyVaultService.class);
-        setup(kvs);
+        setupKVS(kvs);
         when(kvs.getEncryptionKey()).thenReturn(key);
         String plain = "Hello World!";
         byte[] encrypted = cryptoService.encrypt(plain.getBytes());
@@ -93,7 +97,7 @@ public class AESCryptoServiceTest extends BaseUnitTest {
 
     @Test
     public void testEncryptDecryptString() throws InvalidCryptoOperationException {
-        setup(dummyKeyVaultService);
+        setupKVS(dummyKeyVaultService);
         String plain = "Hello World!";
         byte[] encrypted = cryptoService.encrypt(plain.getBytes());
         assertNotSame(plain, encrypted);
@@ -108,7 +112,7 @@ public class AESCryptoServiceTest extends BaseUnitTest {
 
     @Test
     public void testEncryptEmptyString() throws InvalidCryptoOperationException {
-        setup(dummyKeyVaultService);
+        setupKVS(dummyKeyVaultService);
         String plain = "";
         String encrypted = cryptoService.encrypt(plain);
         assertNotSame(plain, encrypted);
@@ -119,7 +123,7 @@ public class AESCryptoServiceTest extends BaseUnitTest {
 
     @Test
     public void testEncryptNotBlockSizeAlignedString() throws InvalidCryptoOperationException {
-        setup(dummyKeyVaultService);
+        setupKVS(dummyKeyVaultService);
         String plain = "Hello this is a not Block-Size aligned String!";
         assertNotSame(0, plain.length() % blockSize);
         String encrypted = cryptoService.encrypt(plain);
@@ -131,7 +135,7 @@ public class AESCryptoServiceTest extends BaseUnitTest {
 
     @Test
     public void testEncryptBlockSizeAlignedString() throws InvalidCryptoOperationException {
-        setup(dummyKeyVaultService);
+        setupKVS(dummyKeyVaultService);
         String plain = "This is gonna be a Block-Size aligned String, achieved by cropping!" +
                 " In order to fit different block sizes, this has to be a quite large String." +
                 " If it is too short, just append something at the end.";
@@ -147,7 +151,7 @@ public class AESCryptoServiceTest extends BaseUnitTest {
 
     @Test
     public void testEncryptSameStringMultipleTimes() throws InvalidCryptoOperationException {
-        setup(dummyKeyVaultService);
+        setupKVS(dummyKeyVaultService);
         String plain = "Hello World!";
         byte[] encrypted1 = cryptoService.encrypt(plain.getBytes());
 
@@ -161,21 +165,22 @@ public class AESCryptoServiceTest extends BaseUnitTest {
                 .equals(plain));
     }
 
-    @Test(expected = InvalidCryptoOperationException.class)
+    @Test
     public void testEncryptDifferentCryptoServiceInstances() throws InvalidKeyException, InvalidCryptoOperationException {
-        setup(dummyKeyVaultService);
+        setupKVS(dummyKeyVaultService);
         String plain = "";
         String encrypted = cryptoService.encrypt(plain);
         assertNotSame(plain, encrypted);
         assertTrue(encrypted.length() > 0);
-        AESCryptoService cryptoService2 = new AESCryptoService(dummyKeyVaultService);
+        AESCryptoService cryptoService2 = spy(new AESCryptoService(dummyKeyVaultService, AESCryptoService.TEST_ALGORITHM));
+        setupCryptoSvc(cryptoService2);
         String decrypted = cryptoService2.decrypt(encrypted);
         assertEquals(plain, decrypted);
     }
 
     @Test
     public void testEncryptLongString() throws InvalidCryptoOperationException {
-        setup(dummyKeyVaultService);
+        setupKVS(dummyKeyVaultService);
         String plain = "\"Nam vehicula tellus euismod, faucibus enim vitae, feugiat risus. Morbi in\\n\" +\n" +
                 "                        \"                pulvinar dolor, vitae ultricies diam. Cras sed turpis nec elit laoreet ultricies non\\n\" +\n" +
                 "                        \"                a velit. Cras vel nunc lacinia, malesuada felis ac, sodales mi. Aliquam erat\\n\" +\n" +

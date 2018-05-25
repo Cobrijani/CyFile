@@ -70,7 +70,7 @@ public class CyFileApplication extends Application {
                     keyVaultService
             );
 
-            CryptoService cryptoService = new AESCryptoService(keyVaultService);
+            CryptoService cryptoService = new AESCryptoService(keyVaultService, AESCryptoService.DEFAULT_ALGORITHM);
             mApplicationComponent = DaggerApplicationComponent.builder()
                     .appModule(new AppModule(this, new AndroidLogger()))
                     .noteModule(new NoteModule(

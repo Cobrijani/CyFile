@@ -23,12 +23,14 @@ public class AESCryptoService implements CryptoService {
     private KeyVaultService keyVaultService;
 
     private static final int BLOCK_SIZE = 16;
-    private static final String ALGORITHM = "AES/CBC/PKCS7Padding";
-    private static final String PROVIDER = "AndroidKeyStore";
+    private final String algorithm;
+    public static final String DEFAULT_ALGORITHM = "AES/CBC/PKCS7Padding";
+    public static final String TEST_ALGORITHM = "AES/CBC/PKCS5Padding";
 
 
-    public AESCryptoService(KeyVaultService keyVaultService) {
+    public AESCryptoService(KeyVaultService keyVaultService, String algorithm) {
         this.keyVaultService = keyVaultService;
+        this.algorithm = algorithm;
     }
 
     @Override
@@ -52,7 +54,7 @@ public class AESCryptoService implements CryptoService {
         Cipher encCipher;
 
         try {
-            encCipher = Cipher.getInstance(ALGORITHM);
+            encCipher = Cipher.getInstance(this.algorithm);
             encCipher.init(Cipher.ENCRYPT_MODE, key);
             currentIV = encCipher.getIV();
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
@@ -81,7 +83,7 @@ public class AESCryptoService implements CryptoService {
                     cipherData.length - BLOCK_SIZE);
 
             IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
-            Cipher decCipher = Cipher.getInstance(ALGORITHM);
+            Cipher decCipher = Cipher.getInstance(this.algorithm);
             decCipher.init(Cipher.DECRYPT_MODE, key, ivParameterSpec);
 
             return decCipher.doFinal(encryptedData);
