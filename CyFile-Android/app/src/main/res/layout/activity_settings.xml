@@ -7,6 +7,11 @@
     android:orientation="vertical"
     tools:context="at.tugraz.tc.cyfile.ui.SettingsActivity">
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
     <RelativeLayout
         android:id="@+id/hide_app_setting"
         android:layout_width="match_parent"
@@ -111,4 +116,6 @@
         android:layout_width="fill_parent"
         android:layout_height="@dimen/note_divider_height"
         android:background="@color/divider" />
+
+    </LinearLayout>
 </ScrollView>
