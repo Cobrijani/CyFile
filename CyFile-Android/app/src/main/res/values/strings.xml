@@ -11,4 +11,8 @@
     <string name="yes">Yes</string>
     <string name="back_confirmation_title">Leave?</string>
     <string name="back_confirmation_content">Are you sure you want to leave without saving?</string>
+    <string name="settings_hide_app">Hide App</string>
+    <string name="settings_phone_number">App Phone Number</string>
+    <string name="settings_unlock_pattern_label">Change Unlock Pattern</string>
+    <string name="settings_unlock_pattern_button_label">Change</string>
 </resources>

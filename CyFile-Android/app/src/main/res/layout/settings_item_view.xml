@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/note_height">
+
+
+    <!-- this is the item front view -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/note_height"
+        android:background="@color/primary_light"
+        android:tag="front"
+        app:srcCompat="@drawable/ic_android_black_24dp">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/note_image"
+            android:layout_marginTop="@dimen/small_margin_dp"
+            android:layout_marginStart="@dimen/small_margin_dp"
+            android:singleLine="true"
+            android:textSize="@dimen/note_title_text_size"
+            android:textStyle="bold" />
+
+
+    </RelativeLayout>
+
+
+    <!-- just a divider -->
+    <View android:background="@color/divider"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/note_divider_height" />
+
+</FrameLayout>
