@@ -1,6 +1,13 @@
 package at.tugraz.tc.cyfile;
 
 import android.content.Intent;
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.ViewAction;
+import android.support.test.espresso.action.GeneralLocation;
+import android.support.test.espresso.action.GeneralSwipeAction;
+import android.support.test.espresso.action.Press;
+import android.support.test.espresso.action.Swipe;
+import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.assertion.ViewAssertions;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 
@@ -30,6 +37,10 @@ import at.tugraz.tc.cyfile.ui.DisplayNoteActivity;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.swipeLeft;
+import static android.support.test.espresso.action.ViewActions.swipeRight;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.matcher.ViewMatchers.hasChildCount;
@@ -160,5 +171,30 @@ public class MainActivityInstrumentedTest extends BaseInstrumentedTest {
                 .check(ViewAssertions.doesNotExist());
 
         intended(hasComponent(DisplayNoteActivity.class.getName()));
+    }
+
+    private static ViewAction swipeFromTopToBottom() {
+        return new GeneralSwipeAction(Swipe.FAST, GeneralLocation.CENTER_LEFT,
+                GeneralLocation.CENTER_RIGHT, Press.FINGER);
+    }
+
+    @Test
+    public void testDeleteDialogNoteSwipeLeft() {
+        List<Note> testNotes = Arrays.asList(new Note("1", "name1", "content1")
+                , new Note("2", "name2", "content2"));
+        mockRepo(testNotes);
+
+        mActivityRule.launchActivity(new Intent());
+
+        String title = testNotes.get(0).getTitle();
+        onView(withText(title))
+                .check(ViewAssertions.matches(isDisplayed()));
+
+        onView(withText(title))
+                .perform(swipeRight());
+
+
+        onView(withText("Are you sure you want to delete")).check(matches(isDisplayed()));
+
     }
 }

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="at.tugraz.tc.cyfile.MainActivity">
+    tools:context="at.tugraz.tc.cyfile.ui.SettingsActivity">
 
     <RelativeLayout
         android:id="@+id/hide_app_setting"

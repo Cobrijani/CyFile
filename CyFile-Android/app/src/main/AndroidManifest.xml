@@ -23,6 +23,9 @@
         <activity
             android:name=".ui.DisplayNoteActivity"
             android:launchMode="singleInstance" />
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:launchMode="singleInstance" />
     </application>
 
 </manifest>
