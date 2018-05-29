@@ -1,8 +1,8 @@
 package at.tugraz.tc.cyfile.note.impl;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import at.tugraz.tc.cyfile.crypto.CryptoService;
@@ -51,7 +51,7 @@ public class SecureNoteService implements NoteService {
             return Collections.emptyList();
         }
 
-        Collections.sort(retVal, (n1, n2) -> n1.getDateTimeModified().compareTo(n2.getDateTimeModified()));
+        Collections.sort(retVal, (n1, n2) -> -1 * n1.getDateTimeModified().compareTo(n2.getDateTimeModified()));
 
         return retVal;
     }
@@ -84,11 +84,12 @@ public class SecureNoteService implements NoteService {
         try {
             note.setContent(cryptoService.encrypt(note.getContent()));
             note.setTitle(cryptoService.encrypt(note.getTitle()));
-            if(note.getDateTimeCreated() == null) {
-                note.setDateTimeCreated(new Timestamp(System.currentTimeMillis()).getTime());
+            if (note.getDateTimeCreated() == null) {
+                note.setDateTimeCreated(new Date().getTime());
             }
 
-            note.setDateTimeModified(new Timestamp(System.currentTimeMillis()).getTime());
+            note.setDateTimeModified(new Date().getTime());
+
             return repository.save(note);
         } catch (InvalidCryptoOperationException e) {
             e.printStackTrace();

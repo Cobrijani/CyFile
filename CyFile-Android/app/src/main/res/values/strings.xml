@@ -5,4 +5,5 @@
     <string name="input_title_note_hint">Input title</string>
     <string name="btn_save_text">SAVE</string>
     <string name="btn_delete">DELETE</string>
+    <string name="note_icon">Note icon</string>
 </resources>

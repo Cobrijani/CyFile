@@ -1,15 +1,12 @@
 package at.tugraz.tc.cyfile.ui;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.widget.TextView;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 import javax.inject.Inject;
@@ -70,7 +67,15 @@ public class DisplayNoteActivity extends BaseActivity {
 
         textContent.setText(loadedNote.getContent());
         textTitle.setText(loadedNote.getTitle());
-        textModifiedDate.setText(new SimpleDateFormat("dd.MM.yyyy").format(new Date(loadedNote.getDateTimeModified() * 1000)));
+
+        if (loadedNote.getDateTimeModified() == null) {
+            textModifiedDate.setVisibility(View.INVISIBLE);
+        } else {
+
+            DateFormat format = SimpleDateFormat.getDateTimeInstance();
+            textModifiedDate.setText(format.format(new Date(loadedNote.getDateTimeModified())));
+        }
+
     }
 
     public void onSelectSaveNote(View v) {
