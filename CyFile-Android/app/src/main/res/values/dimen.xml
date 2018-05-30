@@ -9,5 +9,5 @@
     <dimen name="note_title_text_size">20sp</dimen>
     <dimen name="note_content_text_size">14sp</dimen>
     <dimen name="note_divider_height">0.5dp</dimen>
-    <integer name="maxContentLines">2</integer>
+    <integer name="maxContentLines">1</integer>
 </resources>

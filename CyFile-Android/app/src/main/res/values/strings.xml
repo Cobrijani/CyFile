@@ -6,4 +6,10 @@
     <string name="btn_save_text">SAVE</string>
     <string name="btn_delete">DELETE</string>
     <string name="note_icon">Note icon</string>
+    <string name="delete_confirmation_title">Delete Note?</string>
+    <string name="delete_confirmation_content">Are you sure you want to delete</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="back_confirmation_title">Leave?</string>
+    <string name="back_confirmation_content">Are you sure you want to leave without saving?</string>
 </resources>

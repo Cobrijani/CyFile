@@ -26,7 +26,7 @@
         android:layout_marginBottom="@dimen/default_margin_dp"
         android:onClick="onSelectAddNote"
         android:tint="@android:color/white"
-        app:backgroundTint="@color/teal"
+        app:backgroundTint="@color/accent"
         app:borderWidth="@dimen/default_fab_border_dp"
         app:elevation="@dimen/default_fab_elevation_dp"
         app:layout_constraintBottom_toBottomOf="parent"
