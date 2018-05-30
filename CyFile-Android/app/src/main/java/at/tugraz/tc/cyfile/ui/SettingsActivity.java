@@ -19,6 +19,7 @@ public class SettingsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        getActivityComponent().inject(this);
 
         Switch hidingSwitch = findViewById(R.id.hide_app_switch);
         hidingSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
