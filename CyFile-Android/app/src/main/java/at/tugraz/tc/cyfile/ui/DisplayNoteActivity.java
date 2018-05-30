@@ -12,7 +12,9 @@ import android.util.Pair;
 import android.view.View;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -33,6 +35,7 @@ public class DisplayNoteActivity extends BaseActivity {
     private Note loadedNote;
     private TextView textContent;
     private TextView textTitle;
+    private TextView textModifiedDate;
 
     private boolean newNote;
 
@@ -104,6 +107,7 @@ public class DisplayNoteActivity extends BaseActivity {
     private void initView() {
         textContent = findViewById(R.id.NOTE_CONTENT);
         textTitle = findViewById(R.id.NOTE_TITLE);
+        textModifiedDate = findViewById(R.id.NOTE_MODIFIED);
     }
 
     public void loadNote(String noteId) {
@@ -117,9 +121,19 @@ public class DisplayNoteActivity extends BaseActivity {
     public void onOpenNote() {
         logger.d("Note Id", loadedNote.getId() + " ");
         logger.d("Note Content", loadedNote.getContent() + " ");
+        logger.d("Note Modified", loadedNote.getDateTimeModified() + " ");
 
         textContent.setText(loadedNote.getContent());
         textTitle.setText(loadedNote.getTitle());
+
+        if (loadedNote.getDateTimeModified() == null) {
+            textModifiedDate.setVisibility(View.INVISIBLE);
+        } else {
+
+            DateFormat format = SimpleDateFormat.getDateTimeInstance();
+            textModifiedDate.setText(format.format(new Date(loadedNote.getDateTimeModified())));
+        }
+
     }
 
     public void onSelectSaveNote(View v) {

@@ -12,6 +12,8 @@ import at.tugraz.tc.cyfile.hiding.HidingComponent;
 
 public class SettingsActivity extends BaseActivity {
 
+    public static final String CONTENT_ID = "CONTENT_ID";
+
     @Inject
     HidingComponent hidingComponent;
 
@@ -31,4 +33,27 @@ public class SettingsActivity extends BaseActivity {
         });
     }
 
+    public void openHelpDialog(View view) {
+        Intent intent = new Intent(this, TextDisplayActivity.class);
+        intent.putExtra(CONTENT_ID, TextDisplayActivity.HELP);
+        startActivity(intent);
+    }
+
+    public void openAboutDialog(View view) {
+        Intent intent = new Intent(this, TextDisplayActivity.class);
+        intent.putExtra(CONTENT_ID, TextDisplayActivity.ABOUT);
+        startActivity(intent);
+    }
+
+    public void openLicensesDialog(View view) {
+        Intent intent = new Intent(this, TextDisplayActivity.class);
+        intent.putExtra(CONTENT_ID, TextDisplayActivity.LICENSES);
+        startActivity(intent);
+    }
+
+    public void openContactDialog(View view) {
+        Intent intent = new Intent(this, TextDisplayActivity.class);
+        intent.putExtra(CONTENT_ID, TextDisplayActivity.CONTACT);
+        startActivity(intent);
+    }
 }

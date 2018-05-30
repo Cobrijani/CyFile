@@ -2,6 +2,7 @@ package at.tugraz.tc.cyfile.secret;
 
 public interface SecretManager {
 
+    boolean secretIsSet();
 
     /**
      * Verify that the secret is correct

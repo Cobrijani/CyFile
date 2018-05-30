@@ -1,12 +1,15 @@
 package at.tugraz.tc.cyfile.ui;
 
-import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import at.tugraz.tc.cyfile.R;
@@ -18,25 +21,31 @@ public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private List<Note> items;
 
 
-    /** References to the views for each data item **/
+    /**
+     * References to the views for each data item
+     **/
     public class NoteViewHolder extends SwipeToAction.ViewHolder<Note> {
-        public TextView titleView;
-        public TextView contentView;
+        TextView titleView;
+        TextView contentView;
+        TextView modifiedView;
 
-        public NoteViewHolder(View v) {
+        NoteViewHolder(View v) {
             super(v);
 
-            titleView = (TextView) v.findViewById(R.id.title);
-            contentView = (TextView) v.findViewById(R.id.content);
+            titleView = v.findViewById(R.id.title);
+            contentView = v.findViewById(R.id.content);
+            modifiedView = v.findViewById(R.id.modified);
         }
     }
 
-    /** Constructor **/
+    /**
+     * Constructor
+     **/
     public NotesAdapter(List<Note> items) {
         this.items = items;
     }
 
-    public void updateData(List<Note> notes){
+    public void updateData(List<Note> notes) {
         this.items = notes;
         notifyDataSetChanged();
     }
@@ -51,8 +60,9 @@ public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return items.size();
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_view, parent, false);
 
@@ -60,11 +70,18 @@ public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Note item = items.get(position);
         NoteViewHolder vh = (NoteViewHolder) holder;
         vh.titleView.setText(item.getTitle());
         vh.contentView.setText(item.getContent());
+        if (item.getDateTimeModified() == null) {
+            vh.modifiedView.setVisibility(View.INVISIBLE);
+        } else {
+            DateFormat format = SimpleDateFormat.getDateTimeInstance();
+            vh.modifiedView.setText(format.format(new Date(item.getDateTimeModified())));
+        }
+
         vh.data = item;
     }
 }

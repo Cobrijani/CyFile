@@ -25,6 +25,8 @@
         <activity
             android:name=".ui.NoteListActivity" />
         <activity
+            android:name=".ui.TextDisplayActivity" />
+        <activity
             android:name=".ui.DisplayNoteActivity"
             android:launchMode="singleInstance" />
         <activity

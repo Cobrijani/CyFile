@@ -28,7 +28,7 @@ import at.tugraz.tc.cyfile.crypto.impl.NoOpCryptoService;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.injection.ApplicationComponent;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
-import at.tugraz.tc.cyfile.logging.NoOpLogger;
+import at.tugraz.tc.cyfile.logging.impl.NoOpLogger;
 import at.tugraz.tc.cyfile.note.NoteModule;
 import at.tugraz.tc.cyfile.note.impl.InMemoryNoteRepository;
 import at.tugraz.tc.cyfile.note.impl.SecureNoteService;
@@ -66,8 +66,8 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
             new IntentsTestRule<>(DisplayNoteActivity.class, true, false);
 
     private List<Note> testNotes =
-            Arrays.asList(new Note("1", "name1", "content1")
-                    , new Note("2", "name2", "content2"));
+            Arrays.asList(new Note("1", "name1", "content1", 0L, 0L)
+                    , new Note("2", "name2", "content2", 0L, 0L));
 
 
     @Before

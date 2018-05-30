@@ -117,7 +117,7 @@ public class FileNoteRepository implements NoteRepository {
         }
         inMemoryNoteRepository.delete(id);
         List<Note> notes = inMemoryNoteRepository.findAll();
-        if (notes.contains(new Note(id, "", ""))) {
+        if (notes.contains(new Note(id, "", "", null, null))) {
             throw new IllegalStateException("Note didn't get deleted from InMemoryNoteRepo");
         }
         saveNotesToFile(notes);

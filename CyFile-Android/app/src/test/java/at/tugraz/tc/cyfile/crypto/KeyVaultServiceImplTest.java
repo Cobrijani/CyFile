@@ -23,6 +23,7 @@ import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultServiceException;
 import at.tugraz.tc.cyfile.crypto.impl.KeyVaultServiceImpl;
 import at.tugraz.tc.cyfile.crypto.mocks.MockedKeyGenerator;
 import at.tugraz.tc.cyfile.crypto.mocks.MockedKeyStore;
+import at.tugraz.tc.cyfile.logging.CyFileLogger;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -37,6 +38,9 @@ public class KeyVaultServiceImplTest extends BaseUnitTest {
 
     @Mock
     KeyStoreSpi keyStoreSpi;
+
+    @Mock
+    CyFileLogger logger;
 
     private final String correctPass = "test";
     private final String wrongPass = "wrong";
@@ -75,7 +79,7 @@ public class KeyVaultServiceImplTest extends BaseUnitTest {
             e.printStackTrace();
         }
 
-        keyVaultService = new KeyVaultServiceImpl(keyGenerator, keyStore);
+        keyVaultService = new KeyVaultServiceImpl(keyGenerator, keyStore, logger);
 
 
     }

@@ -42,12 +42,4 @@ public interface CryptoService {
      */
     String decrypt(String cipherData) throws InvalidCryptoOperationException;
 
-
-    /**
-     * After calling the constructor, this method needs to be called in order to initialize the
-     * Key Store
-     *
-     * @param passphrase the passphrase for the KeyVault
-     */
-    void init(String passphrase) throws InvalidKeyException;
 }

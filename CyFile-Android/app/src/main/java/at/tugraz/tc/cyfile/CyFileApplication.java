@@ -13,8 +13,6 @@ import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 import at.tugraz.tc.cyfile.crypto.PrefixCryptoService;
 import at.tugraz.tc.cyfile.crypto.impl.KeyVaultServiceImpl;
 import at.tugraz.tc.cyfile.crypto.impl.NoOpCryptoService;
-import at.tugraz.tc.cyfile.hiding.HidingModule;
-import at.tugraz.tc.cyfile.hiding.impl.HidingComponentImpl;
 import at.tugraz.tc.cyfile.injection.ApplicationComponent;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
 import at.tugraz.tc.cyfile.logging.AndroidLogger;
@@ -54,12 +52,12 @@ public class CyFileApplication extends Application {
     public ApplicationComponent getComponent() {
         if (mApplicationComponent == null) {
 
-            KeyVaultService keyVaultService = new KeyVaultServiceImpl();
-
-            keyVaultService.init("111222");
-            SecretRepository secretRepository = new InMemorySecretRepository(new PinPatternSecret("111222"));
-            OnApplicationForegroundSecretPrompter prompter = new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(this), keyVaultService);
             CyFileLogger logger = new AndroidLogger();
+            KeyVaultService keyVaultService = new KeyVaultServiceImpl(logger);
+
+            NativeBase64 encoder = new NativeBase64();
+            SecretRepository secretRepository = new HashSecretRepository(this, null, logger, encoder);
+            OnApplicationForegroundSecretPrompter prompter = new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(this), keyVaultService);
 
             NoteRepository repository = new FileNoteRepository(this, null, logger);
             repository.initialize();
@@ -69,18 +67,19 @@ public class CyFileApplication extends Application {
 
             SecretModule secretModule = new SecretModule(
                     new SecretManagerImpl(
-                            new SimplePinPatternSecretVerifier(secretRepository),
+                            new HashPinPatternSecretVerifier(secretRepository),
                             secretRepository),
                     prompter,
                     keyVaultService
             );
 
+            CryptoService cryptoService = new AESCryptoService(keyVaultService, encoder, AESCryptoService.DEFAULT_ALGORITHM);
             mApplicationComponent = DaggerApplicationComponent.builder()
                     .appModule(new AppModule(this, new AndroidLogger()))
                     .noteModule(new NoteModule(
                             new SecureNoteService(
                                     repository,
-                                    new NoOpCryptoService())))
+                                    cryptoService)))
                     .asyncModule(new AsyncModule(new JobExecutor()))
                     .secretModule(secretModule)
                     .hidingModule(new HidingModule(new HidingComponentImpl()))
