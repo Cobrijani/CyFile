@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="about_string">Hello, this app is developed with love and passion from the highly intelligent people named below:
-        \nAnil Tilanthe
-        \nMaximilian Baronig
-        \n...and some other guys...
+    <string name="about_string">CyFile is a professional note locker developed to be a reliable tool for saving your important files in a secure and private way. Designed with a clean, minimalistic, interface CyFile makes use of top-notch encryption and hiding techniques as a robust utility.
+
+\n\nWARNING: CyFile might not support all devices due to various manufacturer changes which can affect the application’s ability to function properly.
+
+\n\nFEATURES\n
+▪ Write, edit and save notes on your device.\n
+▪ Hide CyFile on your device in Stealth Mode.\n
+▪ Lock CyFile from unauthorized access\n
+▪ Search, sort your notes\n
+▪ Obfuscate your notes from other apps\n
+▪ Sort recordings by date, time and modification\n
+
+\n\nATTENTION: CyFile requires power-saving options to exempt the application in order for the Stealth Mode to work correctly.
+
+\n\nStealth Mode allows CyFile to be an effective secure locker that can hide your files away from prying eyes.
     </string>
     <string name="help_string">You don\'t need help, find it out by yourself, dumbass!!</string>
+    <string name="licenses_string">We do not have any licenses. All illegal.</string>
+    <string name="contact_string">Email: support@cyfile.com\nPhone:+43 900 666 666</string>
 </resources>

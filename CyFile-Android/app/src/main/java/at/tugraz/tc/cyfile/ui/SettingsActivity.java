@@ -31,4 +31,16 @@ public class SettingsActivity extends BaseActivity {
         intent.putExtra(CONTENT_ID, TextDisplayActivity.ABOUT);
         startActivity(intent);
     }
+
+    public void openLicensesDialog(View view) {
+        Intent intent = new Intent(this, TextDisplayActivity.class);
+        intent.putExtra(CONTENT_ID, TextDisplayActivity.LICENSES);
+        startActivity(intent);
+    }
+
+    public void openContactDialog(View view) {
+        Intent intent = new Intent(this, TextDisplayActivity.class);
+        intent.putExtra(CONTENT_ID, TextDisplayActivity.CONTACT);
+        startActivity(intent);
+    }
 }

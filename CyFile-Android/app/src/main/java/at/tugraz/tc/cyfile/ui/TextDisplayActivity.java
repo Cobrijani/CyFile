@@ -12,9 +12,13 @@ public class TextDisplayActivity extends BaseActivity {
 
     public static final String ABOUT = "ABOUT";
     public static final String HELP = "HELP";
+    public static final String LICENSES = "LICENSES";
+    public static final String CONTACT = "CONTACT";
 
     private static String aboutString;
     private static String helpString;
+    private static String licensesString;
+    private static String contactString;
 
     private TextView content;
 
@@ -24,6 +28,8 @@ public class TextDisplayActivity extends BaseActivity {
         setContentView(R.layout.activity_text_display);
         aboutString = getString(R.string.about_string);
         helpString = getString(R.string.help_string);
+        licensesString = getString(R.string.licenses_string);
+        contactString = getString(R.string.contact_string);
         content = findViewById(R.id.text_content);
         setText();
     }
@@ -37,6 +43,14 @@ public class TextDisplayActivity extends BaseActivity {
         else if(content_id.equals(HELP))
         {
             content.setText(helpString);
+        }
+        else if(content_id.equals(LICENSES))
+        {
+            content.setText(licensesString);
+        }
+        else if(content_id.equals(CONTACT))
+        {
+            content.setText(contactString);
         }
     }
 }

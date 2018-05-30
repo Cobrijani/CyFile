@@ -19,4 +19,6 @@
     <string name="settings_title">Settings</string>
     <string name="settings_help_button_label">Help</string>
     <string name="settings_about_button_label">About</string>
+    <string name="settings_licenses_button_label">Licenses</string>
+    <string name="settings_contact_button_label">Contact Us</string>
 </resources>
