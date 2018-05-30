@@ -16,9 +16,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.Collections;
+
 import javax.inject.Inject;
 
 import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultLockedException;
+import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultNotInitializedException;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.logging.CyFileLogger;
 import at.tugraz.tc.cyfile.note.NoteService;
@@ -57,6 +60,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         getActivityComponent().inject(this);
         secretPrompter.promptSecret();
+
         initializeNoteView();
     }
 
@@ -66,9 +70,8 @@ public class MainActivity extends BaseActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
-        adapter = new NotesAdapter(noteService.findAll());
+        adapter = new NotesAdapter(Collections.emptyList());
         recyclerView.setAdapter(adapter);
-
         swipeToAction = new SwipeToAction(recyclerView, new SwipeToAction.SwipeListener<Note>() {
             @Override
             public boolean swipeLeft(final Note itemData) {
@@ -144,7 +147,7 @@ public class MainActivity extends BaseActivity {
     private void updateNoteList() {
         try {
             adapter.updateData(noteService.findAll());
-        } catch (KeyVaultLockedException e) {
+        } catch (KeyVaultLockedException | KeyVaultNotInitializedException e) {
             e.printStackTrace();
         }
     }
