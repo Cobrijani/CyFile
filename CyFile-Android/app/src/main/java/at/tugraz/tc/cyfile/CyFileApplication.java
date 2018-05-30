@@ -13,6 +13,8 @@ import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 import at.tugraz.tc.cyfile.crypto.PrefixCryptoService;
 import at.tugraz.tc.cyfile.crypto.impl.KeyVaultServiceImpl;
 import at.tugraz.tc.cyfile.crypto.impl.NoOpCryptoService;
+import at.tugraz.tc.cyfile.hiding.HidingModule;
+import at.tugraz.tc.cyfile.hiding.impl.HidingComponentImpl;
 import at.tugraz.tc.cyfile.injection.ApplicationComponent;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
 import at.tugraz.tc.cyfile.logging.AndroidLogger;
@@ -81,6 +83,7 @@ public class CyFileApplication extends Application {
                                     new NoOpCryptoService())))
                     .asyncModule(new AsyncModule(new JobExecutor()))
                     .secretModule(secretModule)
+                    .hidingModule(new HidingModule(new HidingComponentImpl()))
                     .build();
         }
         return mApplicationComponent;

@@ -2,8 +2,6 @@ package at.tugraz.tc.cyfile.hiding;
 
 import javax.inject.Singleton;
 
-import dagger.Provides;
-
 import dagger.Module;
 import dagger.Provides;
 
