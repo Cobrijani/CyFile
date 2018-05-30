@@ -1,6 +1,11 @@
 package at.tugraz.tc.cyfile.ui;
 
 import android.content.Intent;
+import android.support.test.espresso.ViewAction;
+import android.support.test.espresso.action.GeneralLocation;
+import android.support.test.espresso.action.GeneralSwipeAction;
+import android.support.test.espresso.action.Press;
+import android.support.test.espresso.action.Swipe;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.rule.ActivityTestRule;
 
@@ -16,10 +21,9 @@ import at.tugraz.tc.cyfile.BaseInstrumentedTest;
 import at.tugraz.tc.cyfile.MainActivity;
 import at.tugraz.tc.cyfile.R;
 import at.tugraz.tc.cyfile.async.AsyncModule;
-import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 import at.tugraz.tc.cyfile.crypto.impl.DummyKeyVaultService;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
-import at.tugraz.tc.cyfile.logging.NoOpLogger;
+import at.tugraz.tc.cyfile.logging.impl.NoOpLogger;
 import at.tugraz.tc.cyfile.note.NoteModule;
 import at.tugraz.tc.cyfile.note.NoteService;
 import at.tugraz.tc.cyfile.secret.SecretManager;
@@ -70,6 +74,9 @@ public class PatternLockActivityInstrumentedTest extends BaseInstrumentedTest {
         when(secretManager.verify(any()))
                 .thenReturn(true);
 
+        when(secretManager.secretIsSet())
+                .thenReturn(true);
+
         mainActivityActivityTestRule.launchActivity(new Intent());
 
         onView(withId(R.id.pattern_lock_view))
@@ -83,6 +90,8 @@ public class PatternLockActivityInstrumentedTest extends BaseInstrumentedTest {
     public void falsePatternDoesNotRemoveView() {
         when(secretManager.verify(any()))
                 .thenReturn(false);
+        when(secretManager.secretIsSet())
+                .thenReturn(true);
 
         mainActivityActivityTestRule.launchActivity(new Intent());
 
@@ -90,5 +99,47 @@ public class PatternLockActivityInstrumentedTest extends BaseInstrumentedTest {
                 .perform(ViewActions.swipeDown());
 
         onView(withId(R.id.pattern_lock_view)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void twoCorrectPinUserInputsRemovesView() {
+        when(secretManager.secretIsSet())
+                .thenReturn(false);
+
+        mainActivityActivityTestRule.launchActivity(new Intent());
+
+        onView(withId(R.id.pattern_lock_view))
+                .perform(ViewActions.swipeDown())
+                .perform(ViewActions.swipeDown())
+                .check(doesNotExist());
+    }
+
+    @Test
+    public void twoIncorrectPinUserInputsDoesNotRemoveView() {
+        when(secretManager.secretIsSet())
+                .thenReturn(false);
+
+        mainActivityActivityTestRule.launchActivity(new Intent());
+
+        onView(withId(R.id.pattern_lock_view))
+                .perform(ViewActions.swipeRight())
+                .perform(ViewActions.click())
+                .perform(ViewActions.swipeDown())
+                .check(matches(isDisplayed()));
+    }
+
+
+    @Test
+    public void setFalsePinPatternCenterBottom() {
+        when(secretManager.secretIsSet())
+                .thenReturn(false);
+
+        mainActivityActivityTestRule.launchActivity(new Intent());
+
+        onView(withId(R.id.pattern_lock_view))
+                .perform(swipeFromCenterToBottom())
+                .perform(ViewActions.click())
+                .perform(swipeFromCenterToBottom())
+                .check(matches(isDisplayed()));
     }
 }

@@ -1,7 +1,8 @@
-package at.tugraz.tc.cyfile.crypto;
+package at.tugraz.tc.cyfile.crypto.impl;
 
 import java.security.InvalidKeyException;
 
+import at.tugraz.tc.cyfile.crypto.CryptoService;
 import at.tugraz.tc.cyfile.crypto.exceptions.InvalidCryptoOperationException;
 import kotlin.NotImplementedError;
 
@@ -31,8 +32,4 @@ public class PrefixCryptoService implements CryptoService {
         return cipherData.replaceAll(PREFIX, "");
     }
 
-    @Override
-    public void init(String passphrase) throws InvalidKeyException {
-
-    }
 }
