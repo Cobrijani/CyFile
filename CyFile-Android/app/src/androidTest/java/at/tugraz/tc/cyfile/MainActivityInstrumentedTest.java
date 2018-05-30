@@ -34,6 +34,7 @@ import at.tugraz.tc.cyfile.secret.SecretManager;
 import at.tugraz.tc.cyfile.secret.SecretModule;
 import at.tugraz.tc.cyfile.secret.SecretPrompter;
 import at.tugraz.tc.cyfile.ui.DisplayNoteActivity;
+import at.tugraz.tc.cyfile.ui.SettingsActivity;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -149,7 +150,6 @@ public class MainActivityInstrumentedTest extends BaseInstrumentedTest {
         intended(hasComponent(DisplayNoteActivity.class.getName()));
     }
 
-
     @Test
     public void testEditNote() {
         List<Note> testNotes = Arrays.asList(new Note("1", "name1", "content1")
@@ -197,4 +197,15 @@ public class MainActivityInstrumentedTest extends BaseInstrumentedTest {
         onView(withText("Are you sure you want to delete")).check(matches(isDisplayed()));
 
     }
+
+    @Test
+    public void settingsTest() throws Exception {
+
+        mActivityRule.launchActivity(new Intent());
+
+        onView(withId(R.id.action_settings)).perform(click());
+
+        intended(hasComponent(SettingsActivity.class.getName()));
+    }
+
 }
