@@ -21,6 +21,8 @@
         <activity
             android:name=".ui.PatternLockActivity" />
         <activity
+            android:name=".ui.NoteListActivity" />
+        <activity
             android:name=".ui.DisplayNoteActivity"
             android:launchMode="singleInstance" />
         <activity

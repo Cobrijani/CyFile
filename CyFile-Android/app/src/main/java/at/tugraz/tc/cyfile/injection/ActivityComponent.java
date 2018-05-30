@@ -3,6 +3,7 @@ package at.tugraz.tc.cyfile.injection;
 import at.tugraz.tc.cyfile.ui.DisplayNoteActivity;
 import at.tugraz.tc.cyfile.MainActivity;
 import at.tugraz.tc.cyfile.secret.SecretPrompter;
+import at.tugraz.tc.cyfile.ui.NoteListActivity;
 import at.tugraz.tc.cyfile.ui.PatternLockActivity;
 import dagger.Component;
 
@@ -29,6 +30,8 @@ public interface ActivityComponent {
      * @param activity activity
      */
     void inject(PatternLockActivity activity);
+
+    void inject(NoteListActivity activity);
 
     SecretPrompter secretPrompter();
 

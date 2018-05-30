@@ -4,6 +4,10 @@ import javax.inject.Singleton;
 
 import dagger.Provides;
 
+import dagger.Module;
+import dagger.Provides;
+
+@Module
 public class HidingModule {
     private final HidingComponent appHidingComponent;
 
