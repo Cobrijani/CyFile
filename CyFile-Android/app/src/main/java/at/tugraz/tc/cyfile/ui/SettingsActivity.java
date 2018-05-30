@@ -7,9 +7,13 @@ import javax.inject.Inject;
 
 import at.tugraz.tc.cyfile.MainActivity;
 import at.tugraz.tc.cyfile.R;
+import at.tugraz.tc.cyfile.hiding.HidingComponent;
 import at.tugraz.tc.cyfile.logging.CyFileLogger;
 
 public class SettingsActivity extends BaseActivity {
+
+    @Inject
+    private HidingComponent hidingComponent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
