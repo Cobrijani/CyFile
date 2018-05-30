@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_string">Hello, this app is developed with love and passion from the highly intelligent people named below:
+        \nAnil Tilanthe
+        \nMaximilian Baronig
+        \n...and some other guys...
+    </string>
+    <string name="help_string">You don\'t need help, find it out by yourself, dumbass!!</string>
+</resources>

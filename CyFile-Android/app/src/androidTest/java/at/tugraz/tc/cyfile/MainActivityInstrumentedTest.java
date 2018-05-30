@@ -187,11 +187,12 @@ public class MainActivityInstrumentedTest extends BaseInstrumentedTest {
         mActivityRule.launchActivity(new Intent());
 
         String title = testNotes.get(0).getTitle();
+        String content = testNotes.get(0).getContent();
         onView(withText(title))
                 .check(ViewAssertions.matches(isDisplayed()));
 
-        onView(withText(title))
-                .perform(swipeRight());
+        onView(withText(content))
+                .perform(swipeLeft());
 
 
         onView(withText("Are you sure you want to delete")).check(matches(isDisplayed()));
