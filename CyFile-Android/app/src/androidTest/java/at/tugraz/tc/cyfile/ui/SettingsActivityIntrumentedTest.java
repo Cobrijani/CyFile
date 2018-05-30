@@ -1,4 +1,7 @@
 package at.tugraz.tc.cyfile.ui;
 
-public class SettingsActivityIntrumentedTest {
+import at.tugraz.tc.cyfile.BaseInstrumentedTest;
+
+public class SettingsActivityIntrumentedTest extends BaseInstrumentedTest {
+    
 }
