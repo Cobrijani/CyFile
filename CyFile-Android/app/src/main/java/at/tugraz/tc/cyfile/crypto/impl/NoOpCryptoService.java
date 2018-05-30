@@ -30,7 +30,4 @@ public class NoOpCryptoService implements CryptoService {
         return cipherData;
     }
 
-    @Override
-    public void init(String passphrase) throws InvalidKeyException {
-    }
 }

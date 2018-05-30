@@ -27,7 +27,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/small_margin_dp"
             android:layout_marginTop="@dimen/small_margin_dp"
-            android:layout_toEndOf="@id/note_image"
             android:singleLine="true"
             android:text="@string/settings_hide_app"
             android:textSize="@dimen/note_title_text_size"
@@ -60,7 +59,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/small_margin_dp"
             android:layout_marginTop="@dimen/small_margin_dp"
-            android:layout_toEndOf="@id/note_image"
             android:singleLine="true"
             android:text="@string/settings_phone_number"
             android:textSize="@dimen/note_title_text_size"
@@ -77,50 +75,149 @@
             android:inputType="phone" />
     </RelativeLayout>
 
-    <View
+    <!--<View
         android:layout_width="fill_parent"
         android:layout_height="@dimen/note_divider_height"
         android:background="@color/divider" />
 
-    <RelativeLayout
-        android:id="@+id/settings_unlock_pattern"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/note_height"
-        android:background="@color/primary_light"
-        app:srcCompat="@drawable/ic_android_black_24dp">
+        <RelativeLayout
+            android:id="@+id/settings_unlock_pattern"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/note_height"
+            android:background="@color/primary_light"
+            app:srcCompat="@drawable/ic_android_black_24dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/small_margin_dp"
-            android:layout_marginTop="@dimen/small_margin_dp"
-            android:layout_toEndOf="@id/note_image"
-            android:singleLine="true"
-            android:text="@string/settings_unlock_pattern_label"
-            android:textSize="@dimen/note_title_text_size"
-            android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/small_margin_dp"
+                android:layout_marginTop="@dimen/small_margin_dp"
+                android:layout_toEndOf="@id/note_image"
+                android:singleLine="true"
+                android:text="@string/settings_unlock_pattern_label"
+                android:textSize="@dimen/note_title_text_size"
+                android:textStyle="bold" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/button_unlock_pattern"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/default_margin_dp"
-            android:backgroundTint="@color/accent"
-            android:text="@string/settings_unlock_pattern_button_label"
-            android:tint="@color/icons"
-            app:borderWidth="0dp"
-            app:elevation="2dp"
-            app:srcCompat="@drawable/ic_edit_black_24dp" />
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/button_unlock_pattern"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/default_margin_dp"
+                android:backgroundTint="@color/accent"
+                android:text="@string/settings_unlock_pattern_button_label"
+                android:tint="@color/icons"
+                app:borderWidth="0dp"
+                app:elevation="2dp"
+                app:srcCompat="@drawable/ic_edit_black_24dp" />
 
-    </RelativeLayout>
+        </RelativeLayout>-->
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/note_divider_height"
-        android:background="@color/divider" />
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/note_divider_height"
+            android:background="@color/divider" />
 
+        <RelativeLayout
+            android:id="@+id/settings_help"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/note_height"
+            android:background="@color/primary_light"
+            app:srcCompat="@drawable/ic_android_black_24dp"
+            android:onClick="openHelpDialog">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/small_margin_dp"
+                android:layout_marginTop="@dimen/small_margin_dp"
+                android:singleLine="true"
+                android:text="@string/settings_help_button_label"
+                android:textSize="@dimen/note_title_text_size"
+                android:textStyle="bold" />
+
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/note_divider_height"
+            android:background="@color/divider" />
+
+        <RelativeLayout
+            android:id="@+id/settings_about"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/note_height"
+            android:background="@color/primary_light"
+            app:srcCompat="@drawable/ic_android_black_24dp"
+            android:onClick="openAboutDialog">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/small_margin_dp"
+                android:layout_marginTop="@dimen/small_margin_dp"
+                android:singleLine="true"
+                android:text="@string/settings_about_button_label"
+                android:textSize="@dimen/note_title_text_size"
+                android:textStyle="bold" />
+
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/note_divider_height"
+            android:background="@color/divider" />
+
+        <RelativeLayout
+            android:id="@+id/settings_licenses"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/note_height"
+            android:background="@color/primary_light"
+            android:onClick="openLicensesDialog">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/small_margin_dp"
+                android:layout_marginTop="@dimen/small_margin_dp"
+                android:singleLine="true"
+                android:text="@string/settings_licenses_button_label"
+                android:textSize="@dimen/note_title_text_size"
+                android:textStyle="bold" />
+
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/note_divider_height"
+            android:background="@color/divider" />
+
+        <RelativeLayout
+            android:id="@+id/settings_contact"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/note_height"
+            android:background="@color/primary_light"
+            android:onClick="openContactDialog">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/small_margin_dp"
+                android:layout_marginTop="@dimen/small_margin_dp"
+                android:singleLine="true"
+                android:text="@string/settings_contact_button_label"
+                android:textSize="@dimen/note_title_text_size"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/note_divider_height"
+            android:background="@color/divider" />
     </LinearLayout>
 
 </ScrollView>

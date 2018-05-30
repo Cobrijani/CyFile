@@ -52,6 +52,8 @@ public class InMemoryNoteRepository implements NoteRepository {
             if (n.getId().equals(note.getId())) {
                 n.setTitle(note.getTitle());
                 n.setContent(note.getContent());
+                n.setDateTimeCreated(note.getDateTimeCreated());
+                n.setDateTimeModified(note.getDateTimeModified());
                 return n;
             }
         }
