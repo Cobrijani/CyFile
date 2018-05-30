@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "1096356465618",
+    "firebase_url": "https://cyfile-android.firebaseio.com",
+    "project_id": "cyfile-android",
+    "storage_bucket": "cyfile-android.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1096356465618:android:368098692feabcb3",
+        "android_client_info": {
+          "package_name": "at.tugraz.tc.cyfile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1096356465618-a2lbbaj08t0ic0i4i8qjns88uis7b6cm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "at.tugraz.tc.cyfile",
+            "certificate_hash": "47575873ade2a9fa002af216f2c0718b6a2c3658"
+          }
+        },
+        {
+          "client_id": "1096356465618-jif194q31c341p45jfs58q0ak18touue.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "1096356465618-jif194q31c341p45jfs58q0ak18touue.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAskClRe3DBP3goY3vfNfOvrn64uVUGdm0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1096356465618-jif194q31c341p45jfs58q0ak18touue.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
