@@ -206,8 +206,8 @@ public class MainActivityInstrumentedTest extends BaseInstrumentedTest {
 
     @Test
     public void testDeleteDialogNoteSwipeLeft() {
-        List<Note> testNotes = Arrays.asList(new Note("1", "name1", "content1", null, null)
-                , new Note("2", "name2", "content2", null, null));
+        List<Note> testNotes = Arrays.asList(new Note("1", "name1", "content1", 0L, 0L)
+                , new Note("2", "name2", "content2", 0L, 0L));
         mockRepo(testNotes);
 
         mActivityRule.launchActivity(new Intent());
