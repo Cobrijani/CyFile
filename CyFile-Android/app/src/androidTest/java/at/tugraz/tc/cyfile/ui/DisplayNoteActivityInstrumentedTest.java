@@ -66,8 +66,8 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
             new IntentsTestRule<>(DisplayNoteActivity.class, true, false);
 
     private List<Note> testNotes =
-            Arrays.asList(new Note("1", "name1", "content1")
-                    , new Note("2", "name2", "content2"));
+            Arrays.asList(new Note("1", "name1", "content1", 0L, 0L)
+                    , new Note("2", "name2", "content2", 0L, 0L));
 
 
     @Before

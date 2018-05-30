@@ -2,6 +2,7 @@ package at.tugraz.tc.cyfile.note.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import at.tugraz.tc.cyfile.crypto.CryptoService;
@@ -41,12 +42,16 @@ public class SecureNoteService implements NoteService {
                 create.setContent(cryptoService.decrypt(note.getContent()));
                 create.setTitle(cryptoService.decrypt(note.getTitle()));
                 create.setId(note.getId());
+                create.setDateTimeCreated(note.getDateTimeCreated());
+                create.setDateTimeModified(note.getDateTimeModified());
                 retVal.add(create);
             }
         } catch (InvalidCryptoOperationException e) {
             e.printStackTrace();
             return Collections.emptyList();
         }
+
+        Collections.sort(retVal, (n1, n2) -> -1 * n1.getDateTimeModified().compareTo(n2.getDateTimeModified()));
 
         return retVal;
     }
@@ -60,6 +65,8 @@ public class SecureNoteService implements NoteService {
                 newNote.setTitle(cryptoService.decrypt(note.getTitle()));
                 newNote.setContent(cryptoService.decrypt(note.getContent()));
                 newNote.setId(note.getId());
+                newNote.setDateTimeCreated(note.getDateTimeCreated());
+                newNote.setDateTimeModified(note.getDateTimeModified());
                 return newNote;
             } catch (InvalidCryptoOperationException e) {
                 e.printStackTrace();
@@ -77,6 +84,12 @@ public class SecureNoteService implements NoteService {
         try {
             note.setContent(cryptoService.encrypt(note.getContent()));
             note.setTitle(cryptoService.encrypt(note.getTitle()));
+            if (note.getDateTimeCreated() == null) {
+                note.setDateTimeCreated(new Date().getTime());
+            }
+
+            note.setDateTimeModified(new Date().getTime());
+
             return repository.save(note);
         } catch (InvalidCryptoOperationException e) {
             e.printStackTrace();

@@ -26,6 +26,10 @@ public final class Note implements Serializable {
 
     private String content;
 
+    private Long dateTimeCreated;
+
+    private Long dateTimeModified;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
