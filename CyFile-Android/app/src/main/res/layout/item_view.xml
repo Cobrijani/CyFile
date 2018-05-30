@@ -23,10 +23,10 @@
 
     <!-- this view reveals when swipe left -->
     <RelativeLayout
-        android:tag="reveal-left"
-        android:background="@color/primary_dark"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/note_height">
+        android:layout_height="@dimen/note_height"
+        android:background="@color/primary_dark"
+        android:tag="reveal-left">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -54,11 +54,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/small_margin_dp"
             android:layout_marginTop="@dimen/minimal_margin_dp"
+            android:drawableStart="@drawable/ic_description_black_24dp"
+            android:drawableTint="@color/accent"
             android:singleLine="true"
             android:textSize="@dimen/note_title_text_size"
-            android:textStyle="bold"
-            android:drawableStart="@drawable/ic+description_black_24dp"
-            android:drawableTint="@color/accent"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/modified"
