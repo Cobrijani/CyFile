@@ -76,5 +76,23 @@ public class SettingsActivityIntrumentedTest extends BaseInstrumentedTest {
         onView(withText(R.string.help_string)).check(matches(isDisplayed()));
     }
 
+    @Test
+    public void settingsContactTest() throws Exception {
 
+        testRule.launchActivity(new Intent());
+
+        onView(withId(R.id.settings_contact)).perform(click());
+
+        onView(withText(R.string.contact_string)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void settingsLicensesTest() throws Exception {
+
+        testRule.launchActivity(new Intent());
+
+        onView(withId(R.id.settings_licenses)).perform(click());
+
+        onView(withText(R.string.licenses_string)).check(matches(isDisplayed()));
+    }
 }
