@@ -19,12 +19,15 @@ import at.tugraz.tc.cyfile.note.NoteService;
 import at.tugraz.tc.cyfile.secret.SecretManager;
 import at.tugraz.tc.cyfile.secret.SecretModule;
 import at.tugraz.tc.cyfile.secret.SecretPrompter;
+import at.tugraz.tc.cyfile.settings.SettingsModule;
+import at.tugraz.tc.cyfile.settings.UserSettingsComponent;
 import dagger.Component;
 
 @Singleton
 @Component(modules =
         {AppModule.class, CryptoModule.class, NoteModule.class,
-                SecretModule.class, AsyncModule.class, HidingModule.class})
+                SecretModule.class, AsyncModule.class, HidingModule.class,
+                SettingsModule.class})
 public interface ApplicationComponent {
 
     @ApplicationContext
@@ -41,6 +44,8 @@ public interface ApplicationComponent {
     SecretPrompter secretPrompter();
 
     KeyVaultService keyVaultService();
+
+    UserSettingsComponent settingsComponent();
 
     HidingComponent hidingComponent();
 

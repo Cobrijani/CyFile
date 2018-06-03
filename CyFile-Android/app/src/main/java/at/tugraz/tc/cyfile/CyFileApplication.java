@@ -10,25 +10,29 @@ import at.tugraz.tc.cyfile.async.AsyncModule;
 import at.tugraz.tc.cyfile.async.impl.JobExecutor;
 import at.tugraz.tc.cyfile.crypto.CryptoService;
 import at.tugraz.tc.cyfile.crypto.KeyVaultService;
-import at.tugraz.tc.cyfile.crypto.PrefixCryptoService;
+import at.tugraz.tc.cyfile.crypto.impl.AESCryptoService;
 import at.tugraz.tc.cyfile.crypto.impl.KeyVaultServiceImpl;
-import at.tugraz.tc.cyfile.crypto.impl.NoOpCryptoService;
+import at.tugraz.tc.cyfile.crypto.impl.NativeBase64;
+import at.tugraz.tc.cyfile.hiding.HidingModule;
+import at.tugraz.tc.cyfile.hiding.impl.HidingComponentImpl;
 import at.tugraz.tc.cyfile.injection.ApplicationComponent;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
-import at.tugraz.tc.cyfile.logging.AndroidLogger;
 import at.tugraz.tc.cyfile.logging.CyFileLogger;
+import at.tugraz.tc.cyfile.logging.impl.AndroidLogger;
 import at.tugraz.tc.cyfile.note.NoteModule;
 import at.tugraz.tc.cyfile.note.NoteRepository;
 import at.tugraz.tc.cyfile.note.impl.FileNoteRepository;
 import at.tugraz.tc.cyfile.note.impl.SecureNoteService;
 import at.tugraz.tc.cyfile.secret.SecretModule;
+import at.tugraz.tc.cyfile.secret.SecretPrompter;
 import at.tugraz.tc.cyfile.secret.SecretRepository;
-import at.tugraz.tc.cyfile.secret.impl.InMemorySecretRepository;
+import at.tugraz.tc.cyfile.secret.impl.HashPinPatternSecretVerifier;
+import at.tugraz.tc.cyfile.secret.impl.HashSecretRepository;
 import at.tugraz.tc.cyfile.secret.impl.OnApplicationForegroundSecretPrompter;
-import at.tugraz.tc.cyfile.secret.impl.PinPatternSecret;
 import at.tugraz.tc.cyfile.secret.impl.PinPatternSecretPrompter;
 import at.tugraz.tc.cyfile.secret.impl.SecretManagerImpl;
-import at.tugraz.tc.cyfile.secret.impl.SimplePinPatternSecretVerifier;
+import at.tugraz.tc.cyfile.settings.SettingsModule;
+import at.tugraz.tc.cyfile.settings.impl.UserSettingsComponentImpl;
 
 /**
  * Application extended class
@@ -82,6 +86,7 @@ public class CyFileApplication extends Application {
                                     cryptoService)))
                     .asyncModule(new AsyncModule(new JobExecutor()))
                     .secretModule(secretModule)
+                    .settingsModule(new SettingsModule(new UserSettingsComponentImpl(this)))
                     .hidingModule(new HidingModule(new HidingComponentImpl()))
                     .build();
         }

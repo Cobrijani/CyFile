@@ -94,7 +94,7 @@ public class NoteListActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             /*case R.id.action_search:
-                // User chose the "Settings" item, show the app settings UI...
+                // User chose the "UserSettings" item, show the app settings UI...
                 Log.d("onSearchNotes", "on select search notes");
                 return true;
 

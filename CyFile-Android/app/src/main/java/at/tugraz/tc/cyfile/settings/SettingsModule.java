@@ -6,17 +6,17 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-public class HidingModule {
-    private final SettingsComponent appHidingComponent;
+public class SettingsModule {
+    private final UserSettingsComponent userSettings;
 
-    public HidingModule(SettingsComponent appHidingComponent) {
-        this.appHidingComponent = appHidingComponent;
+    public SettingsModule(UserSettingsComponent appHidingComponent) {
+        this.userSettings = appHidingComponent;
     }
 
     @Provides
     @Singleton
-    public SettingsComponent provideHidingComponent() {
-        return appHidingComponent;
+    public UserSettingsComponent provideUserSettings() {
+        return userSettings;
     }
 
 }

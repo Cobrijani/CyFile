@@ -15,31 +15,30 @@
         android:orientation="vertical">
 
 
+        <RelativeLayout
+            android:id="@+id/hide_app_setting"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/note_height"
+            android:background="@color/primary_light">
 
-    <RelativeLayout
-        android:id="@+id/hide_app_setting"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/note_height"
-        android:background="@color/primary_light">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/small_margin_dp"
+                android:layout_marginTop="@dimen/small_margin_dp"
+                android:singleLine="true"
+                android:text="@string/settings_hide_app"
+                android:textSize="@dimen/note_title_text_size"
+                android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/small_margin_dp"
-            android:layout_marginTop="@dimen/small_margin_dp"
-            android:singleLine="true"
-            android:text="@string/settings_hide_app"
-            android:textSize="@dimen/note_title_text_size"
-            android:textStyle="bold" />
-
-        <Switch
-            android:id="@+id/hide_app_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/default_margin_dp" />
-    </RelativeLayout>
+            <Switch
+                android:id="@+id/hide_app_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/default_margin_dp" />
+        </RelativeLayout>
 
     <View
         android:layout_width="fill_parent"
@@ -126,6 +125,18 @@
             android:background="@color/primary_light"
             app:srcCompat="@drawable/ic_android_black_24dp"
             android:onClick="openHelpDialog">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/BTN_SAVE_SETTINGS"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="@dimen/small_margin_dp"
+                android:onClick="onSelectSaveNote"
+                android:tint="@android:color/white"
+                app:backgroundTint="@color/accent"
+
+                app:srcCompat="@drawable/ic_save_black_24dp" />
 
             <TextView
                 android:layout_width="wrap_content"

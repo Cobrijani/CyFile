@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 public class CallReceiver extends BroadcastReceiver {
-
+    public static final String DEFAULT_MAGIC_NUMBER = "1234";
     @Override
     public void onReceive(Context context, Intent intent) {
 
