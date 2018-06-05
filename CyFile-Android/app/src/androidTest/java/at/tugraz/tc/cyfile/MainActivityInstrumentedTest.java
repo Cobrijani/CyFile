@@ -1,7 +1,15 @@
 package at.tugraz.tc.cyfile;
 
 import android.content.Intent;
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.ViewAction;
+import android.support.test.espresso.action.GeneralLocation;
+import android.support.test.espresso.action.GeneralSwipeAction;
+import android.support.test.espresso.action.Press;
+import android.support.test.espresso.action.Swipe;
+import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.assertion.PositionAssertions;
+import android.support.test.espresso.assertion.ViewAssertions;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 
 import org.junit.Before;
@@ -29,9 +37,14 @@ import at.tugraz.tc.cyfile.secret.SecretManager;
 import at.tugraz.tc.cyfile.secret.SecretModule;
 import at.tugraz.tc.cyfile.secret.SecretPrompter;
 import at.tugraz.tc.cyfile.ui.DisplayNoteActivity;
+import at.tugraz.tc.cyfile.ui.SettingsActivity;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.swipeLeft;
+import static android.support.test.espresso.action.ViewActions.swipeRight;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intended;
@@ -163,7 +176,6 @@ public class MainActivityInstrumentedTest extends BaseInstrumentedTest {
         intended(hasComponent(DisplayNoteActivity.class.getName()));
     }
 
-
     @Test
     public void testEditNote() {
         List<Note> testNotes = Arrays.asList(new Note("1", "name1", "content1", 0L, 0L)
@@ -186,4 +198,41 @@ public class MainActivityInstrumentedTest extends BaseInstrumentedTest {
 
         intended(hasComponent(DisplayNoteActivity.class.getName()));
     }
+
+    private static ViewAction swipeFromTopToBottom() {
+        return new GeneralSwipeAction(Swipe.FAST, GeneralLocation.CENTER_LEFT,
+                GeneralLocation.CENTER_RIGHT, Press.FINGER);
+    }
+
+    @Test
+    public void testDeleteDialogNoteSwipeLeft() {
+        List<Note> testNotes = Arrays.asList(new Note("1", "name1", "content1", 0L, 0L)
+                , new Note("2", "name2", "content2", 0L, 0L));
+        mockRepo(testNotes);
+
+        mActivityRule.launchActivity(new Intent());
+
+        String title = testNotes.get(0).getTitle();
+        String content = testNotes.get(0).getContent();
+        onView(withText(title))
+                .check(ViewAssertions.matches(isDisplayed()));
+
+        onView(withText(content))
+                .perform(swipeLeft());
+
+
+        onView(withText("Are you sure you want to delete")).check(matches(isDisplayed()));
+
+    }
+
+    @Test
+    public void settingsTest() throws Exception {
+
+        mActivityRule.launchActivity(new Intent());
+
+        onView(withId(R.id.action_settings)).perform(click());
+
+        intended(hasComponent(SettingsActivity.class.getName()));
+    }
+
 }

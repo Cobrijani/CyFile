@@ -1,7 +1,7 @@
 package at.tugraz.tc.cyfile.domain;
 
 import java.io.Serializable;
-
+import java.util.Date;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -29,6 +29,14 @@ public final class Note implements Serializable {
     private Long dateTimeCreated;
 
     private Long dateTimeModified;
+
+    public Note(String id, String title, String content){
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.dateTimeCreated = new Date().getTime();
+        this.dateTimeModified = dateTimeCreated;
+    }
 
     @Override
     public boolean equals(Object o) {

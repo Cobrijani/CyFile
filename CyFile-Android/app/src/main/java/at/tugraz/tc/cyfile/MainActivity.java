@@ -7,6 +7,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -24,6 +27,7 @@ import at.tugraz.tc.cyfile.secret.SecretPrompter;
 import at.tugraz.tc.cyfile.ui.BaseActivity;
 import at.tugraz.tc.cyfile.ui.DisplayNoteActivity;
 import at.tugraz.tc.cyfile.ui.NotesAdapter;
+import at.tugraz.tc.cyfile.ui.SettingsActivity;
 import co.dift.ui.SwipeToAction;
 
 
@@ -96,6 +100,47 @@ public class MainActivity extends BaseActivity {
             }
         });
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_favorite, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            /*case R.id.action_search:
+                // User chose the "Settings" item, show the app settings UI...
+                Log.d("onSearchNotes", "on select search notes");
+                return true;
+
+            case R.id.action_favorite:
+                // User chose the "Favorite" action, mark the current item
+                // as a favorite...
+                Log.d("onSelectMarkAsFavorite", "on select mark as favorite");
+                return true; */
+
+            case R.id.action_settings:
+                Log.d("onSelectSettings", "on select open settings");
+                openSettingsActivity();
+                return true;
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    private void openSettingsActivity() {
+        logger.d("onSelectSettings", "Go to settings");
+
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
 
     @Override
     protected void onResume() {

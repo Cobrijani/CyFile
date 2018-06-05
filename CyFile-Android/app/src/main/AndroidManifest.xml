@@ -22,8 +22,13 @@
         <activity
             android:name=".ui.PatternLockActivity" />
         <activity
+            android:name=".ui.TextDisplayActivity" />
+        <activity
             android:name=".ui.DisplayNoteActivity"
             android:launchMode="singleInstance" />
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:launchMode="singleInstance"
+            android:windowSoftInputMode="stateHidden"/>
     </application>
-
 </manifest>
