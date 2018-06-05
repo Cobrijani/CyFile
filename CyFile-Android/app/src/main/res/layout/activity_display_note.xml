@@ -7,6 +7,16 @@
     android:layout_height="match_parent"
     tools:context="at.tugraz.tc.cyfile.ui.DisplayNoteActivity">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
     <EditText
         android:layout_margin="@dimen/small_margin_dp"
         android:layout_width="match_parent"
@@ -16,7 +26,9 @@
         android:inputType="text" />
 
     <TextView
-        android:layout_margin="@dimen/default_margin_dp"
+        android:layout_margin="@dimen/minimal_margin_dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginTop="0dp"
         android:layout_width="match_parent"
         android:id="@+id/NOTE_MODIFIED"
         android:layout_height="wrap_content" />
@@ -26,13 +38,12 @@
         android:layout_width="match_parent"
         android:gravity="top"
         android:layout_weight="1"
-
         android:layout_height="0dp"
         android:layout_margin="@dimen/small_margin_dp"
         android:hint="@string/note_text_hint"
         android:inputType="textMultiLine" />
-
-
+        </LinearLayout>
+    </ScrollView>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
