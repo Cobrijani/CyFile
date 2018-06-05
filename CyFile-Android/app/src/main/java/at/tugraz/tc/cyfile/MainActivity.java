@@ -1,12 +1,9 @@
 package at.tugraz.tc.cyfile;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,7 +11,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.Collections;
 
@@ -48,6 +46,8 @@ public class MainActivity extends BaseActivity {
     @Inject
     CyFileLogger logger;
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     private RecyclerView recyclerView;
     private NotesAdapter adapter;
     private SwipeToAction swipeToAction;
@@ -60,7 +60,11 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         getActivityComponent().inject(this);
         secretPrompter.promptSecret();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
 
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.APP_OPEN, Bundle.EMPTY);
+        mFirebaseAnalytics.setUserId("Test");//set user ID
         initializeNoteView();
     }
 
@@ -157,6 +161,13 @@ public class MainActivity extends BaseActivity {
         logger.d("Note Id", noteMessage.getId());
         logger.d("Note Content", noteMessage.getContent());
 
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, noteMessage.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, noteMessage.getContent());
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "note");
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
+
         Intent intent = new Intent(this, DisplayNoteActivity.class);
 
         String message = noteMessage.getId();
@@ -179,18 +190,12 @@ public class MainActivity extends BaseActivity {
         alertDialog.setMessage(getResources().getString(R.string.delete_confirmation_content)
                 + " \"" + noteService.findOne(noteId).getTitle() + "\"?");
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.no),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                (dialog, which) -> dialog.dismiss());
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getResources().getString(R.string.yes),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        noteService.delete(noteId);
-                        updateNoteList();
-                        dialog.dismiss();
-                    }
+                (dialog, which) -> {
+                    noteService.delete(noteId);
+                    updateNoteList();
+                    dialog.dismiss();
                 });
         alertDialog.show();
     }
