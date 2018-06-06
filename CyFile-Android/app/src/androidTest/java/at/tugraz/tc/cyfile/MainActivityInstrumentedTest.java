@@ -1,13 +1,11 @@
 package at.tugraz.tc.cyfile;
 
 import android.content.Intent;
-import android.support.test.espresso.Espresso;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.GeneralLocation;
 import android.support.test.espresso.action.GeneralSwipeAction;
 import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Swipe;
-import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.assertion.PositionAssertions;
 import android.support.test.espresso.assertion.ViewAssertions;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
@@ -40,11 +38,11 @@ import at.tugraz.tc.cyfile.ui.DisplayNoteActivity;
 import at.tugraz.tc.cyfile.ui.SettingsActivity;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
-import static android.support.test.espresso.action.ViewActions.swipeRight;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intended;
@@ -113,6 +111,33 @@ public class MainActivityInstrumentedTest extends BaseInstrumentedTest {
             when(noteRepository.findOne(note.getId()))
                     .thenReturn(note);
         }
+    }
+
+    @Test
+    public void testSearchNotes() {
+        mockRepo(Arrays.asList(new Note("1", "name1", "content1", new Date().getTime() - 100, new Date().getTime() - 100)
+                , new Note("2", "name2", "content2", new Date().getTime() + 100, new Date().getTime() + 100),
+                new Note("3", "name3", "content3", new Date().getTime(), new Date().getTime())));
+
+
+        mActivityRule.launchActivity(new Intent());
+
+        onView(withId(android.support.design.R.id.search_src_text)).perform(typeText("name3"));
+//        onView(withId(R.id.search_note))
+//                .perform(click())
+//                .perform(clearText())
+//                .perform(typeText("name3"))
+//                .perform(closeSoftKeyboard());
+
+        onView(withText("name1"))
+                .check(doesNotExist());
+
+        onView(withText("name2"))
+                .check(doesNotExist());
+
+        onView(withText("name3"))
+                .check(matches(isDisplayed()));
+
     }
 
 
