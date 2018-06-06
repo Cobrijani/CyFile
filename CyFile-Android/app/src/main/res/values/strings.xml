@@ -21,4 +21,9 @@
     <string name="settings_about_button_label">About</string>
     <string name="settings_licenses_button_label">Licenses</string>
     <string name="settings_contact_button_label">Contact Us</string>
+    <string name="new_pattern_text">Please enter a new pattern</string>
+    <string name="confirm_pattern_text">Please confirm</string>
+    <string name="pattern_too_short_text">Pattern too short...</string>
+    <string name="pattern_is_different_text">Patterns different</string>
+    <string name="invalid_pin">Invalid Pin</string>
 </resources>
