@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +21,16 @@ import co.dift.ui.SwipeToAction;
 public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Note> items;
+
+    public void filter(String newText, List<Note> notesList) {
+        List<Note> notes = new ArrayList<>();
+        for (Note note : notesList) {
+            if (note.getContent().contains(newText) || note.getTitle().contains(newText)) {
+                notes.add(note);
+            }
+        }
+        updateData(notes);
+    }
 
 
     /**

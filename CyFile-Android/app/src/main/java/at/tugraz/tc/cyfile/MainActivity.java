@@ -6,13 +6,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.Collections;
 
@@ -35,7 +34,7 @@ import co.dift.ui.SwipeToAction;
  * Main activity
  * Created by cobri on 3/21/2018.
  */
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements SearchView.OnQueryTextListener {
 
     @Inject
     NoteService noteService;
@@ -46,11 +45,9 @@ public class MainActivity extends BaseActivity {
     @Inject
     CyFileLogger logger;
 
-    private FirebaseAnalytics mFirebaseAnalytics;
-
-    private RecyclerView recyclerView;
     private NotesAdapter adapter;
-    private SwipeToAction swipeToAction;
+
+    private SearchView searchView;
 
     public static final String NOTE_ID = "NOTE_ID";
 
@@ -60,23 +57,23 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         getActivityComponent().inject(this);
         secretPrompter.promptSecret();
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
-
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.APP_OPEN, Bundle.EMPTY);
-        mFirebaseAnalytics.setUserId("Test");//set user ID
         initializeNoteView();
+
+        searchView = findViewById(R.id.search_note);
+
+        searchView.setOnQueryTextListener(this);
     }
 
     protected void initializeNoteView() {
-        recyclerView = findViewById(R.id.noteList);
+
+        RecyclerView recyclerView = findViewById(R.id.noteList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
         adapter = new NotesAdapter(Collections.emptyList());
         recyclerView.setAdapter(adapter);
-        swipeToAction = new SwipeToAction(recyclerView, new SwipeToAction.SwipeListener<Note>() {
+        new SwipeToAction(recyclerView, new SwipeToAction.SwipeListener<Note>() {
             @Override
             public boolean swipeLeft(final Note itemData) {
                 onSelectDeleteNote(itemData.getId());
@@ -161,13 +158,6 @@ public class MainActivity extends BaseActivity {
         logger.d("Note Id", noteMessage.getId());
         logger.d("Note Content", noteMessage.getContent());
 
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, noteMessage.getId());
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, noteMessage.getContent());
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "note");
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-
-
         Intent intent = new Intent(this, DisplayNoteActivity.class);
 
         String message = noteMessage.getId();
@@ -198,5 +188,16 @@ public class MainActivity extends BaseActivity {
                     dialog.dismiss();
                 });
         alertDialog.show();
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        adapter.filter(newText, noteService.findAll());
+        return false;
     }
 }

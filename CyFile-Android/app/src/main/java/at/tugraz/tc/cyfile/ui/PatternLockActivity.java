@@ -2,6 +2,7 @@ package at.tugraz.tc.cyfile.ui;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.andrognito.patternlockview.PatternLockView;
@@ -26,6 +27,8 @@ import static com.andrognito.patternlockview.PatternLockView.PatternViewMode.WRO
 public class PatternLockActivity extends BaseActivity {
 
     public static final int PATTERN_MIN_LENGTH = 3;
+
+    private final String TAG = this.getClass().getName();
 
     @Inject
     SecretManager secretManager;
@@ -64,7 +67,9 @@ public class PatternLockActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        moveTaskToBack(true);
+        Log.d(TAG, "Back pressed");
+        // prevent back
+//        moveTaskToBack(true);
     }
 
     abstract class PatternLockActivityListener implements PatternLockViewListener {

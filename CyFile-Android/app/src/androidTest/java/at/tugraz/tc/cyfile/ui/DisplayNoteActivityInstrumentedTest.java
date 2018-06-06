@@ -42,13 +42,11 @@ import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard
 import static android.support.test.espresso.action.ViewActions.pressBack;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.intent.Intents.intended;
-import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static android.support.test.espresso.matcher.RootMatchers.isDialog;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static junit.framework.Assert.assertTrue;
-import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
@@ -239,6 +237,11 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
                 .perform(ViewActions.typeText("New title"))
                 .perform(closeSoftKeyboard())
                 .perform(pressBack());
+
+        onView(withText(R.string.yes))
+                .inRoot(isDialog()) // <---
+                .check(matches(isDisplayed()))
+                .perform(click());
 
         onView(withText(note.getTitle()))
                 .check(matches(isDisplayed()));
