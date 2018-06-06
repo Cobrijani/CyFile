@@ -189,8 +189,6 @@ public class MainActivityInstrumentedTest extends BaseInstrumentedTest {
                 .check(matches(isDisplayed()));
 
         onView(withText("name1"))
-                //TODO: check why this fails
-                //.perform(scrollTo())
                 .perform(click());
 
         onView(withId(R.id.noteList))
@@ -211,8 +209,6 @@ public class MainActivityInstrumentedTest extends BaseInstrumentedTest {
                 .check(matches(isDisplayed()));
 
         onView(withText(title))
-                //TODO: check why this fails
-                //.perform(scrollTo())
                 .perform(click());
 
         onView(withId(R.id.noteList))
