@@ -8,9 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -59,26 +57,20 @@ public class SettingsActivity extends BaseActivity {
 
         stealthModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.PROCESS_OUTGOING_CALLS)
-                        == PackageManager.PERMISSION_GRANTED) {
-                    hidingComponent.hideApp(this);
-
-                } else if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.PROCESS_OUTGOING_CALLS)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    // Permission is not granted
-                    // No explanation needed; request the permission
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.PROCESS_OUTGOING_CALLS},
-                            MY_PERMISSIONS_REQUEST_CALL_PHONE);
-
-                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                    // app-defined int constant. The callback method gets the
-                    // result of the request.
-                }
+                ensureOutgoingCallPermissionGranted();
             } else {
                 hidingComponent.showApp(this);
             }
         });
+    }
+
+    private void ensureOutgoingCallPermissionGranted() {
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.PROCESS_OUTGOING_CALLS)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.PROCESS_OUTGOING_CALLS},
+                    MY_PERMISSIONS_REQUEST_CALL_PHONE);
+        }
     }
 
     @Override
@@ -86,26 +78,13 @@ public class SettingsActivity extends BaseActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_CALL_PHONE: {
-                // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    hidingComponent.hideApp(this);
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                        && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    this.stealthModeSwitch.setChecked(false);
                 }
-                return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
-
 
     private void saveSettings() {
         boolean stealthMode = this.stealthModeSwitch.isChecked();
