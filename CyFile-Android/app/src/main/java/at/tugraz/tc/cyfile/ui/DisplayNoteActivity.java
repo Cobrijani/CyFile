@@ -59,8 +59,6 @@ public class DisplayNoteActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         boolean something_changed = false;
-        boolean a = !textContent.getText().toString().equals("");
-        boolean b = !textTitle.getText().toString().equals("");
         if ((newNote && (!textContent.getText().toString().equals("") || !textTitle.getText().toString().equals(""))) ||
                 (!newNote && (!textContent.getText().toString().equals(loadedNote.getContent()) ||
                         !textTitle.getText().toString().equals(loadedNote.getTitle())))) {
