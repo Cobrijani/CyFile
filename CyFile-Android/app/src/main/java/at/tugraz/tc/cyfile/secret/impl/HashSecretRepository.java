@@ -23,13 +23,18 @@ public class HashSecretRepository implements SecretRepository {
     private final Context context;
     private final CyFileLogger logger;
     private final Base64 encoder;
+    private boolean isInit = false;
 
     public HashSecretRepository(Context context, String fileName, CyFileLogger logger, Base64 encoder) {
         this.fileName = fileName != null ? fileName : DEFAULT_FILE_NAME;
         this.context = context;
         this.logger = logger;
         this.encoder = encoder;
+    }
+
+    public void init() {
         readSecret();
+        isInit = true;
     }
 
     private void readSecret() {
@@ -43,16 +48,19 @@ public class HashSecretRepository implements SecretRepository {
         }
     }
 
-    InputStream getInputStream() throws FileNotFoundException {
+    public InputStream getInputStream() throws FileNotFoundException {
         return context.openFileInput(fileName);
     }
 
-    OutputStream getOutputStream() throws FileNotFoundException {
+    public OutputStream getOutputStream() throws FileNotFoundException {
         return context.openFileOutput(fileName, Context.MODE_PRIVATE);
     }
 
     @Override
     public Secret getSecret() {
+        if (!isInit) {
+            throw new IllegalStateException("Must be initialized first");
+        }
         return secret;
     }
 
