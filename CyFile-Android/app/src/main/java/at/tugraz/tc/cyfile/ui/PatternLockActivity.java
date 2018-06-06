@@ -16,6 +16,7 @@ import at.tugraz.tc.cyfile.R;
 import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultNotInitializedException;
 import at.tugraz.tc.cyfile.logging.CyFileLogger;
+import at.tugraz.tc.cyfile.note.NoteService;
 import at.tugraz.tc.cyfile.secret.SecretManager;
 import at.tugraz.tc.cyfile.secret.SecretPrompter;
 import at.tugraz.tc.cyfile.secret.impl.PinPatternSecret;
@@ -35,6 +36,9 @@ public class PatternLockActivity extends BaseActivity {
 
     @Inject
     KeyVaultService keyVaultService;
+
+    @Inject
+    NoteService service;
 
     @Inject
     CyFileLogger logger;
@@ -97,7 +101,7 @@ public class PatternLockActivity extends BaseActivity {
 
         @Override
         public void onStarted() {
-            Toast.makeText(context, "Please enter a new pattern", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, getResources().getString(R.string.new_pattern_text), Toast.LENGTH_LONG).show();
         }
 
         //TODO no hardcoded texts
@@ -106,20 +110,23 @@ public class PatternLockActivity extends BaseActivity {
             if (pattern.size() >= PATTERN_MIN_LENGTH) {
                 PinPatternSecret pinPatternSecret = new PinPatternSecret(new LinkedList<>(pattern));
                 if (firstEnteredSecret == null) {
-                    Toast.makeText(context, "Please confirm", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, getResources().getString(R.string.confirm_pattern_text), Toast.LENGTH_LONG).show();
                     firstEnteredSecret = pinPatternSecret;
                     mPatternLockView.clearPattern();
                 } else {
                     verifySecondPattern(pinPatternSecret);
                 }
             } else {
-                Toast.makeText(context, "Pattern too short...", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, getResources().getString(R.string.pattern_too_short_text), Toast.LENGTH_LONG).show();
                 mPatternLockView.clearPattern();
             }
         }
 
         private void verifySecondPattern(PinPatternSecret pinPatternSecret) {
             if (pinPatternSecret.equals(firstEnteredSecret)) {
+                service.purgeRepository();
+                keyVaultService.deleteKey();
+
                 mPatternLockView.setViewMode(CORRECT);
                 secretManager.setSecret(pinPatternSecret);
                 String passphrase = pinPatternSecret.getSecretValue();
@@ -127,7 +134,7 @@ public class PatternLockActivity extends BaseActivity {
                 keyVaultService.unlockVault(passphrase);
                 finish();
             } else {
-                Toast.makeText(context, "Different", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, getResources().getString(R.string.pattern_is_different_text), Toast.LENGTH_LONG).show();
                 mPatternLockView.clearPattern();
                 firstEnteredSecret = null;
             }
@@ -155,7 +162,7 @@ public class PatternLockActivity extends BaseActivity {
                 }
                 finish();
             } else {
-                Toast.makeText(context, "Invalid pin", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, getResources().getString(R.string.invalid_pin), Toast.LENGTH_LONG).show();
                 mPatternLockView.setViewMode(WRONG);
             }
         }

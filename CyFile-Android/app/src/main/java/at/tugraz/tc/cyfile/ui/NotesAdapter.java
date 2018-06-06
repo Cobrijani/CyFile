@@ -16,7 +16,6 @@ import at.tugraz.tc.cyfile.R;
 import at.tugraz.tc.cyfile.domain.Note;
 import co.dift.ui.SwipeToAction;
 
-
 public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Note> items;

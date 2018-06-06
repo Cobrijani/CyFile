@@ -32,6 +32,11 @@ public class SecureNoteService implements NoteService {
     }
 
     @Override
+    public void purgeRepository() {
+        this.repository.purge();
+    }
+
+    @Override
     public List<Note> findAll() {
         List<Note> notes = repository.findAll();
         List<Note> retVal = new ArrayList<>();

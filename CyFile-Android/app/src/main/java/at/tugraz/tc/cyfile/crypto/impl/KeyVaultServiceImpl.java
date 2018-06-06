@@ -77,11 +77,20 @@ public class KeyVaultServiceImpl implements KeyVaultService {
     }
 
     @Override
+    public void deleteKey() {
+        try {
+            this.keyStore.load(null);
+            this.keyStore.deleteEntry(KEY_ALIAS);
+        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    @Override
     public void init(String passphrase) throws KeyVaultAlreadyInitializedException {
         if (internalState != State.INIT) {
             throw new KeyVaultAlreadyInitializedException();
         }
-
 
         try {
             this.keyStore.load(null);

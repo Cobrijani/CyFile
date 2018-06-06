@@ -49,7 +49,7 @@ public class DisplayNoteActivity extends BaseActivity {
         initView();
 
         Intent intent = getIntent();
-        String noteId = intent.getStringExtra(MainActivity.NOTE_ID);
+        String noteId = intent.getStringExtra(NoteListActivity.NOTE_ID);
         loadNote(noteId);
         newNote = false;
         if (loadedNote.getTitle() == null)
@@ -166,7 +166,7 @@ public class DisplayNoteActivity extends BaseActivity {
                 new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = getIntent();
-                String noteId = intent.getStringExtra(MainActivity.NOTE_ID);
+                String noteId = intent.getStringExtra(NoteListActivity.NOTE_ID);
                 noteService.delete(noteId);
                 finish();
             }

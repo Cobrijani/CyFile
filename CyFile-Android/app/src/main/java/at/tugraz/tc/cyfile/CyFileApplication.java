@@ -14,6 +14,8 @@ import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 import at.tugraz.tc.cyfile.crypto.impl.AESCryptoService;
 import at.tugraz.tc.cyfile.crypto.impl.KeyVaultServiceImpl;
 import at.tugraz.tc.cyfile.crypto.impl.NativeBase64;
+import at.tugraz.tc.cyfile.hiding.HidingModule;
+import at.tugraz.tc.cyfile.hiding.impl.HidingComponentImpl;
 import at.tugraz.tc.cyfile.injection.ApplicationComponent;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
 import at.tugraz.tc.cyfile.logging.CyFileLogger;
@@ -23,12 +25,15 @@ import at.tugraz.tc.cyfile.note.NoteRepository;
 import at.tugraz.tc.cyfile.note.impl.FileNoteRepository;
 import at.tugraz.tc.cyfile.note.impl.SecureNoteService;
 import at.tugraz.tc.cyfile.secret.SecretModule;
+import at.tugraz.tc.cyfile.secret.SecretPrompter;
 import at.tugraz.tc.cyfile.secret.SecretRepository;
 import at.tugraz.tc.cyfile.secret.impl.HashPinPatternSecretVerifier;
 import at.tugraz.tc.cyfile.secret.impl.HashSecretRepository;
 import at.tugraz.tc.cyfile.secret.impl.OnApplicationForegroundSecretPrompter;
 import at.tugraz.tc.cyfile.secret.impl.PinPatternSecretPrompter;
 import at.tugraz.tc.cyfile.secret.impl.SecretManagerImpl;
+import at.tugraz.tc.cyfile.settings.SettingsModule;
+import at.tugraz.tc.cyfile.settings.impl.UserSettingsComponentImpl;
 import io.fabric.sdk.android.Fabric;
 
 /**
@@ -89,6 +94,8 @@ public class CyFileApplication extends Application {
                                     cryptoService)))
                     .asyncModule(new AsyncModule(new JobExecutor()))
                     .secretModule(secretModule)
+                    .settingsModule(new SettingsModule(new UserSettingsComponentImpl(this)))
+                    .hidingModule(new HidingModule(new HidingComponentImpl()))
                     .build();
         }
         return mApplicationComponent;
