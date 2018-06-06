@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 
 import at.tugraz.tc.cyfile.crypto.impl.ApacheCodecBase64;
 import at.tugraz.tc.cyfile.logging.CyFileLogger;
@@ -25,9 +26,8 @@ import static org.mockito.Mockito.mock;
 public class HashSecretRepositoryUnitTest {
 
     private ByteArrayOutputStream createOutputStream() throws IOException {
-        ByteArrayOutputStream bas = new ByteArrayOutputStream(2048);
 
-        return bas;
+        return new ByteArrayOutputStream(2048);
     }
 
     private InputStream createInputStream(HashedSecret secret) throws IOException {
@@ -74,5 +74,38 @@ public class HashSecretRepositoryUnitTest {
         ObjectInputStream ois = new ObjectInputStream(is);
         HashedSecret actual = (HashedSecret) ois.readObject();
         Assert.assertEquals(actual, newSecret);
+    }
+
+    @Test
+    public void testGetInputStream() throws Exception {
+        HashedSecret secret = new HashedSecret(() -> "111222", new ApacheCodecBase64());
+        Context mockContext = mock(Context.class);
+
+        HashSecretRepository repository =
+                Mockito.spy(new HashSecretRepository(mockContext, ""
+                        , mock(CyFileLogger.class), new ApacheCodecBase64()));
+        Mockito.doReturn(createInputStream(secret)).when(repository).getInputStream();
+        repository.init();
+
+        repository.getInputStream();
+    }
+
+    @Test
+    public void testGetOutputStream() throws Exception {
+        HashedSecret secret = new HashedSecret(() -> "111222", new ApacheCodecBase64());
+        Context mockContext = mock(Context.class);
+
+        HashSecretRepository repository =
+                Mockito.spy(new HashSecretRepository(mockContext, ""
+                        , mock(CyFileLogger.class), new ApacheCodecBase64()));
+
+        OutputStream out = createOutputStream();
+        Mockito.doReturn(createInputStream(secret)).when(repository).getInputStream();
+        Mockito.doReturn(out).when(repository).getOutputStream();
+        repository.init();
+
+        OutputStream result = repository.getOutputStream();
+
+        Assert.assertEquals(result, out);
     }
 }
