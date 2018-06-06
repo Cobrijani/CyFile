@@ -108,6 +108,7 @@ public class SettingsActivity extends BaseActivity {
         }
         userSettingsComponent.saveUserSettings(
                 new UserSettings(stealthMode, magicPhoneNumber));
+        finish();
     }
 
     public void openHelpDialog(View view) {
