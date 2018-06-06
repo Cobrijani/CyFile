@@ -1,8 +1,6 @@
 package at.tugraz.tc.cyfile.crypto.impl;
 
 
-import com.crashlytics.android.Crashlytics;
-
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;

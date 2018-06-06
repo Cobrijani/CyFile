@@ -5,6 +5,7 @@ import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.OnLifecycleEvent;
 
 import at.tugraz.tc.cyfile.crypto.KeyVaultService;
+import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultNotInitializedException;
 import at.tugraz.tc.cyfile.secret.SecretPrompter;
 
 /**
@@ -44,7 +45,11 @@ public class OnApplicationForegroundSecretPrompter implements SecretPrompter, Li
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private void onAppBackgrounded() {
-        keyVaultService.lockVault();
+        try {
+            keyVaultService.lockVault();
+        } catch (KeyVaultNotInitializedException e) {
+            e.printStackTrace();
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
