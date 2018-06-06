@@ -1,6 +1,7 @@
 package at.tugraz.tc.cyfile.ui;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -10,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -43,22 +45,28 @@ public class DisplayNoteActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_note);
-
         getActivityComponent().inject(this);
-
         initView();
-
         Intent intent = getIntent();
         String noteId = intent.getStringExtra(MainActivity.NOTE_ID);
         loadNote(noteId);
         newNote = false;
+        View scroll_view = findViewById(R.id.SCROLL_VIEW);
+        View note_content = findViewById(R.id.NOTE_CONTENT);
+        note_content.requestFocus();
         if (loadedNote.getTitle() == null)
         {
             newNote = true;
             greyOutDeleteButton();
+            hideDateModified();
         }
-
         onOpenNote();
+        scroll_view.scrollTo(0, note_content.getTop());
+    }
+
+    private void hideDateModified() {
+        View date_modified = findViewById(R.id.NOTE_MODIFIED);
+        date_modified.setVisibility(View.INVISIBLE);
     }
 
     @Override
