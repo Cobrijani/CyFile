@@ -1,9 +1,10 @@
 package at.tugraz.tc.cyfile.domain;
 
-import java.io.Serializable;
-import java.util.Date;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.io.Serializable;
+import java.util.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

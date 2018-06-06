@@ -1,8 +1,8 @@
 package at.tugraz.tc.cyfile.injection;
 
-import at.tugraz.tc.cyfile.ui.DisplayNoteActivity;
 import at.tugraz.tc.cyfile.MainActivity;
 import at.tugraz.tc.cyfile.secret.SecretPrompter;
+import at.tugraz.tc.cyfile.ui.DisplayNoteActivity;
 import at.tugraz.tc.cyfile.ui.PatternLockActivity;
 import dagger.Component;
 

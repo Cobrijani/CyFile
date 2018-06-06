@@ -1,5 +1,6 @@
 package at.tugraz.tc.cyfile.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -51,4 +52,14 @@ public class TextDisplayActivity extends BaseActivity {
                 break;
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent i = new Intent(TextDisplayActivity.this, SettingsActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+        finish();
+    }
+
 }

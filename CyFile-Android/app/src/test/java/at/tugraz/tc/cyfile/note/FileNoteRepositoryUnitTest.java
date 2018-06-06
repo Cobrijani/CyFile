@@ -5,12 +5,12 @@ import android.content.Context;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -19,16 +19,12 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.logging.CyFileLogger;
 import at.tugraz.tc.cyfile.note.impl.FileNoteRepository;
-
-import org.mockito.*;
-import org.mockito.junit.MockitoJUnitRunner;
 
 /**
  * Unit tests for {@link at.tugraz.tc.cyfile.note.impl.FileNoteRepository}
