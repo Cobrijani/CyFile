@@ -26,6 +26,8 @@ import at.tugraz.tc.cyfile.async.AsyncModule;
 import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 import at.tugraz.tc.cyfile.crypto.impl.NoOpCryptoService;
 import at.tugraz.tc.cyfile.domain.Note;
+import at.tugraz.tc.cyfile.hiding.HidingComponent;
+import at.tugraz.tc.cyfile.hiding.HidingModule;
 import at.tugraz.tc.cyfile.injection.ApplicationComponent;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
 import at.tugraz.tc.cyfile.logging.impl.NoOpLogger;
@@ -35,6 +37,8 @@ import at.tugraz.tc.cyfile.note.impl.SecureNoteService;
 import at.tugraz.tc.cyfile.secret.SecretManager;
 import at.tugraz.tc.cyfile.secret.SecretModule;
 import at.tugraz.tc.cyfile.secret.SecretPrompter;
+import at.tugraz.tc.cyfile.settings.SettingsModule;
+import at.tugraz.tc.cyfile.settings.UserSettingsComponent;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -42,13 +46,11 @@ import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard
 import static android.support.test.espresso.action.ViewActions.pressBack;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.intent.Intents.intended;
-import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static android.support.test.espresso.matcher.RootMatchers.isDialog;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static junit.framework.Assert.assertTrue;
-import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
@@ -78,6 +80,8 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
                 .secretModule(new SecretModule(secretManager, mock(SecretPrompter.class), mock(KeyVaultService.class)))
                 .appModule(new AppModule(app, new NoOpLogger()))
                 .asyncModule(new AsyncModule(mock(Executor.class)))
+                .hidingModule(new HidingModule(mock(HidingComponent.class)))
+                .settingsModule(new SettingsModule(mock(UserSettingsComponent.class)))
                 .build();
 
         app.setComponent(applicationComponent);
@@ -239,6 +243,11 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
                 .perform(ViewActions.typeText("New title"))
                 .perform(closeSoftKeyboard())
                 .perform(pressBack());
+
+        onView(withText(R.string.yes))
+                .inRoot(isDialog()) // <---
+                .check(matches(isDisplayed()))
+                .perform(click());
 
         onView(withText(note.getTitle()))
                 .check(matches(isDisplayed()));

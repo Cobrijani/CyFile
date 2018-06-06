@@ -1,15 +1,13 @@
 package at.tugraz.tc.cyfile.ui;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.util.Log;
-import android.util.Pair;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -43,56 +41,48 @@ public class DisplayNoteActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_note);
-
         getActivityComponent().inject(this);
-
         initView();
-
         Intent intent = getIntent();
         String noteId = intent.getStringExtra(NoteListActivity.NOTE_ID);
         loadNote(noteId);
         newNote = false;
+        View scroll_view = findViewById(R.id.SCROLL_VIEW);
+        View note_content = findViewById(R.id.NOTE_CONTENT);
+        note_content.requestFocus();
         if (loadedNote.getTitle() == null)
         {
             newNote = true;
             greyOutDeleteButton();
+            hideDateModified();
         }
-
         onOpenNote();
+        scroll_view.scrollTo(0, note_content.getTop());
+    }
+
+    private void hideDateModified() {
+        View date_modified = findViewById(R.id.NOTE_MODIFIED);
+        date_modified.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onBackPressed() {
         boolean something_changed = false;
-        boolean a = !textContent.getText().toString().equals("");
-        boolean b = !textTitle.getText().toString().equals("");
         if ((newNote && (!textContent.getText().toString().equals("") || !textTitle.getText().toString().equals(""))) ||
                 (!newNote && (!textContent.getText().toString().equals(loadedNote.getContent()) ||
-                        !textTitle.getText().toString().equals(loadedNote.getTitle()))))
-        {
+                        !textTitle.getText().toString().equals(loadedNote.getTitle())))) {
             something_changed = true;
         }
-        if (!something_changed)
-        {
+        if (!something_changed) {
             finish();
-        }
-        else
-        {
+        } else {
             AlertDialog alertDialog = new AlertDialog.Builder(DisplayNoteActivity.this).create();
             alertDialog.setTitle(getResources().getString(R.string.back_confirmation_title));
             alertDialog.setMessage(getResources().getString(R.string.back_confirmation_content));
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.no),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
+                    (dialog, which) -> dialog.dismiss());
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getResources().getString(R.string.yes),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                        }
-                    });
+                    (dialog, which) -> finish());
             alertDialog.show();
         }
 
@@ -143,7 +133,6 @@ public class DisplayNoteActivity extends BaseActivity {
         logger.d("onSelectSaveNote", "Content:- " + noteContent);
 
 
-
         loadedNote.setTitle(noteTitle);
         loadedNote.setContent(noteContent);
 
@@ -155,7 +144,7 @@ public class DisplayNoteActivity extends BaseActivity {
         AlertDialog alertDialog = new AlertDialog.Builder(DisplayNoteActivity.this).create();
         alertDialog.setTitle(getResources().getString(R.string.delete_confirmation_title));
         alertDialog.setMessage(getResources().getString(R.string.delete_confirmation_content)
-                +" \"" + loadedNote.getTitle() + "\"?");
+                + " \"" + loadedNote.getTitle() + "\"?");
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.no),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -164,13 +153,13 @@ public class DisplayNoteActivity extends BaseActivity {
                 });
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getResources().getString(R.string.yes),
                 new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = getIntent();
-                String noteId = intent.getStringExtra(NoteListActivity.NOTE_ID);
-                noteService.delete(noteId);
-                finish();
-            }
-        });
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = getIntent();
+                        String noteId = intent.getStringExtra(NoteListActivity.NOTE_ID);
+                        noteService.delete(noteId);
+                        finish();
+                    }
+                });
         alertDialog.show();
     }
 }

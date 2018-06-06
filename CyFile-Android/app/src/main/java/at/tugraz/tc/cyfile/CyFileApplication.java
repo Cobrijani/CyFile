@@ -5,7 +5,6 @@ import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
 
 import com.blankj.utilcode.util.Utils;
-import com.crashlytics.android.Crashlytics;
 
 import at.tugraz.tc.cyfile.async.AsyncModule;
 import at.tugraz.tc.cyfile.async.impl.JobExecutor;
@@ -25,7 +24,6 @@ import at.tugraz.tc.cyfile.note.NoteRepository;
 import at.tugraz.tc.cyfile.note.impl.FileNoteRepository;
 import at.tugraz.tc.cyfile.note.impl.SecureNoteService;
 import at.tugraz.tc.cyfile.secret.SecretModule;
-import at.tugraz.tc.cyfile.secret.SecretPrompter;
 import at.tugraz.tc.cyfile.secret.SecretRepository;
 import at.tugraz.tc.cyfile.secret.impl.HashPinPatternSecretVerifier;
 import at.tugraz.tc.cyfile.secret.impl.HashSecretRepository;
@@ -34,7 +32,7 @@ import at.tugraz.tc.cyfile.secret.impl.PinPatternSecretPrompter;
 import at.tugraz.tc.cyfile.secret.impl.SecretManagerImpl;
 import at.tugraz.tc.cyfile.settings.SettingsModule;
 import at.tugraz.tc.cyfile.settings.impl.UserSettingsComponentImpl;
-import io.fabric.sdk.android.Fabric;
+
 
 /**
  * Application extended class
@@ -49,11 +47,11 @@ public class CyFileApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        final Fabric fabric = new Fabric.Builder(this)
-                .kits(new Crashlytics())
-                .debuggable(true)           // Enables Crashlytics debugger
-                .build();
-        Fabric.with(fabric);
+//        final Fabric fabric = new Fabric.Builder(this)
+//                .kits(new Crashlytics())
+//                .debuggable(true)           // Enables Crashlytics debugger
+//                .build();
+//        Fabric.with(fabric);
         Utils.init(this);
     }
 

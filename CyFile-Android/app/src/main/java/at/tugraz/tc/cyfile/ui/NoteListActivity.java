@@ -7,23 +7,27 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.Collections;
+
 import javax.inject.Inject;
 
 import at.tugraz.tc.cyfile.R;
 import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultLockedException;
+import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultNotInitializedException;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.logging.CyFileLogger;
 import at.tugraz.tc.cyfile.note.NoteService;
 import at.tugraz.tc.cyfile.secret.SecretPrompter;
 import co.dift.ui.SwipeToAction;
 
-public class NoteListActivity extends BaseActivity {
+public class NoteListActivity extends BaseActivity implements SearchView.OnQueryTextListener {
 
     @Inject
     NoteService noteService;
@@ -34,9 +38,9 @@ public class NoteListActivity extends BaseActivity {
     @Inject
     CyFileLogger logger;
 
-    private RecyclerView recyclerView;
     private NotesAdapter adapter;
     private SwipeToAction swipeToAction;
+    private SearchView searchView;
 
     public static final String NOTE_ID = "NOTE_ID";
 
@@ -47,18 +51,22 @@ public class NoteListActivity extends BaseActivity {
         getActivityComponent().inject(this);
         secretPrompter.promptSecret();
         initializeNoteView();
+
+        searchView = findViewById(R.id.search_note);
+
+        searchView.setOnQueryTextListener(this);
     }
 
     protected void initializeNoteView() {
-        recyclerView = findViewById(R.id.noteList);
+
+        RecyclerView recyclerView = findViewById(R.id.noteList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
-        adapter = new NotesAdapter(noteService.findAll());
+        adapter = new NotesAdapter(Collections.emptyList());
         recyclerView.setAdapter(adapter);
-
-        swipeToAction = new SwipeToAction(recyclerView, new SwipeToAction.SwipeListener<Note>() {
+        new SwipeToAction(recyclerView, new SwipeToAction.SwipeListener<Note>() {
             @Override
             public boolean swipeLeft(final Note itemData) {
                 onSelectDeleteNote(itemData.getId());
@@ -94,7 +102,7 @@ public class NoteListActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             /*case R.id.action_search:
-                // User chose the "UserSettings" item, show the app settings UI...
+                // User chose the "Settings" item, show the app settings UI...
                 Log.d("onSearchNotes", "on select search notes");
                 return true;
 
@@ -133,7 +141,7 @@ public class NoteListActivity extends BaseActivity {
     private void updateNoteList() {
         try {
             adapter.updateData(noteService.findAll());
-        } catch (KeyVaultLockedException e) {
+        } catch (KeyVaultLockedException | KeyVaultNotInitializedException e) {
             e.printStackTrace();
         }
     }
@@ -165,19 +173,24 @@ public class NoteListActivity extends BaseActivity {
         alertDialog.setMessage(getResources().getString(R.string.delete_confirmation_content)
                 + " \"" + noteService.findOne(noteId).getTitle() + "\"?");
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.no),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                (dialog, which) -> dialog.dismiss());
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getResources().getString(R.string.yes),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
+                (dialog, which) -> {
                         noteService.delete(noteId);
                         updateNoteList();
                         dialog.dismiss();
-                    }
                 });
         alertDialog.show();
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        adapter.filter(newText, noteService.findAll());
+        return false;
     }
 }

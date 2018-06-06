@@ -10,6 +10,10 @@ import at.tugraz.tc.cyfile.ui.CallReceiver;
 import at.tugraz.tc.cyfile.ui.NoteListActivity;
 
 
+/**
+ * Main activity
+ * Created by cobri on 3/21/2018.
+ */
 public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

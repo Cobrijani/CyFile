@@ -22,6 +22,7 @@ import at.tugraz.tc.cyfile.MainActivity;
 import at.tugraz.tc.cyfile.R;
 import at.tugraz.tc.cyfile.async.AsyncModule;
 import at.tugraz.tc.cyfile.crypto.impl.DummyKeyVaultService;
+import at.tugraz.tc.cyfile.hiding.HidingModule;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
 import at.tugraz.tc.cyfile.logging.impl.NoOpLogger;
 import at.tugraz.tc.cyfile.note.NoteModule;
@@ -30,6 +31,7 @@ import at.tugraz.tc.cyfile.secret.SecretManager;
 import at.tugraz.tc.cyfile.secret.SecretModule;
 import at.tugraz.tc.cyfile.secret.impl.OnApplicationForegroundSecretPrompter;
 import at.tugraz.tc.cyfile.secret.impl.PinPatternSecretPrompter;
+import at.tugraz.tc.cyfile.settings.SettingsModule;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
@@ -63,6 +65,8 @@ public class PatternLockActivityInstrumentedTest extends BaseInstrumentedTest {
                 .appModule(new AppModule(app, new NoOpLogger()))
                 .noteModule(new NoteModule(mock(NoteService.class)))
                 .asyncModule(new AsyncModule(mock(Executor.class)))
+                .hidingModule(mock(HidingModule.class))
+                .settingsModule(mock(SettingsModule.class))
                 .secretModule(new SecretModule(secretManager,
                         new OnApplicationForegroundSecretPrompter(
                                 new PinPatternSecretPrompter(app), keyVaultService),
