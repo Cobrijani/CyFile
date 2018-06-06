@@ -80,9 +80,7 @@ public class FileNoteRepositoryUnitTest {
     }
 
     private OutputStream createOutputStream() throws IOException {
-        ByteArrayOutputStream bas = new ByteArrayOutputStream(2048);
-
-        return bas;
+        return new ByteArrayOutputStream(2048);
     }
 
     @Test
@@ -142,6 +140,32 @@ public class FileNoteRepositoryUnitTest {
         FileNoteRepository spyRepository = Mockito.spy(new FileNoteRepository(context, null, logger));
 
         spyRepository.save(new Note());
+    }
+
+    @Test
+    public void testDeleteWithSuccess() throws Exception {
+        Note n = new Note("my-id1", "name", "content");
+        List<Note> notes = new LinkedList<>();
+        notes.add(n);
+
+        FileNoteRepository spyRepository = Mockito.spy(new FileNoteRepository(context, null, logger));
+
+        ByteArrayOutputStream os = (ByteArrayOutputStream) createOutputStream();
+
+        Mockito.doReturn(os).when(spyRepository).getOutputStream();
+        Mockito.doReturn(createInputStream(notes)).when(spyRepository).getInputStream();
+
+        spyRepository.initialize();
+
+
+        spyRepository.delete("my-id1");
+
+        byte[] buffer = os.toByteArray();
+        ByteArrayInputStream is = new ByteArrayInputStream(buffer);
+        ObjectInputStream ois = new ObjectInputStream(is);
+        List<Note> actual = (List<Note>) ois.readObject();
+
+        Assert.assertTrue(actual.size() == 0);
     }
 }
 

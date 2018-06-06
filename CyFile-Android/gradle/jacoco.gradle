@@ -30,7 +30,18 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ["testDebugUnitTest", 'crea
                       '**/*_MembersInjector*.*', //Dagger2 generated code
                       '**/*_*Factory*.*', //Dagger2 generated code
                       '**/*Component*.*', //Dagger2 generated code
-                      '**/*Module*.*' //Dagger2 generated code
+                      '**/*Module*.*', //Dagger2 generated code
+                      '**/JobExecutor.class',
+                      '**/AndroidLogger.class',
+                      '**/NoOpLogger.class',
+                      '**/JobExecutor.JobThreadFactory.class',
+                      '**/KeyVaultAlreadyInitializedException.class',
+                      '**/KeyVaultLockedException.class',
+                      '**/KeyVaultNotInitializedException.class',
+                      '**/InvalidPassPhraseException.class',
+                      '**/CryptoException.class',
+                      '**/KeyVaultServiceException.class',
+                      '**/InvalidCryptoOperationException.class',
     ]
     def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
     def mainSrc = "${project.projectDir}/src/main/java"
