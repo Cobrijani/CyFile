@@ -6,12 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import at.tugraz.tc.cyfile.BaseUnitTest;
-import at.tugraz.tc.cyfile.crypto.impl.AESCryptoService;
-import at.tugraz.tc.cyfile.crypto.impl.ApacheCodecBase64;
-import at.tugraz.tc.cyfile.crypto.impl.DummyKeyVaultService;
 import at.tugraz.tc.cyfile.crypto.impl.PrefixCryptoService;
-
-import static org.mockito.Mockito.spy;
 
 /**
  * Created by mmalte on 05.06.18.

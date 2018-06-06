@@ -8,9 +8,6 @@ import at.tugraz.tc.cyfile.crypto.impl.ApacheCodecBase64;
 import at.tugraz.tc.cyfile.secret.impl.HashedSecret;
 import at.tugraz.tc.cyfile.secret.impl.PinPatternSecret;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
-
 public class HashedSecretUnitTest extends BaseUnitTest {
 
     @Test

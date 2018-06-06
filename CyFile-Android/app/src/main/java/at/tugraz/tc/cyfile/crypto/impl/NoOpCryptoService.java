@@ -1,7 +1,5 @@
 package at.tugraz.tc.cyfile.crypto.impl;
 
-import java.security.InvalidKeyException;
-
 import at.tugraz.tc.cyfile.crypto.CryptoService;
 
 /**
