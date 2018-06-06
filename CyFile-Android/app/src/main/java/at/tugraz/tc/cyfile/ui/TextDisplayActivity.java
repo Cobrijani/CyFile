@@ -53,4 +53,14 @@ public class TextDisplayActivity extends BaseActivity {
             content.setText(contactString);
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent i = new Intent(TextDisplayActivity.this, SettingsActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+        finish();
+    }
+
 }
