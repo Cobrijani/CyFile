@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    tools:context="at.tugraz.tc.cyfile.ui.SettingsActivity">
+<ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="at.tugraz.tc.cyfile.ui.SettingsActivity">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -126,16 +129,7 @@
             app:srcCompat="@drawable/ic_android_black_24dp"
             android:onClick="openHelpDialog">
 
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/BTN_SAVE_SETTINGS"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_margin="@dimen/small_margin_dp"
-                android:tint="@android:color/white"
-                app:backgroundTint="@color/accent"
 
-                app:srcCompat="@drawable/ic_save_black_24dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -228,6 +222,19 @@
             android:layout_width="fill_parent"
             android:layout_height="@dimen/note_divider_height"
             android:background="@color/divider" />
+
     </LinearLayout>
 
 </ScrollView>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/BTN_SAVE_SETTINGS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/small_margin_dp"
+        android:tint="@android:color/white"
+        app:backgroundTint="@color/accent"
+
+        app:srcCompat="@drawable/ic_save_black_24dp" />
+</RelativeLayout>
