@@ -10,7 +10,6 @@ import javax.inject.Inject;
 import at.tugraz.tc.cyfile.CyFileApplication;
 import at.tugraz.tc.cyfile.injection.ActivityComponent;
 import at.tugraz.tc.cyfile.injection.DaggerActivityComponent;
-import at.tugraz.tc.cyfile.settings.SettingsModule;
 import at.tugraz.tc.cyfile.settings.UserSettings;
 import at.tugraz.tc.cyfile.settings.UserSettingsComponent;
 
