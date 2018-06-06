@@ -44,7 +44,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ["testDebugUnitTest", 'crea
                       '**/InvalidCryptoOperationException.class',
                       '**/CyFileApplication.class',
                       '**/**SwipeToAction.**.class',
-                      'at.tugraz.tc.cyfile.async/**.class'
+                      'at.tugraz.tc.cyfile.async.impl/**.class'
     ]
     def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
     def mainSrc = "${project.projectDir}/src/main/java"
