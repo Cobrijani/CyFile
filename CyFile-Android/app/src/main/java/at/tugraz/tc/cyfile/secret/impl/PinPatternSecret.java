@@ -4,9 +4,7 @@ import com.andrognito.patternlockview.PatternLockView;
 
 import java.util.List;
 
-import at.tugraz.tc.cyfile.secret.Secret;
-
-public class PinPatternSecret implements Secret {
+public class PinPatternSecret extends AbstractSecret {
 
     private List<PatternLockView.Dot> dotList;
 
@@ -38,4 +36,6 @@ public class PinPatternSecret implements Secret {
 
         return null;
     }
+
+
 }

@@ -12,5 +12,4 @@ public interface SecretVerifier {
      * @return true if correct, false otherwise
      */
     boolean verify(Secret secret);
-
 }

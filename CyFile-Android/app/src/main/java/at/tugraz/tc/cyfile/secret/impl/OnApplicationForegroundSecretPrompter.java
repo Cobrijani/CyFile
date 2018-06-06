@@ -3,8 +3,9 @@ package at.tugraz.tc.cyfile.secret.impl;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.OnLifecycleEvent;
-import android.util.Log;
 
+import at.tugraz.tc.cyfile.crypto.KeyVaultService;
+import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultNotInitializedException;
 import at.tugraz.tc.cyfile.secret.SecretPrompter;
 
 /**
@@ -19,16 +20,20 @@ public class OnApplicationForegroundSecretPrompter implements SecretPrompter, Li
 
     private SecretPrompter realState;
 
-    public OnApplicationForegroundSecretPrompter(SecretPrompter state) {
+    private KeyVaultService keyVaultService;
+
+    public OnApplicationForegroundSecretPrompter(SecretPrompter state, KeyVaultService keyVaultService) {
         this.emptyState = new NoOpSecretPrompter();
         this.realState = state;
         this.currentState = state;
+        this.keyVaultService = keyVaultService;
     }
 
-    public OnApplicationForegroundSecretPrompter(SecretPrompter emptyState, SecretPrompter realState) {
+    public OnApplicationForegroundSecretPrompter(SecretPrompter emptyState, SecretPrompter realState, KeyVaultService keyVaultService) {
         this.emptyState = emptyState;
         this.realState = realState;
         this.currentState = realState;
+        this.keyVaultService = keyVaultService;
     }
 
     @Override
@@ -40,12 +45,19 @@ public class OnApplicationForegroundSecretPrompter implements SecretPrompter, Li
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private void onAppBackgrounded() {
-        currentState = realState;
+        try {
+            keyVaultService.lockVault();
+        } catch (KeyVaultNotInitializedException e) {
+            e.printStackTrace();
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     private void onAppForegrounded() {
+
+        currentState = realState;
         currentState.promptSecret();
+
     }
 
 

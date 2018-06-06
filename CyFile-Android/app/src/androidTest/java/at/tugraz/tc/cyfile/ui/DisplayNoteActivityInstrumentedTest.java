@@ -16,15 +16,19 @@ import org.mockito.Mock;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import at.tugraz.tc.cyfile.AppModule;
 import at.tugraz.tc.cyfile.BaseInstrumentedTest;
 import at.tugraz.tc.cyfile.MainActivity;
 import at.tugraz.tc.cyfile.R;
-import at.tugraz.tc.cyfile.crypto.NoOpCryptoService;
+import at.tugraz.tc.cyfile.async.AsyncModule;
+import at.tugraz.tc.cyfile.crypto.KeyVaultService;
+import at.tugraz.tc.cyfile.crypto.impl.NoOpCryptoService;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.injection.ApplicationComponent;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
+import at.tugraz.tc.cyfile.logging.impl.NoOpLogger;
 import at.tugraz.tc.cyfile.note.NoteModule;
 import at.tugraz.tc.cyfile.note.impl.InMemoryNoteRepository;
 import at.tugraz.tc.cyfile.note.impl.SecureNoteService;
@@ -34,8 +38,11 @@ import at.tugraz.tc.cyfile.secret.SecretPrompter;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.pressBack;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.RootMatchers.isDialog;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -57,8 +64,8 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
             new IntentsTestRule<>(DisplayNoteActivity.class, true, false);
 
     private List<Note> testNotes =
-            Arrays.asList(new Note("1", "name1", "content1")
-                    , new Note("2", "name2", "content2"));
+            Arrays.asList(new Note("1", "name1", "content1", 0L, 0L)
+                    , new Note("2", "name2", "content2", 0L, 0L));
 
 
     @Before
@@ -66,8 +73,9 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
         ApplicationComponent applicationComponent
                 = DaggerApplicationComponent.builder()
                 .noteModule(new NoteModule(new SecureNoteService(new InMemoryNoteRepository(new HashSet<>(testNotes)), new NoOpCryptoService())))
-                .secretModule(new SecretModule(secretManager, mock(SecretPrompter.class)))
-                .appModule(mock(AppModule.class))
+                .secretModule(new SecretModule(secretManager, mock(SecretPrompter.class), mock(KeyVaultService.class)))
+                .appModule(new AppModule(app, new NoOpLogger()))
+                .asyncModule(new AsyncModule(mock(Executor.class)))
                 .build();
 
         app.setComponent(applicationComponent);
@@ -95,8 +103,8 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
 
         testRule.launchActivity(startIntent);
 
-        onView(withId(R.id.TEXT_TITLE)).check(matches(withText(editedNote.getTitle())));
-        onView(withId(R.id.noteText)).check(matches(withText(editedNote.getContent())));
+        onView(withId(R.id.NOTE_TITLE)).check(matches(withText(editedNote.getTitle())));
+        onView(withId(R.id.NOTE_CONTENT)).check(matches(withText(editedNote.getContent())));
         assertTrue(editedNote.getTitle().length() > 0);
     }
 
@@ -124,13 +132,15 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
 
         testRule.launchActivity(startIntent);
 
-        onView(withId(R.id.TEXT_TITLE))
+        onView(withId(R.id.NOTE_TITLE))
                 .perform(ViewActions.clearText())
-                .perform(ViewActions.typeText("New title"));
+                .perform(ViewActions.typeText("New title"))
+                .perform(closeSoftKeyboard());
 
-        onView(withId(R.id.noteText))
+        onView(withId(R.id.NOTE_CONTENT))
                 .perform(ViewActions.clearText())
-                .perform(ViewActions.typeText("Next text"));
+                .perform(ViewActions.typeText("Next text"))
+                .perform(closeSoftKeyboard());
 
         onView(withId(R.id.BTN_SAVE))
                 .perform(click());
@@ -144,6 +154,77 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
     }
 
     @Test
+    public void testBackDialogNewNoteNothingChanged() {
+        Intent startIntent = new Intent();
+        // New Note created
+
+        testRule.launchActivity(startIntent);
+
+        Espresso.pressBack();
+
+        onView(withText("Are you sure you want to leave without saving?")).check(doesNotExist());
+    }
+
+    @Test
+    public void testBackDialogNewNoteChanged() {
+        Intent startIntent = new Intent();
+
+        testRule.launchActivity(startIntent);
+
+        onView(withId(R.id.NOTE_TITLE))
+                .perform(ViewActions.clearText())
+                .perform(ViewActions.typeText("New title"))
+                .perform(closeSoftKeyboard());
+
+        onView(withId(R.id.NOTE_CONTENT))
+                .perform(ViewActions.clearText())
+                .perform(ViewActions.typeText("Next text"))
+                .perform(closeSoftKeyboard());
+
+        Espresso.pressBack();
+
+        onView(withText("Are you sure you want to leave without saving?")).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void testBackDialogExistingNoteNothingChanged() {
+        Intent startIntent = new Intent();
+        Note note = testNotes.get(0);
+        startIntent.putExtra(MainActivity.NOTE_ID, note.getId());
+
+        testRule.launchActivity(startIntent);
+
+        Espresso.pressBack();
+
+        onView(withText("Are you sure you want to leave without saving?")).check(doesNotExist());
+    }
+
+    @Test
+    public void testBackDialogExistingNoteChanged() {
+        Intent startIntent = new Intent();
+        Note note = testNotes.get(0);
+        startIntent.putExtra(MainActivity.NOTE_ID, note.getId());
+
+        testRule.launchActivity(startIntent);
+
+        onView(withId(R.id.NOTE_TITLE))
+                .perform(ViewActions.clearText())
+                .perform(ViewActions.typeText("New title"))
+                .perform(closeSoftKeyboard());
+
+        onView(withId(R.id.NOTE_CONTENT))
+                .perform(ViewActions.clearText())
+                .perform(ViewActions.typeText("Next text"))
+                .perform(closeSoftKeyboard());
+
+        Espresso.pressBack();
+
+        onView(withText("Are you sure you want to leave without saving?")).check(matches(isDisplayed()));
+
+    }
+
+
+    @Test
     public void testNotSavedBack() {
         Intent startIntent = new Intent();
         Note note = testNotes.get(0);
@@ -151,11 +232,16 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
 
         testRule.launchActivity(startIntent);
 
-        onView(withId(R.id.TEXT_TITLE))
+        onView(withId(R.id.NOTE_TITLE))
                 .perform(ViewActions.clearText())
-                .perform(ViewActions.typeText("New title"));
+                .perform(ViewActions.typeText("New title"))
+                .perform(closeSoftKeyboard())
+                .perform(pressBack());
 
-        Espresso.pressBack();
+        onView(withText(R.string.yes))
+                .inRoot(isDialog()) // <---
+                .check(matches(isDisplayed()))
+                .perform(click());
 
         onView(withText(note.getTitle()))
                 .check(matches(isDisplayed()));

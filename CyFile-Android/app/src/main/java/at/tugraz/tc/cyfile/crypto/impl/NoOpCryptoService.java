@@ -1,4 +1,6 @@
-package at.tugraz.tc.cyfile.crypto;
+package at.tugraz.tc.cyfile.crypto.impl;
+
+import at.tugraz.tc.cyfile.crypto.CryptoService;
 
 /**
  * Implementation of {@link CryptoService}
@@ -14,9 +16,7 @@ public class NoOpCryptoService implements CryptoService {
     }
 
     @Override
-    public String encrypt(String data) {
-        return data;
-    }
+    public String encrypt(String data) { return data; }
 
     @Override
     public byte[] decrypt(byte[] cipherData) {
@@ -27,4 +27,5 @@ public class NoOpCryptoService implements CryptoService {
     public String decrypt(String cipherData) {
         return cipherData;
     }
+
 }

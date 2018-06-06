@@ -6,34 +6,45 @@
     android:layout_height="match_parent"
     tools:context="at.tugraz.tc.cyfile.MainActivity">
 
-    <ScrollView
-        android:layout_width="368dp"
-        android:layout_height="441dp"
-        android:layout_marginStart="@dimen/default_margin_dp"
-        app:layout_constraintBottom_toBottomOf="@id/BTN_ADD"
-        app:layout_constraintEnd_toEndOf="@id/BTN_ADD"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_goneMarginStart="@dimen/default_margin_dp">
 
-        <LinearLayout
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.SearchView
+            android:id="@+id/search_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!--<android.support.v7.widget.SearchView.SearchAutoComplete-->
+
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content" />-->
+        </android.support.v7.widget.SearchView>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_below="@+id/search_note"
             android:id="@+id/noteList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-    </ScrollView>
+            android:layout_height="match_parent" />
 
-    <Button
+    </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/BTN_ADD"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/default_margin_dp"
         android:layout_marginBottom="@dimen/default_margin_dp"
-        android:layout_marginEnd="@dimen/default_margin_dp"
-        android:background="@drawable/round_button"
         android:onClick="onSelectAddNote"
-        android:text="@string/btn_add_note"
+        android:tint="@android:color/white"
+        app:backgroundTint="@color/accent"
+        app:borderWidth="@dimen/default_fab_border_dp"
+        app:elevation="@dimen/default_fab_elevation_dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        tools:layout_editor_absoluteX="269dp" />
+        app:srcCompat="@android:drawable/ic_input_add" />
+
 
 </android.support.constraint.ConstraintLayout>

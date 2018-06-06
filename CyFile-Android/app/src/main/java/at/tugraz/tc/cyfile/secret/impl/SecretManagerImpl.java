@@ -17,6 +17,11 @@ public class SecretManagerImpl implements SecretManager {
     }
 
     @Override
+    public boolean secretIsSet() {
+        return secretRepository.getSecret() != null;
+    }
+
+    @Override
     public boolean verify(Secret secret) {
         return secretVerifier.verify(secret);
     }

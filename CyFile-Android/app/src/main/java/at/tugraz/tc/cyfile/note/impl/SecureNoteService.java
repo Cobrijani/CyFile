@@ -1,8 +1,12 @@
 package at.tugraz.tc.cyfile.note.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import at.tugraz.tc.cyfile.crypto.CryptoService;
+import at.tugraz.tc.cyfile.crypto.exceptions.InvalidCryptoOperationException;
 import at.tugraz.tc.cyfile.domain.Note;
 import at.tugraz.tc.cyfile.note.NoteRepository;
 import at.tugraz.tc.cyfile.note.NoteService;
@@ -30,25 +34,46 @@ public class SecureNoteService implements NoteService {
     @Override
     public List<Note> findAll() {
         List<Note> notes = repository.findAll();
-        for (Note note :
-                notes) {
-            note.setContent(cryptoService.decrypt(note.getContent()));
-            note.setTitle(cryptoService.decrypt(note.getTitle()));
+        List<Note> retVal = new ArrayList<>();
+        try {
+            for (Note note :
+                    notes) {
+                Note create = new Note();
+                create.setContent(cryptoService.decrypt(note.getContent()));
+                create.setTitle(cryptoService.decrypt(note.getTitle()));
+                create.setId(note.getId());
+                create.setDateTimeCreated(note.getDateTimeCreated());
+                create.setDateTimeModified(note.getDateTimeModified());
+                retVal.add(create);
+            }
+        } catch (InvalidCryptoOperationException e) {
+            e.printStackTrace();
+            return Collections.emptyList();
         }
 
-        return notes;
+        Collections.sort(retVal, (n1, n2) -> -1 * n1.getDateTimeModified().compareTo(n2.getDateTimeModified()));
+
+        return retVal;
     }
 
     @Override
     public Note findOne(String id) {
         Note note = repository.findOne(id);
         if (note != null) {
-            note.setTitle(cryptoService.decrypt(note.getTitle()));
-            note.setContent(cryptoService.decrypt(note.getContent()));
-            return note;
-        } else {
-            return null;
+            try {
+                Note newNote = new Note();
+                newNote.setTitle(cryptoService.decrypt(note.getTitle()));
+                newNote.setContent(cryptoService.decrypt(note.getContent()));
+                newNote.setId(note.getId());
+                newNote.setDateTimeCreated(note.getDateTimeCreated());
+                newNote.setDateTimeModified(note.getDateTimeModified());
+                return newNote;
+            } catch (InvalidCryptoOperationException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
+        return null;
     }
 
     @Override
@@ -56,9 +81,20 @@ public class SecureNoteService implements NoteService {
         if (note == null) {
             throw new IllegalArgumentException("Cannot be null");
         }
-        note.setContent(cryptoService.encrypt(note.getContent()));
-        note.setTitle(cryptoService.encrypt(note.getTitle()));
-        return repository.save(note);
+        try {
+            note.setContent(cryptoService.encrypt(note.getContent()));
+            note.setTitle(cryptoService.encrypt(note.getTitle()));
+            if (note.getDateTimeCreated() == null) {
+                note.setDateTimeCreated(new Date().getTime());
+            }
+
+            note.setDateTimeModified(new Date().getTime());
+
+            return repository.save(note);
+        } catch (InvalidCryptoOperationException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_string">CyFile is a professional note locker developed to be a reliable tool for saving your important files in a secure and private way. Designed with a clean, minimalistic, interface CyFile makes use of top-notch encryption and hiding techniques as a robust utility.
+
+\n\nWARNING: CyFile might not support all devices due to various manufacturer changes which can affect the application’s ability to function properly.
+
+\n\nFEATURES\n
+▪ Write, edit and save notes on your device.\n
+▪ Hide CyFile on your device in Stealth Mode.\n
+▪ Lock CyFile from unauthorized access\n
+▪ Search, sort your notes\n
+▪ Obfuscate your notes from other apps\n
+▪ Sort recordings by date, time and modification\n
+
+\n\nATTENTION: CyFile requires power-saving options to exempt the application in order for the Stealth Mode to work correctly.
+
+\n\nStealth Mode allows CyFile to be an effective secure locker that can hide your files away from prying eyes.
+    </string>
+    <string name="help_string">The notes are stored in a secure way on this device. No data is uploaded or shared to anyone else. The user is fully responsible about the state of the notes.
+
+We provide the application on an AS IS basis and therefore the user is expected to be responsible about the contents within the application.
+
+This application, whilst secure, cannot be a replacement for better security options and we do not advise providing legal notices or criminal information as the underlying system can be also hacked.
+
+The notes can be created in a simple, easy way and the application can be hidden in a simple way.
+</string>
+    <string name="licenses_string">All Copyrights owned by CyFile Corp.</string>
+    <string name="contact_string">If you encounter any technical issues, you can send an e-mail to support@cyfile.com</string>
+</resources>
