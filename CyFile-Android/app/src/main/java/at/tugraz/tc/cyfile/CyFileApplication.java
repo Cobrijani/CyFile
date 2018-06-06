@@ -61,7 +61,8 @@ public class CyFileApplication extends Application {
             KeyVaultService keyVaultService = new KeyVaultServiceImpl(logger);
 
             NativeBase64 encoder = new NativeBase64();
-            SecretRepository secretRepository = new HashSecretRepository(this, null, logger, encoder);
+            HashSecretRepository secretRepository = new HashSecretRepository(this, null, logger, encoder);
+            secretRepository.init();
             OnApplicationForegroundSecretPrompter prompter = new OnApplicationForegroundSecretPrompter(new PinPatternSecretPrompter(this), keyVaultService);
 
             NoteRepository repository = new FileNoteRepository(this, null, logger);

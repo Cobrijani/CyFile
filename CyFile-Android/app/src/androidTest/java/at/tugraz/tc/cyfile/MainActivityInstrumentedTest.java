@@ -40,7 +40,6 @@ import at.tugraz.tc.cyfile.ui.SettingsActivity;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -113,7 +112,6 @@ public class MainActivityInstrumentedTest extends BaseInstrumentedTest {
     }
 
     @Test
-    @Ignore
     public void testSearchNotes() {
         mockRepo(Arrays.asList(new Note("1", "name1", "content1", new Date().getTime() - 100, new Date().getTime() - 100)
                 , new Note("2", "name2", "content2", new Date().getTime() + 100, new Date().getTime() + 100),
@@ -122,26 +120,19 @@ public class MainActivityInstrumentedTest extends BaseInstrumentedTest {
 
         mActivityRule.launchActivity(new Intent());
 
-
-        // Click on the search icon
-        onView(withId(R.id.search_note))
-                .perform(swipeLeft())
+        onView(withId(R.id.search_button))
                 .perform(click());
 
         onView(withId(R.id.search_src_text))
                 .perform(typeText("name3"));
-        // Type the text in the search field and submit the query
-//        onView(isAssignableFrom(EditText.class)).perform(typeText("name3"), pressImeActionButton());
 
-        // Check the empty view is displayed
-
-        onView(withText("name1"))
+        onView(withText("content1"))
                 .check(doesNotExist());
 
-        onView(withText("name2"))
+        onView(withText("content2"))
                 .check(doesNotExist());
 
-        onView(withText("name3"))
+        onView(withText("content3"))
                 .check(matches(isDisplayed()));
 
     }
@@ -198,8 +189,6 @@ public class MainActivityInstrumentedTest extends BaseInstrumentedTest {
                 .check(matches(isDisplayed()));
 
         onView(withText("name1"))
-                //TODO: check why this fails
-                //.perform(scrollTo())
                 .perform(click());
 
         onView(withId(R.id.noteList))
@@ -220,8 +209,6 @@ public class MainActivityInstrumentedTest extends BaseInstrumentedTest {
                 .check(matches(isDisplayed()));
 
         onView(withText(title))
-                //TODO: check why this fails
-                //.perform(scrollTo())
                 .perform(click());
 
         onView(withId(R.id.noteList))
