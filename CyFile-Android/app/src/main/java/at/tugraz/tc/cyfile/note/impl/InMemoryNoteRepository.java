@@ -27,6 +27,11 @@ public class InMemoryNoteRepository implements NoteRepository {
     }
 
     @Override
+    public void purge() {
+        this.noteSet.clear();
+    }
+
+    @Override
     public List<Note> findAll() {
         return new ArrayList<>(noteSet);
     }

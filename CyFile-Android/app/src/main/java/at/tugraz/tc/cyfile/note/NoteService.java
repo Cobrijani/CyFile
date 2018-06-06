@@ -11,6 +11,8 @@ import at.tugraz.tc.cyfile.domain.Note;
 
 public interface NoteService {
 
+    void purgeRepository();
+
     /**
      * Find all notes
      *
