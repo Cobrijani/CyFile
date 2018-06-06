@@ -1,8 +1,6 @@
 package at.tugraz.tc.cyfile.crypto.impl;
 
 
-import com.crashlytics.android.Crashlytics;
-
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -87,8 +85,6 @@ public class AESCryptoService implements CryptoService {
                 InvalidAlgorithmParameterException |
                 InvalidKeyException |
                 NoSuchAlgorithmException e) {
-
-
             throw new InvalidCryptoOperationException(e);
         }
     }

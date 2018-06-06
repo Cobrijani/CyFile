@@ -17,6 +17,7 @@ import javax.inject.Inject;
 
 import at.tugraz.tc.cyfile.R;
 import at.tugraz.tc.cyfile.hiding.HidingComponent;
+import at.tugraz.tc.cyfile.logging.CyFileLogger;
 import at.tugraz.tc.cyfile.settings.UserSettings;
 import at.tugraz.tc.cyfile.settings.UserSettingsComponent;
 
@@ -33,6 +34,9 @@ public class SettingsActivity extends BaseActivity {
 
     @Inject
     UserSettingsComponent userSettingsComponent;
+
+    @Inject
+    CyFileLogger logger;
 
     UserSettings userSettings;
 
@@ -58,8 +62,6 @@ public class SettingsActivity extends BaseActivity {
         stealthModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 ensureOutgoingCallPermissionGranted();
-            } else {
-                hidingComponent.showApp(this);
             }
         });
     }
@@ -98,6 +100,11 @@ public class SettingsActivity extends BaseActivity {
         if (!numberIsOk) {
             Toast.makeText(this, "Please enter a number (at least 2 digits)", Toast.LENGTH_LONG)
                     .show();
+        }
+        if(stealthMode) {
+            this.hidingComponent.hideApp(this, this.logger);
+        } else {
+            this.hidingComponent.showApp(this, this.logger);
         }
         userSettingsComponent.saveUserSettings(
                 new UserSettings(stealthMode, magicPhoneNumber));

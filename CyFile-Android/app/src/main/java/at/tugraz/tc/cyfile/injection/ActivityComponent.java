@@ -1,5 +1,6 @@
 package at.tugraz.tc.cyfile.injection;
 
+import at.tugraz.tc.cyfile.ui.CallReceiver;
 import at.tugraz.tc.cyfile.ui.DisplayNoteActivity;
 import at.tugraz.tc.cyfile.MainActivity;
 import at.tugraz.tc.cyfile.secret.SecretPrompter;
@@ -35,6 +36,8 @@ public interface ActivityComponent {
     void inject(NoteListActivity activity);
 
     void inject(SettingsActivity activity);
+
+    void inject(CallReceiver callReceiver);
 
     SecretPrompter secretPrompter();
 
