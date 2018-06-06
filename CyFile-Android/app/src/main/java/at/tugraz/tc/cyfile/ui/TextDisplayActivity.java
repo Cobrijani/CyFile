@@ -46,6 +46,9 @@ public class TextDisplayActivity extends BaseActivity {
             case CONTACT:
                 content.setText(contactString);
                 break;
+            default:
+                content.setText("");
+                break;
         }
     }
 }
