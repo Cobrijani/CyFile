@@ -44,8 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/note_height"
         android:background="@color/primary_light"
-        android:tag="front"
-        app:srcCompat="@drawable/ic_android_black_24dp">
+        android:tag="front">
 
 
         <TextView
@@ -53,9 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/small_margin_dp"
-            android:layout_marginTop="@dimen/minimal_margin_dp"
-            android:drawableStart="@drawable/ic_description_black_24dp"
-            android:drawableTint="@color/accent"
+            android:layout_marginTop="@dimen/small_margin_dp"
             android:singleLine="true"
             android:textSize="@dimen/note_title_text_size"
             android:textStyle="bold" />
@@ -66,7 +63,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/title"
             android:layout_marginStart="@dimen/small_margin_dp"
-            android:layout_marginTop="@dimen/minimal_margin_dp" />
+            android:layout_marginTop="0dp"
+            android:textStyle="italic"/>
 
 
         <TextView
@@ -75,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/modified"
             android:layout_marginStart="@dimen/small_margin_dp"
-            android:layout_marginTop="@dimen/minimal_margin_dp"
+            android:layout_marginTop="0dp"
             android:maxLines="@integer/maxContentLines"
             android:textSize="@dimen/note_content_text_size" />
     </RelativeLayout>
