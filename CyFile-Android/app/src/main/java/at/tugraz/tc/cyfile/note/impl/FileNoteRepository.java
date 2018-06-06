@@ -81,6 +81,13 @@ public class FileNoteRepository implements NoteRepository {
     }
 
     @Override
+    public void purge() {
+        //ALL MUST BE CLEANSED!!!!
+        context.deleteFile(this.fileName);
+        this.inMemoryNoteRepository.purge();
+    }
+
+    @Override
     public List<Note> findAll() {
         if (!initialized) {
             throw new IllegalStateException("FileNoteRepository was not initialized");

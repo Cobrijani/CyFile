@@ -18,6 +18,11 @@ public class DummyKeyVaultService implements KeyVaultService {
     }
 
     @Override
+    public void deleteKey() {
+        this.key = null;
+    }
+
+    @Override
     public void unlockVault(String passphrase) throws KeyVaultNotInitializedException {
         KeyGenerator keyGenerator;
         try {

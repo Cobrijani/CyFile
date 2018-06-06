@@ -18,6 +18,8 @@ public interface KeyVaultService {
      */
     void init(String passphrase) throws KeyVaultAlreadyInitializedException;
 
+    void deleteKey();
+
     /**
      * Use this method to unlock the KeyVault. You need to unlock it in order to recieve a
      * Key with getEncryptionKey

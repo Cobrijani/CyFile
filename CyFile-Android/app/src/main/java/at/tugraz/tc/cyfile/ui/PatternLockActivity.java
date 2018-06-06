@@ -16,6 +16,7 @@ import at.tugraz.tc.cyfile.R;
 import at.tugraz.tc.cyfile.crypto.KeyVaultService;
 import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultNotInitializedException;
 import at.tugraz.tc.cyfile.logging.CyFileLogger;
+import at.tugraz.tc.cyfile.note.NoteService;
 import at.tugraz.tc.cyfile.secret.SecretManager;
 import at.tugraz.tc.cyfile.secret.SecretPrompter;
 import at.tugraz.tc.cyfile.secret.impl.PinPatternSecret;
@@ -35,6 +36,9 @@ public class PatternLockActivity extends BaseActivity {
 
     @Inject
     KeyVaultService keyVaultService;
+
+    @Inject
+    NoteService service;
 
     @Inject
     CyFileLogger logger;
@@ -120,6 +124,9 @@ public class PatternLockActivity extends BaseActivity {
 
         private void verifySecondPattern(PinPatternSecret pinPatternSecret) {
             if (pinPatternSecret.equals(firstEnteredSecret)) {
+                service.purgeRepository();
+                keyVaultService.deleteKey();
+
                 mPatternLockView.setViewMode(CORRECT);
                 secretManager.setSecret(pinPatternSecret);
                 String passphrase = pinPatternSecret.getSecretValue();
