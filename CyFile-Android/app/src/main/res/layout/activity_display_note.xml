@@ -20,7 +20,6 @@
             android:orientation="vertical">
 
 
-
             <TextView
                 android:id="@+id/NOTE_MODIFIED"
                 android:layout_width="match_parent"
@@ -34,22 +33,33 @@
                 android:id="@+id/NOTE_TITLE"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/small_margin_dp"
-                android:layout_marginEnd="@dimen/small_margin_dp"
+                android:layout_marginStart="@dimen/default_margin_dp"
+                android:layout_marginEnd="@dimen/default_margin_dp"
+                android:layout_marginBottom="0dp"
                 android:hint="@string/input_title_note_hint"
-                android:inputType="text" />
+                android:inputType="text"
+                android:backgroundTint="@android:color/transparent"/>
+
+            <!-- just a divider -->
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/note_divider_height"
+                android:background="@color/divider"
+                android:layout_marginStart="@dimen/default_margin_dp"
+                android:layout_marginEnd="@dimen/default_margin_dp"/>
 
             <EditText
                 android:id="@+id/NOTE_CONTENT"
+                android:layout_marginStart="@dimen/default_margin_dp"
+                android:layout_marginEnd="@dimen/default_margin_dp"
                 android:layout_width="match_parent"
+                android:layout_marginTop="0dp"
                 android:layout_height="0dp"
-                android:layout_marginStart="@dimen/small_margin_dp"
-                android:layout_marginEnd="@dimen/small_margin_dp"
                 android:layout_weight="1"
                 android:gravity="top"
                 android:hint="@string/note_text_hint"
                 android:inputType="textMultiLine"
-                android:background="@android:color/transparent"/>
+                android:backgroundTint="@android:color/transparent"/>
 
             <View
                 android:layout_width="match_parent"
