@@ -24,10 +24,11 @@
             android:name=".ui.TextDisplayActivity" />
         <activity
             android:name=".ui.DisplayNoteActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize"
             android:launchMode="singleInstance" />
         <activity
             android:name=".ui.SettingsActivity"
             android:launchMode="singleInstance"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
     </application>
 </manifest>

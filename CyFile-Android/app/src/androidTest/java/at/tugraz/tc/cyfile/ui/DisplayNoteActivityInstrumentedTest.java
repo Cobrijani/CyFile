@@ -224,24 +224,4 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
         onView(withText("Are you sure you want to leave without saving?")).check(matches(isDisplayed()));
 
     }
-
-
-    @Test
-    public void testNotSavedBack() {
-        Intent startIntent = new Intent();
-        Note note = testNotes.get(0);
-        startIntent.putExtra(MainActivity.NOTE_ID, note.getId());
-
-        testRule.launchActivity(startIntent);
-
-        onView(withId(R.id.NOTE_TITLE))
-                .perform(ViewActions.clearText())
-                .perform(ViewActions.typeText("New title"))
-                .perform(closeSoftKeyboard())
-                .perform(pressBack());
-
-        onView(withText(note.getTitle()))
-                .check(matches(isDisplayed()));
-
-    }
 }

@@ -45,34 +45,28 @@ public class DisplayNoteActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_note);
-
         getActivityComponent().inject(this);
-
-        View scroll_view = findViewById(R.id.SCROLL_VIEW);
-        View note_content = findViewById(R.id.NOTE_CONTENT);
-        scroll_view.scrollTo(0, note_content.getTop());
-        note_content.requestFocus();
-
-        View view = this.getCurrentFocus();
-        if (view != null) {
-            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
-
-
         initView();
-
         Intent intent = getIntent();
         String noteId = intent.getStringExtra(MainActivity.NOTE_ID);
         loadNote(noteId);
         newNote = false;
+        View scroll_view = findViewById(R.id.SCROLL_VIEW);
+        View note_content = findViewById(R.id.NOTE_CONTENT);
+        note_content.requestFocus();
         if (loadedNote.getTitle() == null)
         {
             newNote = true;
             greyOutDeleteButton();
+            hideDateModified();
         }
-
         onOpenNote();
+        scroll_view.scrollTo(0, note_content.getTop());
+    }
+
+    private void hideDateModified() {
+        View date_modified = findViewById(R.id.NOTE_MODIFIED);
+        date_modified.setVisibility(View.INVISIBLE);
     }
 
     @Override
