@@ -119,6 +119,34 @@ public class FileNoteRepositoryUnitTest {
         Assert.assertTrue(actual.size() == 2);
         Assert.assertTrue(actual.contains(nSave));
     }
+
+    @Test(expected = IllegalStateException.class)
+    public void testFindAllIsUninitializedThrowsIllegalStateException() throws Exception {
+        FileNoteRepository spyRepository = Mockito.spy(new FileNoteRepository(context, null, logger));
+
+        spyRepository.findAll();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testFindOneIsUninitializedThrowsIllegalStateException() throws Exception {
+        FileNoteRepository spyRepository = Mockito.spy(new FileNoteRepository(context, null, logger));
+
+        spyRepository.findOne("testid");
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testDeleteIsUninitializedThrowsIllegalStateException() throws Exception {
+        FileNoteRepository spyRepository = Mockito.spy(new FileNoteRepository(context, null, logger));
+
+        spyRepository.delete("testid");
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testSaveIsUninitializedThrowsIllegalStateException() throws Exception {
+        FileNoteRepository spyRepository = Mockito.spy(new FileNoteRepository(context, null, logger));
+
+        spyRepository.save(new Note());
+    }
 }
 
 
