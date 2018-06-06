@@ -13,8 +13,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-
 import java.util.Collections;
 
 import javax.inject.Inject;
@@ -47,8 +45,6 @@ public class MainActivity extends BaseActivity implements SearchView.OnQueryText
     @Inject
     CyFileLogger logger;
 
-    private FirebaseAnalytics mFirebaseAnalytics;
-
     private NotesAdapter adapter;
 
     private SearchView searchView;
@@ -61,11 +57,6 @@ public class MainActivity extends BaseActivity implements SearchView.OnQueryText
         setContentView(R.layout.activity_main);
         getActivityComponent().inject(this);
         secretPrompter.promptSecret();
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
-
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.APP_OPEN, Bundle.EMPTY);
-        mFirebaseAnalytics.setUserId("Test");//set user ID
         initializeNoteView();
 
         searchView = findViewById(R.id.search_note);
@@ -166,13 +157,6 @@ public class MainActivity extends BaseActivity implements SearchView.OnQueryText
         Note noteMessage = noteService.findOne(noteId);
         logger.d("Note Id", noteMessage.getId());
         logger.d("Note Content", noteMessage.getContent());
-
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, noteMessage.getId());
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, noteMessage.getContent());
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "note");
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-
 
         Intent intent = new Intent(this, DisplayNoteActivity.class);
 

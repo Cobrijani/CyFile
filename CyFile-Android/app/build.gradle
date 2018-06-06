@@ -55,9 +55,9 @@ dependencies {
     implementation "co.dift.ui.swipetoaction:library:$swipe_to_action_version"
     implementation "org.apache.commons:commons-lang3:$apache_commons_version"
     implementation "commons-codec:commons-codec:$apache_codec_version"
-    implementation 'com.google.firebase:firebase-core:16.0.0'
+//    implementation 'com.google.firebase:firebase-core:16.0.0'
 //    implementation 'com.google.firebase:firebase-crash:16.0.0'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.3'
+//    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.3'
 
     //testing
     testImplementation "junit:junit:$junit_version"
