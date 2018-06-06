@@ -101,7 +101,7 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
     public void testViewNote() {
         Intent startIntent = new Intent();
         Note editedNote = testNotes.get(0);
-        startIntent.putExtra(NoteListActivity.NOTE_ID, editedNote.getId());
+        startIntent.putExtra(MainActivity.NOTE_ID, editedNote.getId());
 
         testRule.launchActivity(startIntent);
 
@@ -114,7 +114,7 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
     public void testDeleteButton() {
         Intent startIntent = new Intent();
         Note note = testNotes.get(0);
-        startIntent.putExtra(NoteListActivity.NOTE_ID, note.getId());
+        startIntent.putExtra(MainActivity.NOTE_ID, note.getId());
 
         testRule.launchActivity(startIntent);
 
@@ -130,7 +130,7 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
     public void testSaveButton() {
         Intent startIntent = new Intent();
         Note note = testNotes.get(0);
-        startIntent.putExtra(NoteListActivity.NOTE_ID, note.getId());
+        startIntent.putExtra(MainActivity.NOTE_ID, note.getId());
 
         testRule.launchActivity(startIntent);
 
@@ -192,7 +192,7 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
     public void testBackDialogExistingNoteNothingChanged() {
         Intent startIntent = new Intent();
         Note note = testNotes.get(0);
-        startIntent.putExtra(NoteListActivity.NOTE_ID, note.getId());
+        startIntent.putExtra(MainActivity.NOTE_ID, note.getId());
 
         testRule.launchActivity(startIntent);
 
@@ -205,7 +205,7 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
     public void testBackDialogExistingNoteChanged() {
         Intent startIntent = new Intent();
         Note note = testNotes.get(0);
-        startIntent.putExtra(NoteListActivity.NOTE_ID, note.getId());
+        startIntent.putExtra(MainActivity.NOTE_ID, note.getId());
 
         testRule.launchActivity(startIntent);
 
@@ -230,7 +230,7 @@ public class DisplayNoteActivityInstrumentedTest extends BaseInstrumentedTest {
     public void testNotSavedBack() {
         Intent startIntent = new Intent();
         Note note = testNotes.get(0);
-        startIntent.putExtra(NoteListActivity.NOTE_ID, note.getId());
+        startIntent.putExtra(MainActivity.NOTE_ID, note.getId());
 
         testRule.launchActivity(startIntent);
 
