@@ -1,8 +1,8 @@
 package at.tugraz.tc.cyfile.settings;
 
 public class UserSettings {
-    private final boolean stealthMode;
-    private final String magicPhoneNumber;
+    private boolean stealthMode;
+    private String magicPhoneNumber;
 
     public boolean isStealthMode() {
         return stealthMode;
@@ -14,6 +14,14 @@ public class UserSettings {
 
     public UserSettings(boolean stealthMode, String magicPhoneNumber) {
         this.stealthMode = stealthMode;
+        this.magicPhoneNumber = magicPhoneNumber;
+    }
+
+    public void setStealthMode(boolean stealthMode) {
+        this.stealthMode = stealthMode;
+    }
+
+    public void setMagicPhoneNumber(String magicPhoneNumber) {
         this.magicPhoneNumber = magicPhoneNumber;
     }
 }

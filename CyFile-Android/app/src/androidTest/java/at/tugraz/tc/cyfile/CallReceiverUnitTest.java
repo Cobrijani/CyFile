@@ -17,6 +17,8 @@ import java.util.concurrent.Executor;
 
 import at.tugraz.tc.cyfile.async.AsyncModule;
 import at.tugraz.tc.cyfile.crypto.KeyVaultService;
+import at.tugraz.tc.cyfile.hiding.HidingComponent;
+import at.tugraz.tc.cyfile.hiding.HidingModule;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
 import at.tugraz.tc.cyfile.logging.CyFileLogger;
 import at.tugraz.tc.cyfile.logging.impl.NoOpLogger;
@@ -33,6 +35,7 @@ import at.tugraz.tc.cyfile.settings.impl.UserSettingsComponentImpl;
 import at.tugraz.tc.cyfile.ui.CallReceiver;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 /**
@@ -43,11 +46,11 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class CallReceiverUnitTest extends BaseInstrumentedTest {
 
-    private UserSettings userSettings;
+    private UserSettings userSettings = new UserSettings(false, "");
 
     @Before
     public void init() {
-        UserSettingsComponent userSettingsComponent = new UserSettingsComponentImpl(app);
+        UserSettingsComponent userSettingsComponent = spy(new UserSettingsComponentImpl(app));
         when(userSettingsComponent.getUserSettings()).thenReturn(userSettings);
 
         app = (CyFileApplication)
@@ -59,6 +62,7 @@ public class CallReceiverUnitTest extends BaseInstrumentedTest {
                 .appModule(new AppModule(app, new NoOpLogger()))
                 .noteModule(new NoteModule(mock(NoteService.class)))
                 .asyncModule(new AsyncModule(mock(Executor.class)))
+                .hidingModule(new HidingModule(mock(HidingComponent.class)))
                 .settingsModule(new SettingsModule(userSettingsComponent))
                 .secretModule(new SecretModule(mock(SecretManager.class), mock(SecretPrompter.class), mock(KeyVaultService.class))).build());
 
@@ -66,14 +70,13 @@ public class CallReceiverUnitTest extends BaseInstrumentedTest {
 
     @Test
     public void testStealthModeEnabledCorrectNumber() {
-        Context context = Mockito.spy(mock(Context.class));
-
         String number = "1234";
-        userSettings = new UserSettings(true, number);
+        userSettings.setMagicPhoneNumber(number);
+        userSettings.setStealthMode(true);
         CallReceiver receiver = new CallReceiver();
         Intent intent = new Intent("android.intent.action.NEW_OUTGOING_CALL");
         intent.putExtra("android.intent.extra.PHONE_NUMBER", number);
-        receiver.onReceive(context, intent);
+        receiver.onReceive(app, intent);
 
     }
 }
