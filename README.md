@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/Cobrijani/CyFile.svg?branch=master)](https://travis-ci.org/Cobrijani/CyFile)
 [![CodeFactor](https://www.codefactor.io/repository/github/cobrijani/cyfile/badge)](https://www.codefactor.io/repository/github/cobrijani/cyfile)
 [![Known Vulnerabilities](https://snyk.io/test/github/cobrijani/cyfile/badge.svg?targetFile=CyFile-Android%2Fapp%2Fbuild.gradle)](https://snyk.io/test/github/cobrijani/cyfile?targetFile=CyFile-Android%2Fapp%2Fbuild.gradle)
-
+![cyfile2](https://user-images.githubusercontent.com/36132662/41317572-41e1c07a-6e9e-11e8-82f5-98d69333c322.png)
 # Group: XP Morning 04
 ## Project title: CyFile
 ## Project description:
