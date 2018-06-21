@@ -12,18 +12,14 @@ import at.tugraz.tc.cyfile.secret.SecretPrompter
  * Prompts [at.tugraz.tc.cyfile.secret.Secret]
  * whenever application is in foreground
  */
-class OnApplicationForegroundSecretPrompter(state: SecretPrompter, keyVaultService: KeyVaultService) : SecretPrompter, LifecycleObserver {
+class OnApplicationForegroundSecretPrompter(private var realState: SecretPrompter,
+                                            private var keyVaultService: KeyVaultService,
+                                            private var emptyState: SecretPrompter) : SecretPrompter, LifecycleObserver {
 
-    private var currentState: SecretPrompter? = state
-
-    private var emptyState: SecretPrompter? = null
-
-    private var realState: SecretPrompter? = null
-
-    private var keyVaultService: KeyVaultService? = keyVaultService
+    private var currentState = realState
 
     override fun promptSecret() {
-        currentState!!.promptSecret()
+        currentState.promptSecret()
         currentState = emptyState
     }
 
@@ -31,7 +27,7 @@ class OnApplicationForegroundSecretPrompter(state: SecretPrompter, keyVaultServi
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private fun onAppBackgrounded() {
         try {
-            keyVaultService!!.lockVault()
+            keyVaultService.lockVault()
         } catch (e: KeyVaultNotInitializedException) {
             e.printStackTrace()
         }
@@ -41,12 +37,8 @@ class OnApplicationForegroundSecretPrompter(state: SecretPrompter, keyVaultServi
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     private fun onAppForegrounded() {
         currentState = realState
-        currentState!!.promptSecret()
+        currentState.promptSecret()
 
-    }
-
-    init {
-        this.emptyState = NoOpSecretPrompter()
     }
 
 

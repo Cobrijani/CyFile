@@ -3,6 +3,7 @@ package at.tugraz.tc.cyfile
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
@@ -28,7 +29,7 @@ import javax.inject.Inject
  * Main activity
  * Created by cobri on 3/21/2018.
  */
-open class MainActivity : BaseActivity(), SearchView.OnQueryTextListener {
+class MainActivity : BaseActivity(), SearchView.OnQueryTextListener {
 
     @Inject
     lateinit var noteService: NoteService
@@ -39,9 +40,11 @@ open class MainActivity : BaseActivity(), SearchView.OnQueryTextListener {
     @Inject
     lateinit var logger: CyFileLogger
 
-    private var adapter: NotesAdapter? = null
+    private var adapter: NotesAdapter = NotesAdapter(emptyList())
 
-    private var searchView: SearchView? = null
+    private lateinit var searchView: SearchView
+
+    private lateinit var btnAdd: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,10 +52,11 @@ open class MainActivity : BaseActivity(), SearchView.OnQueryTextListener {
         activityComponent.inject(this)
         secretPrompter.promptSecret()
         initializeNoteView()
-
+        btnAdd = findViewById(R.id.BTN_ADD)
         searchView = findViewById(R.id.search_note)
+        searchView.setOnQueryTextListener(this)
 
-        searchView!!.setOnQueryTextListener(this)
+        btnAdd.setOnClickListener { onSelectAddNote() }
     }
 
     private fun initializeNoteView() {
@@ -62,7 +66,6 @@ open class MainActivity : BaseActivity(), SearchView.OnQueryTextListener {
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
 
-        adapter = NotesAdapter(emptyList())
         recyclerView.adapter = adapter
         SwipeToAction(recyclerView, object : SwipeToAction.SwipeListener<Note> {
             override fun swipeLeft(itemData: Note): Boolean {
@@ -131,7 +134,7 @@ open class MainActivity : BaseActivity(), SearchView.OnQueryTextListener {
 
     private fun updateNoteList() {
         try {
-            adapter!!.updateData(noteService.findAll())
+            adapter.updateData(noteService.findAll())
         } catch (e: KeyVaultLockedException) {
             e.printStackTrace()
         } catch (e: KeyVaultNotInitializedException) {
@@ -152,7 +155,7 @@ open class MainActivity : BaseActivity(), SearchView.OnQueryTextListener {
         startActivity(intent)
     }
 
-    fun onSelectAddNote() {
+    private fun onSelectAddNote() {
         logger.d("onSelectAddNote", "on select add new note")
         val intent = Intent(this, DisplayNoteActivity::class.java)
         startActivity(intent)
@@ -181,12 +184,11 @@ open class MainActivity : BaseActivity(), SearchView.OnQueryTextListener {
     }
 
     override fun onQueryTextChange(newText: String): Boolean {
-        adapter!!.filter(newText, noteService.findAll())
+        adapter.filter(newText, noteService.findAll())
         return false
     }
 
     companion object {
-
         const val NOTE_ID = "NOTE_ID"
     }
 }

@@ -4,22 +4,29 @@
 
     <application
         android:name=".CyFileApplication"
+        android:allowBackup="true"
         android:icon="@mipmap/new_icon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".ui.DisplayNoteActivity" />
         <activity android:name=".ui.PatternLockActivity" />
-        <activity android:name=".ui.SettingsActivity" />
         <activity android:name=".ui.TextDisplayActivity" />
+        <activity
+            android:name=".ui.DisplayNoteActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:launchMode="singleInstance" />
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:launchMode="singleInstance"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
     </application>
 </manifest>

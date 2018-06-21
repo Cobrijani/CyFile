@@ -37,7 +37,9 @@ class CyFileApplication : Application() {
                 val encoder = NativeBase64()
                 val secretRepository = HashSecretRepository(this, null, logger, encoder)
                 secretRepository.init()
-                val prompter = OnApplicationForegroundSecretPrompter(PinPatternSecretPrompter(this), keyVaultService)
+                val prompter = OnApplicationForegroundSecretPrompter(PinPatternSecretPrompter(this),
+                        keyVaultService,
+                        NoOpSecretPrompter())
 
                 val repository = FileBasedNoteRepository(this, null, logger)
                 repository.initialize()
