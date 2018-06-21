@@ -7,8 +7,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import at.tugraz.tc.cyfile.secret.impl.InMemorySecretRepository;
-
 public class InMemorySecretRepositoryUnitTest {
 
     private InMemorySecretRepository memorySecretRepository;
@@ -21,14 +19,14 @@ public class InMemorySecretRepositoryUnitTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        memorySecretRepository = new InMemorySecretRepository(secret);
+        memorySecretRepository = new InMemorySecretRepository();
 
     }
 
     @Test
     public void getSecretShouldReturnSecretIfSecretSet() {
         // given secret is set
-        memorySecretRepository = new InMemorySecretRepository(() -> "test");
+        memorySecretRepository = new InMemorySecretRepository();
         // when secret is retrieved
         Secret secret = memorySecretRepository.getSecret();
 
@@ -39,7 +37,7 @@ public class InMemorySecretRepositoryUnitTest {
     @Test
     public void getSecretShouldReturnNullIfSecretNotSet() {
         // given secret is not set
-        memorySecretRepository = new InMemorySecretRepository(null);
+        memorySecretRepository = new InMemorySecretRepository();
 
         // when secret is retrieved
         Secret secret = memorySecretRepository.getSecret();

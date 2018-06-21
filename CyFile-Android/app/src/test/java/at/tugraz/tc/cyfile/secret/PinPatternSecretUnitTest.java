@@ -10,8 +10,6 @@ import org.junit.Test;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
-import at.tugraz.tc.cyfile.BaseUnitTest;
-import at.tugraz.tc.cyfile.secret.impl.PinPatternSecret;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 

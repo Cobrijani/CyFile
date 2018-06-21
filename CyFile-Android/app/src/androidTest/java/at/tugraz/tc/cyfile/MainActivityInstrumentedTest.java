@@ -22,21 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-import at.tugraz.tc.cyfile.async.AsyncModule;
-import at.tugraz.tc.cyfile.crypto.impl.DummyKeyVaultService;
-import at.tugraz.tc.cyfile.crypto.impl.NoOpCryptoService;
-import at.tugraz.tc.cyfile.domain.Note;
-import at.tugraz.tc.cyfile.injection.ApplicationComponent;
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent;
-import at.tugraz.tc.cyfile.logging.impl.NoOpLogger;
-import at.tugraz.tc.cyfile.note.NoteModule;
-import at.tugraz.tc.cyfile.note.NoteRepository;
-import at.tugraz.tc.cyfile.note.impl.SecureNoteService;
-import at.tugraz.tc.cyfile.secret.SecretManager;
-import at.tugraz.tc.cyfile.secret.SecretModule;
-import at.tugraz.tc.cyfile.secret.SecretPrompter;
-import at.tugraz.tc.cyfile.ui.DisplayNoteActivity;
-import at.tugraz.tc.cyfile.ui.SettingsActivity;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;

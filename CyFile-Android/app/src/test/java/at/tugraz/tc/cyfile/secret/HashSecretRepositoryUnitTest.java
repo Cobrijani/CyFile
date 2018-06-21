@@ -15,12 +15,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
-import at.tugraz.tc.cyfile.crypto.impl.ApacheCodecBase64;
-import at.tugraz.tc.cyfile.logging.CyFileLogger;
-import at.tugraz.tc.cyfile.secret.impl.HashSecretRepository;
-import at.tugraz.tc.cyfile.secret.impl.HashedSecret;
-import at.tugraz.tc.cyfile.secret.impl.PinPatternSecret;
-
 import static org.mockito.Mockito.mock;
 
 public class HashSecretRepositoryUnitTest {
