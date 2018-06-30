@@ -6,64 +6,57 @@ import at.tugraz.tc.cyfile.crypto.impl.KeyVaultServiceImpl
 import at.tugraz.tc.cyfile.crypto.mocks.MockedKeyGenerator
 import at.tugraz.tc.cyfile.crypto.mocks.MockedKeyStore
 import at.tugraz.tc.cyfile.logging.CyFileLogger
+import io.mockk.every
+import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.mockk
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mock
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
-import java.security.*
+import java.security.Key
+import java.security.KeyStoreSpi
+import java.security.NoSuchAlgorithmException
+import java.security.UnrecoverableKeyException
 import javax.crypto.KeyGeneratorSpi
 
 class KeyVaultServiceImplUnitTest : BaseUnitTest() {
 
     private lateinit var keyVaultService: KeyVaultServiceImpl
 
-    @Mock
-    private var keyGeneratorSpi: KeyGeneratorSpi? = null
+    @RelaxedMockK
+    private lateinit var keyGeneratorSpi: KeyGeneratorSpi
 
-    @Mock
-    private var keyStoreSpi: KeyStoreSpi? = null
+    @RelaxedMockK
+    private lateinit var keyStoreSpi: KeyStoreSpi
 
-    @Mock
-    private var logger: CyFileLogger? = null
+    @RelaxedMockK
+    private lateinit var logger: CyFileLogger
 
     private val correctPass = "test"
     private val wrongPass = "wrong"
 
     @Before
     fun setup() {
-        val keyGenerator = MockedKeyGenerator(keyGeneratorSpi!!, mock(Provider::class.java), "test")
+
+
+        val keyGenerator = MockedKeyGenerator(keyGeneratorSpi, mockk(), "test")
         keyGenerator.init(32)
-        val keyStore = MockedKeyStore(keyStoreSpi!!, mock(Provider::class.java), "test")
-        `when`(keyStoreSpi!!.engineContainsAlias(any()))
-                .thenReturn(true)
+
+        val keyStore = MockedKeyStore(keyStoreSpi, mockk(), "test")
+
+        every { keyStoreSpi.engineContainsAlias(any()) } returns true
 
         try {
-            `when`(keyStoreSpi!!.engineGetKey(KEY_ALIAS, correctPass.toCharArray()))
-                    .thenReturn(object : Key {
-                        override fun getAlgorithm(): String {
-                            return "test"
-                        }
-
-                        override fun getFormat(): String {
-                            return "test"
-                        }
-
-                        override fun getEncoded(): ByteArray {
-                            return ByteArray(0)
-                        }
-                    })
-
-            `when`(keyStoreSpi!!.engineGetKey(KEY_ALIAS, wrongPass.toCharArray()))
-                    .thenThrow(UnrecoverableKeyException::class.java)
+            every { keyStoreSpi.engineGetKey(KEY_ALIAS, correctPass.toCharArray()) } returns object : Key {
+                override fun getEncoded(): ByteArray = ByteArray(0)
+                override fun getFormat(): String = "test"
+                override fun getAlgorithm(): String = "test"
+            }
         } catch (e: NoSuchAlgorithmException) {
             e.printStackTrace()
         } catch (e: UnrecoverableKeyException) {
             e.printStackTrace()
         }
 
-        keyVaultService = KeyVaultServiceImpl(keyGenerator, keyStore, logger!!)
+        keyVaultService = KeyVaultServiceImpl(keyGenerator, keyStore, logger)
 
 
     }
@@ -88,14 +81,18 @@ class KeyVaultServiceImplUnitTest : BaseUnitTest() {
 
     @Test(expected = InvalidPassPhraseException::class)
     fun keyVaultServiceShouldThrowErrorWhenUnlockingWithWrongPassphrase() {
+        every { keyStoreSpi.engineGetKey(any(), any()) } throws UnrecoverableKeyException()
+
         keyVaultService.init(correctPass)
         keyVaultService.unlockVault(wrongPass)
     }
 
     @Test(expected = KeyVaultServiceException::class)
     fun keyVaultServiceShouldThrowErrorWhenAliasDoesNotExist() {
-        `when`(keyStoreSpi!!.engineContainsAlias(any()))
-                .thenReturn(false)
+        every {
+            keyStoreSpi.engineContainsAlias(any())
+        } returns false
+
         keyVaultService.init(correctPass)
         keyVaultService.unlockVault(correctPass)
     }
@@ -108,14 +105,14 @@ class KeyVaultServiceImplUnitTest : BaseUnitTest() {
 
     @Test(expected = KeyVaultNotInitializedException::class)
     fun keyVaultServiceGetKeyShouldThrowErrorWhenNotInitialized() {
-        keyVaultService.encryptionKey
+        keyVaultService.getEncryptionKey()
     }
 
     @Test(expected = KeyVaultLockedException::class)
     fun keyVaultServiceGetKeyShouldThrowErrorWhenLocked() {
         keyVaultService.init(correctPass)
 
-        keyVaultService.encryptionKey
+        keyVaultService.getEncryptionKey()
     }
 
     @Test
@@ -123,7 +120,7 @@ class KeyVaultServiceImplUnitTest : BaseUnitTest() {
         keyVaultService.init(correctPass)
         keyVaultService.unlockVault(correctPass)
 
-        keyVaultService.encryptionKey
+        keyVaultService.getEncryptionKey()
     }
 
     @Test(expected = KeyVaultLockedException::class)
@@ -132,7 +129,7 @@ class KeyVaultServiceImplUnitTest : BaseUnitTest() {
         keyVaultService.unlockVault(correctPass)
         keyVaultService.lockVault()
 
-        keyVaultService.encryptionKey
+        keyVaultService.getEncryptionKey()
     }
 
     @Test
@@ -140,13 +137,13 @@ class KeyVaultServiceImplUnitTest : BaseUnitTest() {
         keyVaultService.init(correctPass)
         keyVaultService.unlockVault(correctPass)
 
-        keyVaultService.encryptionKey
+        keyVaultService.getEncryptionKey()
 
         keyVaultService.lockVault()
 
         keyVaultService.unlockVault(correctPass)
 
-        keyVaultService.encryptionKey
+        keyVaultService.getEncryptionKey()
     }
 
     @Test(expected = KeyVaultNotInitializedException::class)

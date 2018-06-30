@@ -2,6 +2,7 @@ package at.tugraz.tc.cyfile.crypto
 
 import at.tugraz.tc.cyfile.crypto.exceptions.InvalidPassPhraseException
 import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultAlreadyInitializedException
+import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultLockedException
 import at.tugraz.tc.cyfile.crypto.exceptions.KeyVaultNotInitializedException
 import java.security.Key
 
@@ -16,7 +17,8 @@ interface KeyVaultService {
      * @throws KeyVaultLockedException         when vault is locked
      * @throws KeyVaultNotInitializedException when vault is not initialized
      */
-    val encryptionKey: Key?
+    @Throws(KeyVaultNotInitializedException::class, KeyVaultLockedException::class)
+    fun getEncryptionKey(): Key?
 
 
     /**

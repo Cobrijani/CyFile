@@ -35,14 +35,12 @@ class CyFileApplication : Application() {
                 val keyVaultService = KeyVaultServiceImpl(logger)
 
                 val encoder = NativeBase64()
-                val secretRepository = HashSecretRepository(this, null, logger, encoder)
-                secretRepository.init()
+                val secretRepository = HashSecretRepository(this, logger = logger, encoder = encoder)
                 val prompter = OnApplicationForegroundSecretPrompter(PinPatternSecretPrompter(this),
                         keyVaultService,
                         NoOpSecretPrompter())
 
-                val repository = FileBasedNoteRepository(this, null, logger)
-                repository.initialize()
+                val repository = FileBasedNoteRepository(this, logger = logger)
                 ProcessLifecycleOwner.get().lifecycle.addObserver(prompter)
 
                 val secretModule = SecretModule(

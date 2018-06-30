@@ -8,6 +8,7 @@ import at.tugraz.tc.cyfile.crypto.exceptions.InvalidCryptoOperationException
 import java.nio.charset.StandardCharsets
 import java.security.InvalidAlgorithmParameterException
 import java.security.InvalidKeyException
+import java.security.Key
 import java.security.NoSuchAlgorithmException
 import javax.crypto.BadPaddingException
 import javax.crypto.Cipher
@@ -25,7 +26,13 @@ class AES256CBCCryptoService(private val keyVaultService: KeyVaultService, priva
 
     @Throws(InvalidCryptoOperationException::class)
     override fun encrypt(data: ByteArray): ByteArray {
-        val key = keyVaultService.encryptionKey
+        val key: Key?
+        try {
+            key = keyVaultService.getEncryptionKey()
+        } catch (e: Exception) {
+            throw InvalidCryptoOperationException()
+        }
+
         val currentIV: ByteArray
         val encCipher: Cipher
 
@@ -34,11 +41,11 @@ class AES256CBCCryptoService(private val keyVaultService: KeyVaultService, priva
             encCipher.init(Cipher.ENCRYPT_MODE, key)
             currentIV = encCipher.iv
         } catch (e: NoSuchAlgorithmException) {
-            throw InvalidCryptoOperationException(e)
+            throw InvalidCryptoOperationException()
         } catch (e: NoSuchPaddingException) {
-            throw InvalidCryptoOperationException(e)
+            throw InvalidCryptoOperationException()
         } catch (e: InvalidKeyException) {
-            throw InvalidCryptoOperationException(e)
+            throw InvalidCryptoOperationException()
         }
 
         try {
@@ -48,17 +55,17 @@ class AES256CBCCryptoService(private val keyVaultService: KeyVaultService, priva
             System.arraycopy(encBytes, 0, ret, currentIV.size, encBytes.size)
             return ret
         } catch (e: IllegalBlockSizeException) {
-            throw InvalidCryptoOperationException(e)
+            throw InvalidCryptoOperationException()
         } catch (e: BadPaddingException) {
-            throw InvalidCryptoOperationException(e)
+            throw InvalidCryptoOperationException()
         }
 
     }
 
     @Throws(InvalidCryptoOperationException::class)
     override fun decrypt(cipherData: ByteArray): ByteArray {
-        val key = keyVaultService.encryptionKey
         try {
+            val key = keyVaultService.getEncryptionKey()
             val iv = ByteArray(BLOCK_SIZE)
             val encryptedData = ByteArray(cipherData.size - BLOCK_SIZE)
             System.arraycopy(cipherData, 0, iv, 0, BLOCK_SIZE)
@@ -71,19 +78,19 @@ class AES256CBCCryptoService(private val keyVaultService: KeyVaultService, priva
 
             return decCipher.doFinal(encryptedData)
         } catch (e: IllegalBlockSizeException) {
-
-
-            throw InvalidCryptoOperationException(e)
+            throw InvalidCryptoOperationException()
         } catch (e: BadPaddingException) {
-            throw InvalidCryptoOperationException(e)
+            throw InvalidCryptoOperationException()
         } catch (e: NoSuchPaddingException) {
-            throw InvalidCryptoOperationException(e)
+            throw InvalidCryptoOperationException()
         } catch (e: InvalidAlgorithmParameterException) {
-            throw InvalidCryptoOperationException(e)
+            throw InvalidCryptoOperationException()
         } catch (e: InvalidKeyException) {
-            throw InvalidCryptoOperationException(e)
+            throw InvalidCryptoOperationException()
         } catch (e: NoSuchAlgorithmException) {
-            throw InvalidCryptoOperationException(e)
+            throw InvalidCryptoOperationException()
+        } catch (e: Exception) {
+            throw InvalidCryptoOperationException()
         }
 
     }

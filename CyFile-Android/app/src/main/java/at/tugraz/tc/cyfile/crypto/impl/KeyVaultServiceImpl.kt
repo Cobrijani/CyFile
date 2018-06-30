@@ -9,16 +9,16 @@ import java.io.IOException
 import java.security.*
 import java.security.cert.CertificateException
 import javax.crypto.KeyGenerator
-import kotlin.math.log
 
-class KeyVaultServiceImpl(private val logger: CyFileLogger) : KeyVaultService {
+class KeyVaultServiceImpl : KeyVaultService {
 
 
-    private var secretKey: Key?
+    private var secretKey: Key? = null
     private var internalState = State.INIT
 
-    private var generator: KeyGenerator? = null
-    private var keyStore: KeyStore? = null
+    private var logger: CyFileLogger
+    private var generator: KeyGenerator
+    private var keyStore: KeyStore
 
     private enum class State {
         INIT,
@@ -26,7 +26,37 @@ class KeyVaultServiceImpl(private val logger: CyFileLogger) : KeyVaultService {
         LOCKED
     }
 
-    constructor(keyGenerator: KeyGenerator, keyStore: KeyStore, logger: CyFileLogger) : this(logger) {
+    constructor(log: CyFileLogger) {
+        this.secretKey = null
+        this.logger = log
+        try {
+            this.keyStore = KeyStore.getInstance(KEYSTORE_PROVIDER)
+        } catch (e: KeyStoreException) {
+            throw KeyVaultServiceException("KeyStore cannot be initialized")
+        }
+        try {
+            generator = KeyGenerator
+                    .getInstance(KeyProperties.KEY_ALGORITHM_AES, KEYSTORE_PROVIDER)
+        } catch (e: NoSuchAlgorithmException) {
+            throw KeyVaultServiceException("Configuration failure")
+        } catch (e: NoSuchProviderException) {
+            throw KeyVaultServiceException("Configuration failure")
+        }
+        val keyGenParameterSpec = KeyGenParameterSpec.Builder(KEY_ALIAS,
+                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+                .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+                .setKeySize(256)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                .build()
+        try {
+            generator.init(keyGenParameterSpec)
+        } catch (e: InvalidAlgorithmParameterException) {
+            throw KeyVaultServiceException("Wrong parameter configuration")
+        }
+    }
+
+    constructor(keyGenerator: KeyGenerator, keyStore: KeyStore, logger: CyFileLogger) {
+        this.logger = logger
         this.generator = keyGenerator
         this.keyStore = keyStore
     }
@@ -39,10 +69,10 @@ class KeyVaultServiceImpl(private val logger: CyFileLogger) : KeyVaultService {
 
 
         try {
-            this.keyStore!!.load(null)
-            if (!keyStore!!.containsAlias(KEY_ALIAS)) {
+            this.keyStore.load(null)
+            if (!keyStore.containsAlias(KEY_ALIAS)) {
                 this.logger.d("KeyVaultService", "Generating key")
-                this.secretKey = generator!!.generateKey()
+                this.secretKey = generator.generateKey()
             }
             internalState = State.LOCKED
         } catch (e: KeyStoreException) {
@@ -76,10 +106,10 @@ class KeyVaultServiceImpl(private val logger: CyFileLogger) : KeyVaultService {
         }
 
         try {
-            this.keyStore!!.load(null)
-            if (this.keyStore!!.containsAlias(KEY_ALIAS)) {
+            this.keyStore.load(null)
+            if (this.keyStore.containsAlias(KEY_ALIAS)) {
                 // load key from keystore
-                secretKey = this.keyStore!!.getKey(KEY_ALIAS, passphrase.toCharArray())
+                secretKey = this.keyStore.getKey(KEY_ALIAS, passphrase.toCharArray())
             } else {
                 throw KeyVaultServiceException("Configuration is invalid - contact programmer!")
             }
@@ -113,18 +143,17 @@ class KeyVaultServiceImpl(private val logger: CyFileLogger) : KeyVaultService {
         internalState = State.LOCKED
     }
 
-    override val encryptionKey: Key?
-        get() {
-            if (internalState == State.INIT) {
-                throw KeyVaultNotInitializedException("Not initialized")
-            }
-
-            if (internalState == State.LOCKED) {
-                throw KeyVaultLockedException("Key vault is locked")
-            }
-
-            return secretKey
+    override fun getEncryptionKey(): Key? {
+        if (internalState == State.INIT) {
+            throw KeyVaultNotInitializedException("Not initialized")
         }
+
+        if (internalState == State.LOCKED) {
+            throw KeyVaultLockedException("Key vault is locked")
+        }
+
+        return secretKey
+    }
 
 
     companion object {
@@ -133,30 +162,6 @@ class KeyVaultServiceImpl(private val logger: CyFileLogger) : KeyVaultService {
     }
 
     init {
-        this.secretKey = null
-        try {
-            this.keyStore = KeyStore.getInstance(KEYSTORE_PROVIDER)
-        } catch (e: KeyStoreException) {
-            throw KeyVaultServiceException("KeyStore cannot be initialized")
-        }
-        try {
-            generator = KeyGenerator
-                    .getInstance(KeyProperties.KEY_ALGORITHM_AES, KEYSTORE_PROVIDER)
-        } catch (e: NoSuchAlgorithmException) {
-            throw KeyVaultServiceException("Configuration failure")
-        } catch (e: NoSuchProviderException) {
-            throw KeyVaultServiceException("Configuration failure")
-        }
-        val keyGenParameterSpec = KeyGenParameterSpec.Builder(KEY_ALIAS,
-                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
-                .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-                .setKeySize(256)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
-                .build()
-        try {
-            generator!!.init(keyGenParameterSpec)
-        } catch (e: InvalidAlgorithmParameterException) {
-            throw KeyVaultServiceException("Wrong parameter configuration")
-        }
+
     }
 }

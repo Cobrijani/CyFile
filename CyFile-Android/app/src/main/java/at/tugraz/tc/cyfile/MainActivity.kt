@@ -60,7 +60,6 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener {
     }
 
     private fun initializeNoteView() {
-
         val recyclerView = findViewById<RecyclerView>(R.id.noteList)
         val layoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager

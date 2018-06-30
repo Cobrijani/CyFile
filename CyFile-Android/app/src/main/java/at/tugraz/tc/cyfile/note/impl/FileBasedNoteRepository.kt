@@ -7,27 +7,19 @@ import at.tugraz.tc.cyfile.note.NoteRepository
 import java.io.*
 import java.util.HashSet
 import kotlin.collections.ArrayList
-import kotlin.collections.List
 
 
-class FileBasedNoteRepository(private val context: Context, fileName_: String?, private val logger: CyFileLogger) : NoteRepository {
+class FileBasedNoteRepository(private val context: Context,
+                              private val fileName: String = DEFAULT_FILE_NAME,
+                              private val logger: CyFileLogger,
+                              private val inputStream: InputStream = context.openFileInput(fileName),
+                              private val outputStream: OutputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)) : NoteRepository {
 
-    private val fileName: String
-    private lateinit var inMemoryNoteRepository: InMemoryNoteRepository
-    private var initialized = false
+    private var inMemoryNoteRepository: InMemoryNoteRepository
 
-    val inputStream: InputStream
-        @Throws(FileNotFoundException::class)
-        get() = context.openFileInput(fileName)
-
-    val outputStream: OutputStream
-        @Throws(FileNotFoundException::class)
-        get() = context.openFileOutput(fileName, Context.MODE_PRIVATE)
-
-    override fun initialize() {
+    init {
         val notes = loadNotesFromFile()
         inMemoryNoteRepository = InMemoryNoteRepository(notes)
-        initialized = true
     }
 
     private fun loadNotesFromFile(): MutableSet<Note> {
@@ -68,23 +60,14 @@ class FileBasedNoteRepository(private val context: Context, fileName_: String?, 
     }
 
     override fun findAll(): List<Note> {
-        if (!initialized) {
-            throw IllegalStateException("FileNoteRepository was not initialized")
-        }
         return inMemoryNoteRepository.findAll()
     }
 
     override fun findOne(id: String): Note? {
-        if (!initialized) {
-            throw IllegalStateException("FileNoteRepository was not initialized")
-        }
         return inMemoryNoteRepository.findOne(id)
     }
 
     override fun save(note: Note): Note {
-        if (!initialized) {
-            throw IllegalStateException("FileNoteRepository was not initialized")
-        }
         inMemoryNoteRepository.save(note)
         val notes = inMemoryNoteRepository.findAll()
         if (note.id.isEmpty()) {
@@ -95,9 +78,6 @@ class FileBasedNoteRepository(private val context: Context, fileName_: String?, 
     }
 
     override fun delete(id: String) {
-        if (!initialized) {
-            throw IllegalStateException("FileNoteRepository was not initialized")
-        }
         inMemoryNoteRepository.delete(id)
         val notes = inMemoryNoteRepository.findAll()
         saveNotesToFile(notes)
@@ -107,11 +87,4 @@ class FileBasedNoteRepository(private val context: Context, fileName_: String?, 
         private const val DEFAULT_FILE_NAME = "notes.bin"
     }
 
-    init {
-        var fileName = fileName_
-        if (fileName == null) {
-            fileName = DEFAULT_FILE_NAME
-        }
-        this.fileName = fileName
-    }
 }

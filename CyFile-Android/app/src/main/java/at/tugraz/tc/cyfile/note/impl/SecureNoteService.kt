@@ -5,10 +5,10 @@ import at.tugraz.tc.cyfile.crypto.exceptions.InvalidCryptoOperationException
 import at.tugraz.tc.cyfile.domain.Note
 import at.tugraz.tc.cyfile.note.NoteRepository
 import at.tugraz.tc.cyfile.note.NoteService
+import at.tugraz.tc.cyfile.note.exceptions.NoteCannotBeSavedException
 import java.util.ArrayList
 import java.util.Date
 import kotlin.Comparator
-import kotlin.String
 
 /**
  * Secure implementation of [NoteService]
@@ -27,7 +27,7 @@ class SecureNoteService(private val repository: NoteRepository, private val cryp
         val retVal = ArrayList<Note>()
         try {
             for (note in notes) {
-                val create = Note(note.id, cryptoService.decrypt(note.title!!), cryptoService.decrypt(note.content!!))
+                val create = Note(note.id, cryptoService.decrypt(note.title), cryptoService.decrypt(note.content))
                 create.dateTimeCreated = note.dateTimeCreated
                 create.dateTimeModified = note.dateTimeModified
                 retVal.add(create)
@@ -44,9 +44,12 @@ class SecureNoteService(private val repository: NoteRepository, private val cryp
 
     override fun findOne(id: String): Note? {
         val note = repository.findOne(id)
-        if (note != null) {
+
+        return note?.apply {
             return try {
-                val newNote = Note(note.id, cryptoService.decrypt(note.title!!), cryptoService.decrypt(note.content!!))
+                val newNote = Note(note.id,
+                        cryptoService.decrypt(note.title),
+                        cryptoService.decrypt(note.content))
                 newNote.dateTimeCreated = note.dateTimeCreated
                 newNote.dateTimeModified = note.dateTimeModified
                 newNote
@@ -54,21 +57,19 @@ class SecureNoteService(private val repository: NoteRepository, private val cryp
                 e.printStackTrace()
                 null
             }
-
         }
-        return null
     }
 
     override fun save(note: Note): Note {
         return try {
-            note.content = cryptoService.encrypt(note.content!!)
-            note.title = cryptoService.encrypt(note.title!!)
+            note.content = cryptoService.encrypt(note.content)
+            note.title = cryptoService.encrypt(note.title)
             note.dateTimeModified = Date().time
 
             repository.save(note)
         } catch (e: InvalidCryptoOperationException) {
             e.printStackTrace()
-            note
+            throw NoteCannotBeSavedException()
         }
 
     }

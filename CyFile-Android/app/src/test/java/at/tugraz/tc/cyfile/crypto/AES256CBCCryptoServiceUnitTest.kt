@@ -5,11 +5,12 @@ import at.tugraz.tc.cyfile.crypto.exceptions.InvalidCryptoOperationException
 import at.tugraz.tc.cyfile.crypto.impl.AES256CBCCryptoService
 import at.tugraz.tc.cyfile.crypto.impl.ApacheCodecBase64
 import at.tugraz.tc.cyfile.crypto.impl.DummyKeyVaultService
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.spyk
 import junit.framework.Assert.*
 import org.junit.Test
-import org.mockito.Mockito.*
 import java.security.InvalidKeyException
-import java.security.Key
 import java.security.NoSuchAlgorithmException
 import java.util.*
 import javax.crypto.KeyGenerator
@@ -20,14 +21,15 @@ import javax.crypto.KeyGenerator
 
 class AES256CBCCryptoServiceUnitTest : BaseUnitTest() {
 
-    private var cryptoService: AES256CBCCryptoService? = null
+    private lateinit var cryptoService: AES256CBCCryptoService
     private val dummyKeyVaultService = DummyKeyVaultService()
 
 
     private val blockSize = 16
 
-    fun setupKVS(keyVaultService: KeyVaultService) {
-        cryptoService = spy(AES256CBCCryptoService(keyVaultService, ApacheCodecBase64(), AES256CBCCryptoService.TEST_ALGORITHM))
+    private fun setupKVS(keyVaultService: KeyVaultService) {
+        cryptoService = AES256CBCCryptoService(keyVaultService, ApacheCodecBase64(), AES256CBCCryptoService.TEST_ALGORITHM)
+        keyVaultService.init("asdf")
         keyVaultService.unlockVault("asdf")
     }
 
@@ -36,38 +38,39 @@ class AES256CBCCryptoServiceUnitTest : BaseUnitTest() {
     fun testRelockedVault() {
         setupKVS(dummyKeyVaultService)
         val plain = "Hello World!"
-        val encrypted = cryptoService!!.encrypt(plain)
+        val encrypted = cryptoService.encrypt(plain)
 
         assertNotSame(plain, encrypted)
-        assertTrue(encrypted.length > 0)
+        assertTrue(encrypted.isNotEmpty())
 
         //after we encrypted something we lock the vault
         dummyKeyVaultService.lockVault()
-        val decrypted = cryptoService!!.decrypt(encrypted)
+        val decrypted = cryptoService.decrypt(encrypted)
         assertNull(decrypted)
     }
 
     @Test(expected = InvalidCryptoOperationException::class)
     @Throws(InvalidCryptoOperationException::class, NoSuchAlgorithmException::class)
     fun testEncryptChangePasswordDecryptFail() {
-        val keyGenerator: KeyGenerator
-        keyGenerator = KeyGenerator.getInstance("AES")
+        val keyGenerator: KeyGenerator = KeyGenerator.getInstance("AES")
         keyGenerator.init(128)
         val key = keyGenerator.generateKey()
         val key2 = keyGenerator.generateKey()
-        val kvs = mock(KeyVaultService::class.java)
+        val kvs = mockk<KeyVaultService>(relaxed = true)
         setupKVS(kvs)
-        `when`<Key>(kvs.encryptionKey).thenReturn(key)
+
+        every { kvs.getEncryptionKey() } returns key
         val plain = "Hello World!"
-        val encrypted = cryptoService!!.encrypt(plain.toByteArray())
+        val encrypted = cryptoService.encrypt(plain.toByteArray())
         assertNotSame(plain, encrypted)
-        `when`<Key>(kvs.encryptionKey).thenReturn(key2)
+
+        every { kvs.getEncryptionKey() } returns key2
 
         // 16 for iv, then 16 for each started block of 16
         val expectedLength = (plain.length / 16 + 2) * 16
         assertEquals(encrypted.size, expectedLength)
 
-        val decrypted = String(cryptoService!!.decrypt(encrypted))
+        val decrypted = String(cryptoService.decrypt(encrypted))
         assertFalse(plain == decrypted)
     }
 
@@ -77,14 +80,14 @@ class AES256CBCCryptoServiceUnitTest : BaseUnitTest() {
     fun testEncryptDecryptString() {
         setupKVS(dummyKeyVaultService)
         val plain = "Hello World!"
-        val encrypted = cryptoService!!.encrypt(plain.toByteArray())
+        val encrypted = cryptoService.encrypt(plain.toByteArray())
         assertNotSame(plain, encrypted)
 
         // 16 for iv, then 16 for each started block of 16
         val expectedLength = (plain.length / 16 + 2) * 16
         assertEquals(encrypted.size, expectedLength)
 
-        val decrypted = String(cryptoService!!.decrypt(encrypted))
+        val decrypted = String(cryptoService.decrypt(encrypted))
         assertEquals(plain, decrypted)
     }
 
@@ -93,10 +96,10 @@ class AES256CBCCryptoServiceUnitTest : BaseUnitTest() {
     fun testEncryptEmptyString() {
         setupKVS(dummyKeyVaultService)
         val plain = ""
-        val encrypted = cryptoService!!.encrypt(plain)
+        val encrypted = cryptoService.encrypt(plain)
         assertNotSame(plain, encrypted)
-        assertTrue(encrypted.length > 0)
-        val decrypted = cryptoService!!.decrypt(encrypted)
+        assertTrue(encrypted.isNotEmpty())
+        val decrypted = cryptoService.decrypt(encrypted)
         assertEquals(plain, decrypted)
     }
 
@@ -106,10 +109,10 @@ class AES256CBCCryptoServiceUnitTest : BaseUnitTest() {
         setupKVS(dummyKeyVaultService)
         val plain = "Hello this is a not Block-Size aligned String!"
         assertNotSame(0, plain.length % blockSize)
-        val encrypted = cryptoService!!.encrypt(plain)
+        val encrypted = cryptoService.encrypt(plain)
         assertNotSame(plain, encrypted)
-        assertTrue(encrypted.length > 0)
-        val decrypted = cryptoService!!.decrypt(encrypted)
+        assertTrue(encrypted.isNotEmpty())
+        val decrypted = cryptoService.decrypt(encrypted)
         assertEquals(plain, decrypted)
     }
 
@@ -123,10 +126,10 @@ class AES256CBCCryptoServiceUnitTest : BaseUnitTest() {
         assertTrue(plain.length >= blockSize)
         plain = plain.substring(0, blockSize)
         assertEquals(0, plain.length % blockSize)
-        val encrypted = cryptoService!!.encrypt(plain)
+        val encrypted = cryptoService.encrypt(plain)
         assertNotSame(plain, encrypted)
-        assertTrue(encrypted.length > 0)
-        val decrypted = cryptoService!!.decrypt(encrypted)
+        assertTrue(encrypted.isNotEmpty())
+        val decrypted = cryptoService.decrypt(encrypted)
         assertEquals(plain, decrypted)
     }
 
@@ -135,14 +138,14 @@ class AES256CBCCryptoServiceUnitTest : BaseUnitTest() {
     fun testEncryptSameStringMultipleTimes() {
         setupKVS(dummyKeyVaultService)
         val plain = "Hello World!"
-        val encrypted1 = cryptoService!!.encrypt(plain.toByteArray())
+        val encrypted1 = cryptoService.encrypt(plain.toByteArray())
 
-        val encrypted2 = cryptoService!!.encrypt(plain.toByteArray())
+        val encrypted2 = cryptoService.encrypt(plain.toByteArray())
         assertNotSame(plain, encrypted2)
         assertFalse(Arrays.equals(encrypted1, encrypted2))
 
-        assertTrue(String(cryptoService!!.decrypt(encrypted1)) == plain)
-        assertTrue(String(cryptoService!!.decrypt(encrypted2)) == plain)
+        assertTrue(String(cryptoService.decrypt(encrypted1)) == plain)
+        assertTrue(String(cryptoService.decrypt(encrypted2)) == plain)
     }
 
     @Test
@@ -150,10 +153,10 @@ class AES256CBCCryptoServiceUnitTest : BaseUnitTest() {
     fun testEncryptDifferentCryptoServiceInstances() {
         setupKVS(dummyKeyVaultService)
         val plain = ""
-        val encrypted = cryptoService!!.encrypt(plain)
+        val encrypted = cryptoService.encrypt(plain)
         assertNotSame(plain, encrypted)
-        assertTrue(encrypted.length > 0)
-        val cryptoService2 = spy(AES256CBCCryptoService(dummyKeyVaultService, ApacheCodecBase64(), AES256CBCCryptoService.TEST_ALGORITHM))
+        assertTrue(encrypted.isNotEmpty())
+        val cryptoService2 = spyk(AES256CBCCryptoService(dummyKeyVaultService, ApacheCodecBase64(), AES256CBCCryptoService.TEST_ALGORITHM))
         val decrypted = cryptoService2.decrypt(encrypted)
         assertEquals(plain, decrypted)
     }
@@ -264,10 +267,10 @@ class AES256CBCCryptoServiceUnitTest : BaseUnitTest() {
                 "                        \"                Aliquam erat volutpat. Suspendisse potenti. Sed sed euismod enim. Morbi dignissim\\n\" +\n" +
                 "                        \"                tempor nibh sed vehicula. Etiam condimentum neque a tortor dapibus, et vehicula diam\\n\" +\n" +
                 "                        \"                feugiat. Curabitur feugiat augue nec porta vehicula.\""
-        val encrypted = cryptoService!!.encrypt(plain)
+        val encrypted = cryptoService.encrypt(plain)
         assertNotSame(plain, encrypted)
-        assertTrue(encrypted.length > 0)
-        val decrypted = cryptoService!!.decrypt(encrypted)
+        assertTrue(encrypted.isNotEmpty())
+        val decrypted = cryptoService.decrypt(encrypted)
         assertEquals(plain, decrypted)
     }
 }

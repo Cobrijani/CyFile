@@ -5,15 +5,11 @@ import android.content.Context
 import at.tugraz.tc.cyfile.BaseUnitTest
 import at.tugraz.tc.cyfile.domain.Note
 import at.tugraz.tc.cyfile.logging.CyFileLogger
+import at.tugraz.tc.cyfile.logging.impl.NoOpLogger
 import at.tugraz.tc.cyfile.note.impl.FileBasedNoteRepository
+import io.mockk.impl.annotations.RelaxedMockK
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.MockitoAnnotations
-import org.mockito.junit.MockitoJUnitRunner
 import java.io.*
 import java.util.*
 
@@ -22,14 +18,12 @@ import java.util.*
  * Created by mmalte on 25.04.18.
  */
 
-@RunWith(MockitoJUnitRunner::class)
 class FileBasedRepositoryUnitTest : BaseUnitTest() {
 
-    @Mock
-    private val context: Context? = null
+    @RelaxedMockK
+    private lateinit var context: Context
 
-    @Mock
-    private val logger: CyFileLogger? = null
+    private var logger: CyFileLogger = NoOpLogger()
 
 
     @Throws(IOException::class)
@@ -51,11 +45,9 @@ class FileBasedRepositoryUnitTest : BaseUnitTest() {
         notes.add(n1)
         notes.add(n)
 
-        val spyRepository = Mockito.spy(FileBasedNoteRepository(context!!, null, logger!!))
-
-        Mockito.doReturn(createInputStream(notes)).`when`(spyRepository).inputStream
-
-        spyRepository.initialize()
+        val spyRepository = FileBasedNoteRepository(context, logger = logger,
+                inputStream = createInputStream(notes),
+                outputStream = createOutputStream())
 
         val actual = spyRepository.findAll()
         Assert.assertTrue(actual.size == 2)
@@ -78,15 +70,10 @@ class FileBasedRepositoryUnitTest : BaseUnitTest() {
         notes.add(n)
 
         val nSave = Note("", "name2", "content2")
-
-        val spyRepository = Mockito.spy(FileBasedNoteRepository(context!!, null, logger!!))
-
         val os = createOutputStream() as ByteArrayOutputStream
-
-        Mockito.doReturn(os).`when`(spyRepository).outputStream
-        Mockito.doReturn(createInputStream(notes)).`when`(spyRepository).inputStream
-
-        spyRepository.initialize()
+        val spyRepository = FileBasedNoteRepository(context, logger = logger,
+                inputStream = createInputStream(notes),
+                outputStream = os)
 
         val saved = spyRepository.save(nSave)
         Assert.assertNotNull(saved)
@@ -100,54 +87,18 @@ class FileBasedRepositoryUnitTest : BaseUnitTest() {
         Assert.assertTrue(actual.contains(nSave))
     }
 
-    @Test(expected = IllegalStateException::class)
-    @Throws(Exception::class)
-    fun testFindAllIsUninitializedThrowsIllegalStateException() {
-        val spyRepository = Mockito.spy(FileBasedNoteRepository(context!!, null, logger!!))
-
-        spyRepository.findAll()
-    }
-
-    @Test(expected = IllegalStateException::class)
-    @Throws(Exception::class)
-    fun testFindOneIsUninitializedThrowsIllegalStateException() {
-        val spyRepository = Mockito.spy(FileBasedNoteRepository(context!!, null, logger!!))
-
-        spyRepository.findOne("testid")
-    }
-
-    @Test(expected = IllegalStateException::class)
-    @Throws(Exception::class)
-    fun testDeleteIsUninitializedThrowsIllegalStateException() {
-        val spyRepository = Mockito.spy(FileBasedNoteRepository(context!!, null, logger!!))
-
-        spyRepository.delete("testid")
-    }
-
-    @Test(expected = IllegalStateException::class)
-    @Throws(Exception::class)
-    fun testSaveIsUninitializedThrowsIllegalStateException() {
-        val spyRepository = Mockito.spy(FileBasedNoteRepository(context!!, null, logger!!))
-
-        spyRepository.save(Note("", null, null))
-    }
-
-    @Test
+   @Test
     @Throws(Exception::class)
     fun testDeleteWithSuccess() {
         val n = Note("my-id1", "name", "content")
         val notes = LinkedList<Note>()
         notes.add(n)
 
-        val spyRepository = Mockito.spy(FileBasedNoteRepository(context!!, null, logger!!))
-
         val os = createOutputStream() as ByteArrayOutputStream
 
-        Mockito.doReturn(os).`when`(spyRepository).outputStream
-        Mockito.doReturn(createInputStream(notes)).`when`(spyRepository).inputStream
-
-        spyRepository.initialize()
-
+        val spyRepository = FileBasedNoteRepository(context, logger = logger,
+                inputStream = createInputStream(notes),
+                outputStream = os)
 
         spyRepository.delete("my-id1")
 
@@ -156,7 +107,7 @@ class FileBasedRepositoryUnitTest : BaseUnitTest() {
         val ois = ObjectInputStream(`is`)
         val actual = ois.readObject() as List<Note>
 
-        Assert.assertTrue(actual.size == 0)
+        Assert.assertTrue(actual.isEmpty())
     }
 }
 

@@ -39,5 +39,4 @@ interface NoteRepository {
      */
     fun delete(id: String)
 
-    fun initialize()
 }

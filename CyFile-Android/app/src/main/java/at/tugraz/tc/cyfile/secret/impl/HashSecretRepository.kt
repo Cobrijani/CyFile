@@ -9,29 +9,16 @@ import at.tugraz.tc.cyfile.secret.SecretRepository
 import java.io.*
 
 class HashSecretRepository(private val context: Context,
-                           fileName: String?,
+                           private val fileName: String = DEFAULT_FILE_NAME,
                            private val logger: CyFileLogger,
-                           private val encoder: Base64) : SecretRepository {
+                           private val encoder: Base64,
+                           private val inputStream: InputStream = context.openFileInput(fileName),
+                           private val outputStream: OutputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)) : SecretRepository {
 
     private var secret: Secret? = null
-    private val fileName: String
-    private var isInit = false
-
-    val inputStream: InputStream
-        @Throws(FileNotFoundException::class)
-        get() = context.openFileInput(fileName)
-
-    val outputStream: OutputStream
-        @Throws(FileNotFoundException::class)
-        get() = context.openFileOutput(fileName, Context.MODE_PRIVATE)
 
     init {
-        this.fileName = fileName ?: DEFAULT_FILE_NAME
-    }
-
-    fun init() {
         readSecret()
-        isInit = true
     }
 
     private fun readSecret() {
@@ -51,9 +38,6 @@ class HashSecretRepository(private val context: Context,
     }
 
     override fun saveSecret(secret: Secret): Boolean {
-        if (this.secret != null) {
-            return false
-        }
         this.secret = HashedSecret(secret, encoder)
         try {
             ObjectOutputStream(outputStream).use { oos -> oos.writeObject(this.secret) }
@@ -65,9 +49,6 @@ class HashSecretRepository(private val context: Context,
     }
 
     override fun retrieveSecret(): Secret? {
-        if (!isInit) {
-            throw IllegalStateException("Must be initialized first")
-        }
         return secret
     }
 

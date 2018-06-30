@@ -1,6 +1,7 @@
 package at.tugraz.tc.cyfile.note
 
 import at.tugraz.tc.cyfile.domain.Note
+import at.tugraz.tc.cyfile.note.exceptions.NoteCannotBeSavedException
 
 /**
  * Service responsible for managing [at.tugraz.tc.cyfile.domain.Note]
@@ -29,7 +30,9 @@ interface NoteService {
      *
      * @param note note to be saved
      * @return saved note
+     * @throws NoteCannotBeSavedException when error occurs during saving the note
      */
+    @Throws(NoteCannotBeSavedException::class)
     fun save(note: Note): Note
 
     /**

@@ -15,7 +15,7 @@ class InMemoryNoteRepository(private val noteSet: MutableSet<Note>) : NoteReposi
     }
 
     override fun findOne(id: String): Note? {
-        return noteSet.first { x -> x.id == id }
+        return noteSet.firstOrNull { x -> x.id == id }
     }
 
     override fun save(note: Note): Note {
@@ -44,7 +44,4 @@ class InMemoryNoteRepository(private val noteSet: MutableSet<Note>) : NoteReposi
 
     }
 
-    override fun initialize() {
-        //nothing to do
-    }
 }

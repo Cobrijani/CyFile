@@ -1,7 +1,7 @@
 package at.tugraz.tc.cyfile
 
+import io.mockk.MockKAnnotations
 import org.junit.Before
-import org.mockito.MockitoAnnotations
 
 /**
  * Base unit test class holding shared code for all unit tests
@@ -9,7 +9,5 @@ import org.mockito.MockitoAnnotations
 abstract class BaseUnitTest {
 
     @Before
-    fun initialization() {
-        MockitoAnnotations.initMocks(this)
-    }
+    fun initialization() = MockKAnnotations.init(this)
 }

@@ -19,7 +19,7 @@ class InMemoryNoteRepositoryUnitTest : BaseUnitTest() {
     private val notes = HashSet<Note>()
 
 
-    private var inMemoryNoteRepository: InMemoryNoteRepository? = null
+    private lateinit var inMemoryNoteRepository: InMemoryNoteRepository
 
     @Before
     fun setup() {
@@ -33,9 +33,8 @@ class InMemoryNoteRepositoryUnitTest : BaseUnitTest() {
 
     @Test
     fun findAllShouldReturnCorrectNumberOfEntities() {
-        notes.add(Note("id", null, null))
-
-        Assert.assertEquals(1, inMemoryNoteRepository!!.findAll().size)
+        notes.add(Note("id", "", ""))
+        Assert.assertEquals(1, inMemoryNoteRepository.findAll().size)
     }
 
     @Test
@@ -45,7 +44,7 @@ class InMemoryNoteRepositoryUnitTest : BaseUnitTest() {
         notes.add(n)
         notes.add(n1)
 
-        val note = inMemoryNoteRepository!!.findOne("my-id23")
+        val note = inMemoryNoteRepository.findOne("my-id23")
 
         Assert.assertEquals(n.id, note!!.id)
         Assert.assertEquals(n.title, note.title)
@@ -59,18 +58,18 @@ class InMemoryNoteRepositoryUnitTest : BaseUnitTest() {
         notes.add(n)
         notes.add(n1)
 
-        val note = inMemoryNoteRepository!!.findOne("non-existing-id")
+        val note = inMemoryNoteRepository.findOne("non-existing-id")
 
         Assert.assertEquals(null, note)
     }
 
     @Test
     fun saveShouldInsertNonExistingEntity() {
-        val n = Note(null!!, "name", "content")
+        val n = Note("id1", "name", "content")
         val n1 = Note("my-id2", "name2", "content2")
         notes.add(n1)
 
-        val saved = inMemoryNoteRepository!!.save(n)
+        val saved = inMemoryNoteRepository.save(n)
 
         //since it is new entity the repository should assign the id
         Assert.assertNotNull(n.id)
@@ -87,20 +86,9 @@ class InMemoryNoteRepositoryUnitTest : BaseUnitTest() {
         notes.add(n)
 
         n.title = "Changed title"
-        val saved = inMemoryNoteRepository!!.save(n)
+        val saved = inMemoryNoteRepository.save(n)
 
         Assert.assertEquals(saved, n)
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    fun saveShouldThrowAnErrorIfEntityIsNotValid() {
-        val n = Note("my-id1", "name", "content")
-        val n1 = Note("my-id2", "name2", "content2")
-        notes.add(n1)
-        notes.add(n)
-
-        inMemoryNoteRepository!!.save(null!!)
-
     }
 
     @Test
@@ -110,7 +98,7 @@ class InMemoryNoteRepositoryUnitTest : BaseUnitTest() {
         notes.add(n1)
         notes.add(n)
 
-        inMemoryNoteRepository!!.delete("my-id1")
+        inMemoryNoteRepository.delete("my-id1")
 
         Assert.assertTrue(!notes.contains(n))
         Assert.assertTrue(notes.size == 1)
@@ -123,7 +111,7 @@ class InMemoryNoteRepositoryUnitTest : BaseUnitTest() {
         notes.add(n1)
         notes.add(n)
 
-        inMemoryNoteRepository!!.delete("non-existing-id")
+        inMemoryNoteRepository.delete("non-existing-id")
 
         Assert.assertTrue(notes.contains(n))
         Assert.assertTrue(notes.contains(n1))
