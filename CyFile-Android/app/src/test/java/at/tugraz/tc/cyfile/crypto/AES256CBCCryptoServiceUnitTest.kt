@@ -8,7 +8,7 @@ import at.tugraz.tc.cyfile.crypto.impl.DummyKeyVaultService
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
-import junit.framework.Assert.*
+import org.junit.Assert.*
 import org.junit.Test
 import java.security.InvalidKeyException
 import java.security.NoSuchAlgorithmException

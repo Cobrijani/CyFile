@@ -21,7 +21,8 @@ class NotesAdapter
     fun filter(newText: String, notesList: List<Note>) {
         val notes = ArrayList<Note>()
         for (note in notesList) {
-            if (note.content!!.contains(newText) || note.title!!.contains(newText)) {
+            if (note.content.toLowerCase().contains(newText.toLowerCase()) ||
+                    note.title.toLowerCase().contains(newText.toLowerCase())) {
                 notes.add(note)
             }
         }

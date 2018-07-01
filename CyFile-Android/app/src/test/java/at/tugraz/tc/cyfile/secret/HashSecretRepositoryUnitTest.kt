@@ -9,7 +9,7 @@ import at.tugraz.tc.cyfile.secret.impl.PinPatternSecret
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
-import junit.framework.Assert
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import java.io.*

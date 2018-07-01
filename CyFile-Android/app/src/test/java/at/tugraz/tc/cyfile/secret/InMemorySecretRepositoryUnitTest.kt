@@ -3,7 +3,7 @@ package at.tugraz.tc.cyfile.secret
 import at.tugraz.tc.cyfile.BaseUnitTest
 import at.tugraz.tc.cyfile.secret.impl.InMemorySecretRepository
 import at.tugraz.tc.cyfile.secret.impl.PinPatternSecret
-import junit.framework.Assert
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 

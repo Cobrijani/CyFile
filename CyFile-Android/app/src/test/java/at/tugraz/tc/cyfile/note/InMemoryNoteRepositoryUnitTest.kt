@@ -3,7 +3,7 @@ package at.tugraz.tc.cyfile.note
 import at.tugraz.tc.cyfile.BaseUnitTest
 import at.tugraz.tc.cyfile.domain.Note
 import at.tugraz.tc.cyfile.note.impl.InMemoryNoteRepository
-import junit.framework.Assert
+import org.junit.Assert
 import org.junit.After
 import org.junit.Before
 import org.junit.Test

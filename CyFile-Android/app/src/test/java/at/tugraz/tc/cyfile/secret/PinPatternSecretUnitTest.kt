@@ -3,7 +3,7 @@ package at.tugraz.tc.cyfile.secret
 import at.tugraz.tc.cyfile.BaseUnitTest
 import at.tugraz.tc.cyfile.secret.impl.PinPatternSecret
 import com.andrognito.patternlockview.PatternLockView
-import junit.framework.Assert
+import org.junit.Assert
 import nl.jqno.equalsverifier.EqualsVerifier
 import nl.jqno.equalsverifier.Warning
 import org.junit.Before

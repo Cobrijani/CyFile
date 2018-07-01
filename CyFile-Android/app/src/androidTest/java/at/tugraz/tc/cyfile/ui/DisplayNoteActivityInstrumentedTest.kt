@@ -28,7 +28,7 @@ import at.tugraz.tc.cyfile.secret.SecretManager
 import at.tugraz.tc.cyfile.secret.SecretModule
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
-import junit.framework.Assert.assertTrue
+import org.junit.Assert.assertTrue
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
