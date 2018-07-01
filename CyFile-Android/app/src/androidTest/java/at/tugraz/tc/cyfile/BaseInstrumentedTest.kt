@@ -7,10 +7,10 @@ import android.support.test.espresso.action.GeneralSwipeAction
 import android.support.test.espresso.action.Press
 import android.support.test.espresso.action.Swipe
 import android.support.test.runner.AndroidJUnit4
+import io.mockk.MockKAnnotations
 
 import org.junit.Before
 import org.junit.runner.RunWith
-import org.mockito.MockitoAnnotations
 
 @RunWith(AndroidJUnit4::class)
 abstract class BaseInstrumentedTest {
@@ -19,7 +19,7 @@ abstract class BaseInstrumentedTest {
 
     @Before
     fun initialization() {
-        MockitoAnnotations.initMocks(this)
+        MockKAnnotations.init(this)
 
         app = InstrumentationRegistry
                 .getInstrumentation()

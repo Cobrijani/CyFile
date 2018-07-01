@@ -2,6 +2,7 @@ package at.tugraz.tc.cyfile.note.impl
 
 import android.content.Context
 import at.tugraz.tc.cyfile.domain.Note
+import at.tugraz.tc.cyfile.file.FileHandler
 import at.tugraz.tc.cyfile.logging.CyFileLogger
 import at.tugraz.tc.cyfile.note.NoteRepository
 import java.io.*
@@ -9,11 +10,8 @@ import java.util.HashSet
 import kotlin.collections.ArrayList
 
 
-class FileBasedNoteRepository(private val context: Context,
-                              private val fileName: String = DEFAULT_FILE_NAME,
-                              private val logger: CyFileLogger,
-                              private val inputStream: InputStream = context.openFileInput(fileName),
-                              private val outputStream: OutputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)) : NoteRepository {
+class FileBasedNoteRepository(private val logger: CyFileLogger,
+                              private val fileHandler: FileHandler) : NoteRepository {
 
     private var inMemoryNoteRepository: InMemoryNoteRepository
 
@@ -25,7 +23,7 @@ class FileBasedNoteRepository(private val context: Context,
     private fun loadNotesFromFile(): MutableSet<Note> {
         var notes: List<Note> = ArrayList()
         try {
-            inputStream.use { fis ->
+            fileHandler.getInputStream().use { fis ->
                 ObjectInputStream(fis).use { `is` ->
                     notes = `is`.readObject() as List<Note>
                     logger.d("File IO", "loaded " + notes.size + " notes from file")
@@ -33,7 +31,9 @@ class FileBasedNoteRepository(private val context: Context,
             }
         } catch (e: FileNotFoundException) {
             logger.d("File IO", "file not found, is this the first use?")
-        } catch (e: IOException) {
+        }  catch (e: EOFException){
+            logger.d("File IO", "file not found, is this the first use?")
+        }catch (e: IOException) {
             throw IllegalStateException(e)
         } catch (e: ClassNotFoundException) {
             throw IllegalStateException(e)
@@ -46,7 +46,7 @@ class FileBasedNoteRepository(private val context: Context,
 
     private fun saveNotesToFile(notes: List<Note>) {
         try {
-            outputStream.use { fos ->
+            fileHandler.getOutputStream().use { fos ->
                 ObjectOutputStream(fos).use { os ->
                     os.writeObject(notes)
                     logger.d("File IO", "saved " + notes.size + " notes to file")
@@ -84,7 +84,7 @@ class FileBasedNoteRepository(private val context: Context,
     }
 
     companion object {
-        private const val DEFAULT_FILE_NAME = "notes.bin"
+         const val DEFAULT_FILE_NAME = "notes.bin"
     }
 
 }

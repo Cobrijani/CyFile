@@ -10,25 +10,21 @@ import at.tugraz.tc.cyfile.AppModule
 import at.tugraz.tc.cyfile.BaseInstrumentedTest
 import at.tugraz.tc.cyfile.R
 import at.tugraz.tc.cyfile.async.AsyncModule
-import at.tugraz.tc.cyfile.crypto.KeyVaultService
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent
 import at.tugraz.tc.cyfile.logging.impl.NoOpLogger
 import at.tugraz.tc.cyfile.note.NoteModule
-import at.tugraz.tc.cyfile.note.NoteService
 import at.tugraz.tc.cyfile.secret.SecretManager
 import at.tugraz.tc.cyfile.secret.SecretModule
-import at.tugraz.tc.cyfile.secret.SecretPrompter
+import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.mockk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mock
-import org.mockito.Mockito.mock
-import java.util.concurrent.Executor
 
 class SettingsActivityInstrumentedTest : BaseInstrumentedTest() {
 
-    @Mock
-    private val secretManager: SecretManager? = null
+    @RelaxedMockK
+    private lateinit var secretManager: SecretManager
 
     @Rule
     @JvmField
@@ -38,9 +34,11 @@ class SettingsActivityInstrumentedTest : BaseInstrumentedTest() {
     fun init() {
         app.component = DaggerApplicationComponent.builder()
                 .appModule(AppModule(app, NoOpLogger()))
-                .noteModule(NoteModule(mock(NoteService::class.java)))
-                .asyncModule(AsyncModule(mock(Executor::class.java)))
-                .secretModule(SecretModule(secretManager!!, mock(SecretPrompter::class.java), mock(KeyVaultService::class.java))).build()
+                .noteModule(NoteModule(mockk(relaxed = true)))
+                .asyncModule(AsyncModule(mockk(relaxed = true)))
+                .secretModule(SecretModule(secretManager,
+                        mockk(relaxed = true),
+                        mockk(relaxed = true))).build()
 
     }
 

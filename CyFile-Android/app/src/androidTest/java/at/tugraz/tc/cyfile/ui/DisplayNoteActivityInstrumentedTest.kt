@@ -17,7 +17,6 @@ import at.tugraz.tc.cyfile.BaseInstrumentedTest
 import at.tugraz.tc.cyfile.MainActivity
 import at.tugraz.tc.cyfile.R
 import at.tugraz.tc.cyfile.async.AsyncModule
-import at.tugraz.tc.cyfile.crypto.KeyVaultService
 import at.tugraz.tc.cyfile.crypto.impl.NoOpCryptoService
 import at.tugraz.tc.cyfile.domain.Note
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent
@@ -27,21 +26,19 @@ import at.tugraz.tc.cyfile.note.impl.InMemoryNoteRepository
 import at.tugraz.tc.cyfile.note.impl.SecureNoteService
 import at.tugraz.tc.cyfile.secret.SecretManager
 import at.tugraz.tc.cyfile.secret.SecretModule
-import at.tugraz.tc.cyfile.secret.SecretPrompter
+import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.mockk
 import junit.framework.Assert.assertTrue
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mock
-import org.mockito.Mockito.mock
 import java.util.*
-import java.util.concurrent.Executor
 
 class DisplayNoteActivityInstrumentedTest : BaseInstrumentedTest() {
 
-    @Mock
-    private val secretManager: SecretManager? = null
+    @RelaxedMockK
+    private lateinit var secretManager: SecretManager
 
     @Rule
     @JvmField
@@ -58,9 +55,11 @@ class DisplayNoteActivityInstrumentedTest : BaseInstrumentedTest() {
     fun init() {
         val applicationComponent = DaggerApplicationComponent.builder()
                 .noteModule(NoteModule(SecureNoteService(InMemoryNoteRepository(HashSet(testNotes)), NoOpCryptoService())))
-                .secretModule(SecretModule(secretManager!!, mock(SecretPrompter::class.java), mock(KeyVaultService::class.java)))
+                .secretModule(SecretModule(secretManager,
+                        mockk(relaxed = true),
+                        mockk(relaxed = true)))
                 .appModule(AppModule(app, NoOpLogger()))
-                .asyncModule(AsyncModule(mock(Executor::class.java)))
+                .asyncModule(AsyncModule(mockk(relaxed = true)))
                 .build()
 
         app.component = applicationComponent
@@ -91,7 +90,7 @@ class DisplayNoteActivityInstrumentedTest : BaseInstrumentedTest() {
 
         onView(withId(R.id.NOTE_TITLE)).check(matches(withText(editedNote.title)))
         onView(withId(R.id.NOTE_CONTENT)).check(matches(withText(editedNote.content)))
-        assertTrue(editedNote.title!!.isNotEmpty())
+        assertTrue(editedNote.title.isNotEmpty())
     }
 
     @Test

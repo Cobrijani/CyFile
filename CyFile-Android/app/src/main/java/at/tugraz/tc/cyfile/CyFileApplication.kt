@@ -8,6 +8,7 @@ import at.tugraz.tc.cyfile.async.impl.JobExecutor
 import at.tugraz.tc.cyfile.crypto.impl.AES256CBCCryptoService
 import at.tugraz.tc.cyfile.crypto.impl.KeyVaultServiceImpl
 import at.tugraz.tc.cyfile.crypto.impl.NativeBase64
+import at.tugraz.tc.cyfile.file.impl.FileHandlerImpl
 import at.tugraz.tc.cyfile.injection.ApplicationComponent
 import at.tugraz.tc.cyfile.injection.DaggerApplicationComponent
 import at.tugraz.tc.cyfile.logging.impl.AndroidLogger
@@ -35,12 +36,14 @@ class CyFileApplication : Application() {
                 val keyVaultService = KeyVaultServiceImpl(logger)
 
                 val encoder = NativeBase64()
-                val secretRepository = HashSecretRepository(this, logger = logger, encoder = encoder)
+                val secretRepository = HashSecretRepository(FileHandlerImpl(this, HashSecretRepository.DEFAULT_FILE_NAME),
+                        logger = logger,
+                        encoder = encoder)
                 val prompter = OnApplicationForegroundSecretPrompter(PinPatternSecretPrompter(this),
                         keyVaultService,
                         NoOpSecretPrompter())
 
-                val repository = FileBasedNoteRepository(this, logger = logger)
+                val repository = FileBasedNoteRepository(logger, FileHandlerImpl(this, FileBasedNoteRepository.DEFAULT_FILE_NAME))
                 ProcessLifecycleOwner.get().lifecycle.addObserver(prompter)
 
                 val secretModule = SecretModule(

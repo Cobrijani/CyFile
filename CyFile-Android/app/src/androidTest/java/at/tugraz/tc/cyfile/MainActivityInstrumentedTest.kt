@@ -30,40 +30,36 @@ import at.tugraz.tc.cyfile.secret.SecretModule
 import at.tugraz.tc.cyfile.secret.SecretPrompter
 import at.tugraz.tc.cyfile.ui.DisplayNoteActivity
 import at.tugraz.tc.cyfile.ui.SettingsActivity
+import io.mockk.every
+import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.mockk
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mock
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
 import java.util.*
-import java.util.concurrent.Executor
 
 /**
  * Created by kina on 11.04.18.
  */
 class MainActivityInstrumentedTest : BaseInstrumentedTest() {
 
-    @Mock
+    @RelaxedMockK
     private lateinit var secretManager: SecretManager
-
-    @Mock
+    @RelaxedMockK
     private lateinit var noteRepository: NoteRepository
-    @Mock
+    @RelaxedMockK
     private lateinit var secretPrompter: SecretPrompter
 
     @Rule
     @JvmField
     var mActivityRule = IntentsTestRule(MainActivity::class.java, true, false)
 
-
     @Before
     fun init() {
         val applicationComponent = DaggerApplicationComponent.builder()
                 .noteModule(NoteModule(SecureNoteService(noteRepository, NoOpCryptoService())))
-                .asyncModule(AsyncModule(mock(Executor::class.java)))
+                .asyncModule(AsyncModule(mockk(relaxed = true)))
                 .secretModule(SecretModule(secretManager, secretPrompter,
                         DummyKeyVaultService()))
                 .appModule(AppModule(app, NoOpLogger()))
@@ -71,14 +67,13 @@ class MainActivityInstrumentedTest : BaseInstrumentedTest() {
 
         app.component = applicationComponent
 
-        `when`(secretManager.verify(any()))
-                .thenReturn(true)
+        every { secretManager.verify(any()) } returns true
     }
 
     @Test
     fun testNoNotesPresent() {
-        `when`(noteRepository.findAll())
-                .thenReturn(emptyList())
+
+        every { noteRepository.findAll() } returns emptyList()
 
         mActivityRule.launchActivity(Intent())
 
@@ -89,12 +84,10 @@ class MainActivityInstrumentedTest : BaseInstrumentedTest() {
     }
 
     private fun mockRepo(testNotes: List<Note>) {
-        `when`(noteRepository.findAll())
-                .thenReturn(testNotes)
+        every { noteRepository.findAll() } returns testNotes
 
         for (note in testNotes) {
-            `when`<Note>(noteRepository.findOne(note.id))
-                    .thenReturn(note)
+            every { noteRepository.findOne(note.id) } returns note
         }
     }
 
@@ -159,18 +152,15 @@ class MainActivityInstrumentedTest : BaseInstrumentedTest() {
 
     @Test
     fun buttonsTest() {
-        `when`(noteRepository!!.findAll())
-                .thenReturn(Arrays.asList(Note("1", "name1", "content1", 0L, 0L), Note("2", "name2", "content2", 0L, 0L)))
 
-        `when`<Note>(noteRepository.findOne("1"))
-                .thenReturn(Note("1", "name1", "content1", 0L, 0L))
+        every { noteRepository.findAll() } returns Arrays.asList(Note("1", "name1", "content1", 0L, 0L), Note("2", "name2", "content2", 0L, 0L))
+
+        every { noteRepository.findOne("1") } returns Note("1", "name1", "content1", 0L, 0L)
 
         mActivityRule.launchActivity(Intent())
 
         onView(withText("name1"))
                 .check(matches(isDisplayed()))
-
-        onView(withText("name1"))
                 .perform(click())
 
         onView(withId(R.id.noteList))

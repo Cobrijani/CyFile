@@ -44,7 +44,7 @@ class DisplayNoteActivity : BaseActivity() {
         val scrollView = findViewById<View>(R.id.SCROLL_VIEW)
         val noteContent = findViewById<View>(R.id.NOTE_CONTENT)
         noteContent.requestFocus()
-        if (loadedNote.title == null) {
+        if (noteId == null) {
             newNote = true
             greyOutDeleteButton()
             hideDateModified()
@@ -103,9 +103,7 @@ class DisplayNoteActivity : BaseActivity() {
         loadedNote = if (noteId == null) {
             Note("", "", "")
         } else {
-            noteService.findOne(noteId).let {
-                Note("", "", "")
-            }
+            noteService.findOne(noteId)!!
         }
     }
 
