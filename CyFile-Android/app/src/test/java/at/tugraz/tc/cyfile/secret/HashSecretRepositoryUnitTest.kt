@@ -1,16 +1,35 @@
 package at.tugraz.tc.cyfile.secret
 
-import android.content.Context
+import at.tugraz.tc.cyfile.BaseUnitTest
 import at.tugraz.tc.cyfile.crypto.impl.ApacheCodecBase64
+import at.tugraz.tc.cyfile.file.FileHandler
 import at.tugraz.tc.cyfile.secret.impl.HashSecretRepository
 import at.tugraz.tc.cyfile.secret.impl.HashedSecret
 import at.tugraz.tc.cyfile.secret.impl.PinPatternSecret
+import io.mockk.every
+import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import junit.framework.Assert
+import org.junit.Before
 import org.junit.Test
 import java.io.*
 
-class HashSecretRepositoryUnitTest {
+class HashSecretRepositoryUnitTest : BaseUnitTest() {
+
+    @RelaxedMockK
+    private lateinit var fileHandler: FileHandler
+    private val defaultSecretValue = "111222"
+    private val defaultSecret = HashedSecret(PinPatternSecret(defaultSecretValue), ApacheCodecBase64())
+
+    private lateinit var repository: HashSecretRepository
+
+    @Before
+    fun setup() {
+        every { fileHandler.getOutputStream() } returns createOutputStream()
+        every { fileHandler.getInputStream() } returns createInputStream(
+                defaultSecret)
+        repository = HashSecretRepository(fileHandler, mockk(relaxed = true), ApacheCodecBase64())
+    }
 
     @Throws(IOException::class)
     private fun createOutputStream(): ByteArrayOutputStream {
@@ -30,36 +49,17 @@ class HashSecretRepositoryUnitTest {
     @Test
     @Throws(IOException::class)
     fun testReadSecret() {
-        val secret = HashedSecret(PinPatternSecret("111222"), ApacheCodecBase64())
-        val mockContext = mockk<Context>(relaxed = true)
-
-        val repository = HashSecretRepository(mockContext,
-                "",
-                mockk(relaxed = true),
-                ApacheCodecBase64(),
-                createInputStream(secret))
-
-        Assert.assertEquals(repository.retrieveSecret(), secret)
+        Assert.assertEquals(repository.retrieveSecret(), defaultSecret)
     }
 
     @Test
     @Throws(IOException::class, ClassNotFoundException::class)
     fun testWriteSecret() {
-        val oldSecret = HashedSecret(PinPatternSecret("332211"), ApacheCodecBase64())
-        val newSecret = PinPatternSecret("111222")
-        val mockContext = mockk<Context>(relaxed = true)
-
-        val outputStream = createOutputStream()
-        val repository = HashSecretRepository(mockContext,
-                "",
-                mockk(relaxed = true),
-                ApacheCodecBase64(),
-                inputStream = createInputStream(oldSecret),
-                outputStream = outputStream)
+        val newSecret = PinPatternSecret("332211")
 
         repository.saveSecret(newSecret)
 
-        val buffer = outputStream.toByteArray()
+        val buffer = (fileHandler.getOutputStream() as ByteArrayOutputStream).toByteArray()
         val `is` = ByteArrayInputStream(buffer)
         val ois = ObjectInputStream(`is`)
         val actual = ois.readObject() as HashedSecret

@@ -1,6 +1,5 @@
 package at.tugraz.tc.cyfile.note.impl
 
-import android.content.Context
 import at.tugraz.tc.cyfile.domain.Note
 import at.tugraz.tc.cyfile.file.FileHandler
 import at.tugraz.tc.cyfile.logging.CyFileLogger

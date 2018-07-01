@@ -1,17 +1,19 @@
 package at.tugraz.tc.cyfile.note
 
 
-import android.content.Context
 import at.tugraz.tc.cyfile.BaseUnitTest
 import at.tugraz.tc.cyfile.domain.Note
+import at.tugraz.tc.cyfile.file.FileHandler
 import at.tugraz.tc.cyfile.logging.CyFileLogger
 import at.tugraz.tc.cyfile.logging.impl.NoOpLogger
 import at.tugraz.tc.cyfile.note.impl.FileBasedNoteRepository
+import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
+import org.junit.After
 import org.junit.Assert
+import org.junit.Before
 import org.junit.Test
 import java.io.*
-import java.util.*
 
 /**
  * Unit tests for [at.tugraz.tc.cyfile.note.impl.FileBasedNoteRepository]
@@ -20,10 +22,27 @@ import java.util.*
 
 class FileBasedRepositoryUnitTest : BaseUnitTest() {
 
-    @RelaxedMockK
-    private lateinit var context: Context
-
     private var logger: CyFileLogger = NoOpLogger()
+
+    private lateinit var sut: FileBasedNoteRepository
+
+    @RelaxedMockK
+    private lateinit var fileHandler: FileHandler
+
+    private val notes: MutableList<Note> = ArrayList()
+
+    @Before
+    fun setup() {
+        every { fileHandler.getInputStream() } returns createInputStream(notes)
+        every { fileHandler.getOutputStream() } returns createOutputStream()
+
+        sut = FileBasedNoteRepository(logger, fileHandler)
+    }
+
+    @After
+    fun tearDown() {
+        notes.clear()
+    }
 
 
     @Throws(IOException::class)
@@ -41,18 +60,17 @@ class FileBasedRepositoryUnitTest : BaseUnitTest() {
     fun loadNotesFromFileWithGeneratedInputStream() {
         val n = Note("my-id1", "name", "content")
         val n1 = Note("my-id2", "name2", "content2")
-        val notes = LinkedList<Note>()
         notes.add(n1)
         notes.add(n)
 
-        val spyRepository = FileBasedNoteRepository(context, logger = logger,
-                inputStream = createInputStream(notes),
-                outputStream = createOutputStream())
+        every { fileHandler.getInputStream() } returns createInputStream(notes)
 
-        val actual = spyRepository.findAll()
+
+        sut = FileBasedNoteRepository(logger, fileHandler)
+        val actual = sut.findAll()
         Assert.assertTrue(actual.size == 2)
 
-        val actual2 = spyRepository.findOne("my-id2")
+        val actual2 = sut.findOne("my-id2")
         Assert.assertNotNull(actual2)
         Assert.assertEquals("name2", actual2!!.title)
     }
@@ -66,19 +84,16 @@ class FileBasedRepositoryUnitTest : BaseUnitTest() {
     @Throws(Exception::class)
     fun saveNoteToFileWithSuccess() {
         val n = Note("my-id1", "name", "content")
-        val notes = LinkedList<Note>()
         notes.add(n)
 
         val nSave = Note("", "name2", "content2")
-        val os = createOutputStream() as ByteArrayOutputStream
-        val spyRepository = FileBasedNoteRepository(context, logger = logger,
-                inputStream = createInputStream(notes),
-                outputStream = os)
+        every { fileHandler.getInputStream() } returns createInputStream(notes)
+        sut = FileBasedNoteRepository(logger, fileHandler)
+        val saved = sut.save(nSave)
 
-        val saved = spyRepository.save(nSave)
         Assert.assertNotNull(saved)
 
-        val buffer = os.toByteArray()
+        val buffer = (fileHandler.getOutputStream() as ByteArrayOutputStream).toByteArray()
         val `is` = ByteArrayInputStream(buffer)
         val ois = ObjectInputStream(`is`)
         val actual = ois.readObject() as List<Note>
@@ -87,22 +102,16 @@ class FileBasedRepositoryUnitTest : BaseUnitTest() {
         Assert.assertTrue(actual.contains(nSave))
     }
 
-   @Test
+    @Test
     @Throws(Exception::class)
     fun testDeleteWithSuccess() {
         val n = Note("my-id1", "name", "content")
-        val notes = LinkedList<Note>()
         notes.add(n)
 
-        val os = createOutputStream() as ByteArrayOutputStream
+        sut = FileBasedNoteRepository(logger, fileHandler)
+        sut.delete("my-id1")
 
-        val spyRepository = FileBasedNoteRepository(context, logger = logger,
-                inputStream = createInputStream(notes),
-                outputStream = os)
-
-        spyRepository.delete("my-id1")
-
-        val buffer = os.toByteArray()
+        val buffer = (fileHandler.getOutputStream() as ByteArrayOutputStream).toByteArray()
         val `is` = ByteArrayInputStream(buffer)
         val ois = ObjectInputStream(`is`)
         val actual = ois.readObject() as List<Note>
