@@ -109,7 +109,7 @@ class DisplayNoteActivity : BaseActivity() {
 
     private fun onOpenNote() {
         logger.d("Note Id", loadedNote.id + " ")
-        logger.d("Note Content", loadedNote.content!! + " ")
+        logger.d("Note Content", loadedNote.content + " ")
         logger.d("Note Modified", loadedNote.dateTimeModified!!.toString() + " ")
 
         textContent.text = loadedNote.content
@@ -139,7 +139,7 @@ class DisplayNoteActivity : BaseActivity() {
         finish()
     }
 
-    fun onSelectDeleteNote() {
+    private fun onSelectDeleteNote() {
         val alertDialog = AlertDialog.Builder(this@DisplayNoteActivity).create()
         alertDialog.setTitle(resources.getString(R.string.delete_confirmation_title))
         alertDialog.setMessage(resources.getString(R.string.delete_confirmation_content)
