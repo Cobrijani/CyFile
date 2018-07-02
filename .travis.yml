@@ -18,8 +18,8 @@ env:
     - EMULATOR_API_LEVEL=19
     - ANDROID_BUILD_TOOLS=27.0.3
     - ADB_INSTALL_TIMEOUT=5 # minutes
-    - secure: "MFBIzwq7ZDqs5vt7jr1zIVNXfdfykX3EgmJbmKAReAeSPFulIH3PzDYr9kBnpvHDKbZ0Z6/EnWWfE0/CjYc8OJoiXpHMV4/gTLbLNsIJL9e0UdCJWbxc2iyN71gwCJdZlijg0QfhTf6N5X85iNOymHKgpbzlSAK3xKVec/NOs4PEGa2lEQVvQo1eyONknyK2ly4bdmGmiDW1LBMkwfTvu3+zR27qD+rpqPhM6VsjAHrmFiPSpJ9yCc1vv9kHj1ii584Y93/a6NLpVBFsUwRZG8YNOizo6cw4dfXcUO+O+hBG7mDj2l87kQicgxO6ZJKaAHIPOcfC/rbqmw4Qu9EQz6Kf05K6ILYFQJ4ewgeuoVme5VpEXnavf4udwdMKmS8tMZWKdh3Np5fPqMd0LQqxN33mHPo0Khn6Rx0jSrADNk614Nce3L0XU0BzKZod5vv6AIw54uAvaCaGAcbSyMw6Z1RrZf2T6oQvuWt2hs4mao9JWPYluXsBcn5TGKzUqLYlc2AeyYod5Q9PTAnZv3y7H9q8fxWRNmjqbsftZvQGeVxQ0j4ERqJ6KvlxWhb6FIl7Wh76Dn1DkQE3TpDZbHSoI4kZSVheiLK9lFap6ngKrpdkuAy4dhuYCjTu7FiROLm9eh3daYPr90kxNh45EXk6xMAMnzseKLKBvKs9v83cUnY="
-    - secure: "XNrXfYnk5Z0xarVwKqbl70motHIY7eK+gyfK2ENTNbozYakZd9m1h4PE6PNcM0n9Q2WRIyT80AiISeWD0UpYbS1d8R4o6X/twCBKrCUIHGYftwXLuwFPJvbO0XPOiyyA43ae8mqBcljMgxtShgpD0NM1Z2Ggfa1GFoTUCwm8PSD6p999D61SooS8cocAXoo1KhfOfVlsRxXH/JxLvLjp3jMf+VIEPD/M1dJbya0x+0uNXLXZV7413Mfjx85oer1SJNBw0DKMysTpFbay3JNZM0Wt0Z15QPRjU7Sn5OOuJjzFtQZAkFMbL2LynSyJUHHfgYl+r54rNx9JSBMMwhp5plUznhxmlhstduvx31u6VVar3te4/+My+oQAeiTgmXXlQxFERtcKRVp09ZRUd42wCMfSb0MODryM4eY5gEh3wD5/M1RkSWSkm/eIEakTaTJhIPovgbQUGa3Q2R2kYkzD7QawQiLtNwa5BHEtDBXw9NaLCGP0hh3/aXbMSmpyvxz5wWFRLWY2GtyLccpg0g2bKkNzPQKNoJuq2uja4jFhhNlEhX40EmzuV8CYPdeZ+kA8R79x3cc+5E6S9PrL9UX0WpvM8C0YbdTA1n/RMEJmjL2bMuvQN7b0SFM8nvhm90ZaBdEYYE8T2D5AK2MWdOSfmY+55wxTYzDhZkTIhv9+tYk="
+    # - secure: "MFBIzwq7ZDqs5vt7jr1zIVNXfdfykX3EgmJbmKAReAeSPFulIH3PzDYr9kBnpvHDKbZ0Z6/EnWWfE0/CjYc8OJoiXpHMV4/gTLbLNsIJL9e0UdCJWbxc2iyN71gwCJdZlijg0QfhTf6N5X85iNOymHKgpbzlSAK3xKVec/NOs4PEGa2lEQVvQo1eyONknyK2ly4bdmGmiDW1LBMkwfTvu3+zR27qD+rpqPhM6VsjAHrmFiPSpJ9yCc1vv9kHj1ii584Y93/a6NLpVBFsUwRZG8YNOizo6cw4dfXcUO+O+hBG7mDj2l87kQicgxO6ZJKaAHIPOcfC/rbqmw4Qu9EQz6Kf05K6ILYFQJ4ewgeuoVme5VpEXnavf4udwdMKmS8tMZWKdh3Np5fPqMd0LQqxN33mHPo0Khn6Rx0jSrADNk614Nce3L0XU0BzKZod5vv6AIw54uAvaCaGAcbSyMw6Z1RrZf2T6oQvuWt2hs4mao9JWPYluXsBcn5TGKzUqLYlc2AeyYod5Q9PTAnZv3y7H9q8fxWRNmjqbsftZvQGeVxQ0j4ERqJ6KvlxWhb6FIl7Wh76Dn1DkQE3TpDZbHSoI4kZSVheiLK9lFap6ngKrpdkuAy4dhuYCjTu7FiROLm9eh3daYPr90kxNh45EXk6xMAMnzseKLKBvKs9v83cUnY="
+    # - secure: "XNrXfYnk5Z0xarVwKqbl70motHIY7eK+gyfK2ENTNbozYakZd9m1h4PE6PNcM0n9Q2WRIyT80AiISeWD0UpYbS1d8R4o6X/twCBKrCUIHGYftwXLuwFPJvbO0XPOiyyA43ae8mqBcljMgxtShgpD0NM1Z2Ggfa1GFoTUCwm8PSD6p999D61SooS8cocAXoo1KhfOfVlsRxXH/JxLvLjp3jMf+VIEPD/M1dJbya0x+0uNXLXZV7413Mfjx85oer1SJNBw0DKMysTpFbay3JNZM0Wt0Z15QPRjU7Sn5OOuJjzFtQZAkFMbL2LynSyJUHHfgYl+r54rNx9JSBMMwhp5plUznhxmlhstduvx31u6VVar3te4/+My+oQAeiTgmXXlQxFERtcKRVp09ZRUd42wCMfSb0MODryM4eY5gEh3wD5/M1RkSWSkm/eIEakTaTJhIPovgbQUGa3Q2R2kYkzD7QawQiLtNwa5BHEtDBXw9NaLCGP0hh3/aXbMSmpyvxz5wWFRLWY2GtyLccpg0g2bKkNzPQKNoJuq2uja4jFhhNlEhX40EmzuV8CYPdeZ+kA8R79x3cc+5E6S9PrL9UX0WpvM8C0YbdTA1n/RMEJmjL2bMuvQN7b0SFM8nvhm90ZaBdEYYE8T2D5AK2MWdOSfmY+55wxTYzDhZkTIhv9+tYk="
 android:
  components:
    - tools
@@ -42,12 +42,14 @@ android:
 before_install:
 # - openssl aes-256-cbc -K $encrypted_5d1391afea9a_key -iv $encrypted_5d1391afea9a_iv -in google-services.json.enc -out google-services.json -d
 - yes | sdkmanager "platforms;android-27"
+- cd CyFile-Android
+- chmod +x gradlew
 
-before_script:
-  - echo no | android create avd --force -n test -t android-$EMULATOR_API_LEVEL --abi google_apis/armeabi-v7a
-  - emulator -avd test -no-window &
-  - android-wait-for-emulator
-  - adb shell input keyevent 82 &
+# before_script:
+  # - echo no | android create avd --force -n test -t android-$EMULATOR_API_LEVEL --abi google_apis/armeabi-v7a
+  # - emulator -avd test -no-window &
+  # - android-wait-for-emulator
+  # - adb shell input keyevent 82 &
 script:
   - echo "Travis branch is $TRAVIS_BRANCH"
   - echo "Travis branch is in pull request $TRAVIS_PULL+REQUEST"
