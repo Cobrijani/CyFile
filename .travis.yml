@@ -45,6 +45,7 @@ before_install:
 
 before_script:
   cd CyFile-Android
+  chmod +x gradlew
   # - echo no | android create avd --force -n test -t android-$EMULATOR_API_LEVEL --abi google_apis/armeabi-v7a
   # - emulator -avd test -no-window &
   # - android-wait-for-emulator
